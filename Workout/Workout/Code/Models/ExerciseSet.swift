@@ -13,7 +13,7 @@ public enum ExerciseSetType: String, Codable, CaseIterable {
     case distance = "distance"
 }
 
-/// This is one set of an exercise created by the coach for the user to perform. For example, 12 reps of Bicep Curls at 30 lbs
+/// This is one set of an exercise created by the coach for the user to perform. For example, 12 reps of Bicep Curls at 30 lbs.
 public struct ExerciseSet: Codable, Equatable {
     public var id: String
     public var exercise: Exercise?
@@ -26,7 +26,7 @@ public struct ExerciseSet: Codable, Equatable {
     public var estimatedDuration: Int?
     public var intensity: String?
     public var isTwoDumbbells: Bool?
-    
+
     public enum CodingKeys: String, CodingKey {
         case id = "id"
         case exercise = "exercise"
@@ -41,10 +41,10 @@ public struct ExerciseSet: Codable, Equatable {
         case intensity = "intensity"
         case isTwoDumbbells = "is_two_dumbbells"
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+
         self.id = try container.decode(String.self, forKey: .id)
         self.exercise = try container.decodeIfPresent(Exercise.self, forKey: .exercise)
         self.type = (try? container.decode(ExerciseSetType.self, forKey: .type)) ?? .unknown
@@ -57,10 +57,10 @@ public struct ExerciseSet: Codable, Equatable {
         self.intensity = try container.decodeIfPresent(String.self, forKey: .intensity)
         self.isTwoDumbbells = try container.decodeIfPresent(Bool.self, forKey: .isTwoDumbbells)
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
+
         try container.encode(self.id, forKey: .id)
         try container.encodeIfPresent(self.exercise, forKey: .exercise)
         try container.encodeIfPresent(self.type, forKey: .type)
@@ -73,17 +73,17 @@ public struct ExerciseSet: Codable, Equatable {
         try container.encodeIfPresent(self.intensity, forKey: .intensity)
         try container.encodeIfPresent(self.isTwoDumbbells, forKey: .isTwoDumbbells)
     }
-    
+
     // MARK: Helpers
-    
+
     public var isRecovery: Bool {
         return (self.exercise?.type ?? "") == "rest"
     }
-    
+
     public var weightUnit: String {
         return (isTwoDumbbells ?? false) ? "lb dumbbells" : "lbs"
     }
-    
+
 }
 
 public enum Intensity: String {
@@ -111,7 +111,7 @@ public enum Intensity: String {
     case weightHeavy = "weight_heavy"
     case weightLight = "weight_light"
     case weightModerate = "weight_moderate"
-    
+
     public var displayName: String {
         switch self {
         case .none: return "Normal"

@@ -19,7 +19,7 @@ public struct Exercise: Codable, Equatable {
     public var movementPatterns: String?
     public var muscleGroups: String?
     public var type: String?
-    
+
     public enum CodingKeys: String, CodingKey {
         case description = "description"
         case id = "id"
@@ -34,10 +34,10 @@ public struct Exercise: Codable, Equatable {
         case side = "side"
         case type = "type"
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        
+
         self.description = try container.decodeIfPresent(String.self, forKey: .description)
         self.id = try container.decode(String.self, forKey: .id)
         self.isAlternating = try container.decodeIfPresent(Bool.self, forKey: .isAlternating) ?? false
@@ -51,10 +51,10 @@ public struct Exercise: Codable, Equatable {
         self.side = try container.decodeIfPresent(String.self, forKey: .side)
         self.type = try container.decodeIfPresent(String.self, forKey: .type)
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        
+
         try container.encode(self.id, forKey: .id)
         try container.encodeIfPresent(self.description, forKey: .description)
         try container.encodeIfPresent(self.isAlternating, forKey: .isAlternating)
@@ -68,17 +68,17 @@ public struct Exercise: Codable, Equatable {
         try container.encodeIfPresent(self.side, forKey: .side)
         try container.encodeIfPresent(self.type, forKey: .type)
     }
-    
+
 }
 
 // MARK: Helpers
 extension Exercise {
-    
+
     public var sideDisplayName: String? {
         guard let side = side else { return nil }
         return Side(rawValue: side)?.displayName
     }
-    
+
 }
 
 public enum Side: String {
@@ -88,7 +88,7 @@ public enum Side: String {
     case leftArm = "left_arm"
     case rightLeg = "right_leg"
     case leftLeg = "left_leg"
-    
+
     public var displayName: String {
         switch self {
         case .left: return "Left Side"
@@ -99,4 +99,5 @@ public enum Side: String {
         case .rightLeg: return "Right Leg"
         }
     }
+
 }
