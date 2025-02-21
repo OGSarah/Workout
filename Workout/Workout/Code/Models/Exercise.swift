@@ -6,7 +6,7 @@
 import Foundation
 
 /// This is the exercise model, can be used to relate different sets in the same workouts or across different workouts
-public struct Exercise: Codable, Equatable {
+public struct Exercise: Codable, Equatable, Identifiable {
     public var id: String
     public var name: String?
     public var side: String?

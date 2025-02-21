@@ -6,18 +6,24 @@
 //
 
 import SwiftUI
-import CoreData
 
 struct ContentView: View {
+    let workoutsController = WorkoutsController()
 
     var body: some View {
         NavigationStack {
-            Text("Hello, World!")
+            ExerciseListView(workoutsController: workoutsController)
+                .navigationTitle(Text("Exercises"))
+            }
         }
     }
 
+#Preview("Light Mode") {
+    ContentView()
+        .preferredColorScheme(.light)
 }
 
-#Preview {
+#Preview("Dark Mode") {
     ContentView()
+        .preferredColorScheme(.dark)
 }
