@@ -25,20 +25,36 @@ struct ExerciseListView: View {
 
     private static func extractExercises(from workoutSummaries: [WorkoutSummary]) -> [Exercise] {
         var exercises: [Exercise] = []
+        var seenNames: Set<String> = []
 
+        // Collect and deduplicate exercises by name
         for summary in workoutSummaries {
             for setSummary in summary.setSummaries {
                 if let exerciseSet = setSummary.exerciseSet,
-                   let exercise = exerciseSet.exercise {
+                   let exercise = exerciseSet.exercise,
+                   let name = exercise.name { // Only consider exercises with a name
+                    if seenNames.insert(name).inserted {
+                        exercises.append(exercise)
+                    }
+                } else if let exerciseSet = setSummary.exerciseSet,
+                          let exercise = exerciseSet.exercise {
+                    // Include exercises with nil names as unique entries
                     exercises.append(exercise)
                 }
             }
         }
 
-        let uniqueExercises = Array(NSOrderedSet(array: exercises.map { $0.id })
-            .compactMap { id in exercises.first { $0.id == id as! String } })
-
-        return uniqueExercises
+        // Sort alphabetically by name, with nil names at the end.
+        return exercises.sorted { (lhs, rhs) in
+            switch (lhs.name, rhs.name) {
+                case let (left?, right?):
+                    return left < right // Compare non-nil names alphabetically
+                case (nil, _):
+                    return false // nil goes to the end
+                case (_, nil):
+                    return true // non-nil comes before nil
+            }
+        }
     }
 
 }
