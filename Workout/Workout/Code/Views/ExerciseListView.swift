@@ -9,17 +9,54 @@ import SwiftUI
 
 struct ExerciseListView: View {
     @State private var exercises: [Exercise] = []
+    @State private var searchText: String = ""
     let workoutsController: WorkoutsController
+
+    private let backgroundGradient = LinearGradient(
+        stops: [
+            Gradient.Stop(color: .gray.opacity(0.6), location: 0),
+            Gradient.Stop(color: .gray.opacity(0.3), location: 0.256),
+            Gradient.Stop(color: .clear, location: 0.4)
+        ],
+        startPoint: .top,
+        endPoint: .bottom
+    )
 
     init(workoutsController: WorkoutsController) {
         self.workoutsController = workoutsController
         _exercises = .init(initialValue: Self.extractExercises(from: workoutsController.workoutSummaries))
+
+        // Make the search field a custom color.
+        UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self])
+            .backgroundColor = UIColor.lightGray.withAlphaComponent(0.3)
     }
 
     var body: some View {
-        ForEach(exercises) { exercise in
-            Text(exercise.name ?? "no exercise name")
-                .foregroundStyle(.red)
+        NavigationStack {
+            List {
+                ForEach(filteredExercises) { exercise in
+                    NavigationLink {
+                        ExerciseDetailView(exercise: exercise)
+                    } label: {
+                        Text(exercise.name ?? "no exercise name")
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+            .navigationTitle(Text("Exercises"))
+            .searchable(text: $searchText, prompt: "Search")
+            .background(backgroundGradient)
+            .scrollContentBackground(.hidden)
+        }
+    }
+
+    private var filteredExercises: [Exercise] {
+        if searchText.isEmpty {
+            return exercises
+        } else {
+            return exercises.filter { exercise in
+                exercise.name?.localizedCaseInsensitiveContains(searchText) ?? false
+            }
         }
     }
 

@@ -11,10 +11,7 @@ struct ContentView: View {
     let workoutsController = WorkoutsController()
 
     var body: some View {
-        NavigationStack {
             ExerciseListView(workoutsController: workoutsController)
-                .navigationTitle(Text("Exercises"))
-            }
         }
     }
 
