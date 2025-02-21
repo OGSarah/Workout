@@ -1,6 +1,5 @@
-# Workout
 <div align="center">
-  <img src="https://raw.githubusercontent.com/Pearljam66/Workout/dd591db49ac547498df52a153c09fb687839a26b/Workout/Workout/Assets.xcassets/AppIcon.appiconset/workout_any.jpg" width="150" style="border: 3px solid white; border-radius: 15px; vertical-align: middle; margin-right: 20px;">
+  <img src="https://raw.githubusercontent.com/Pearljam66/Workout/805402c2580b8cdea6aec8a7e9722b9676289345/Workout/Workout/Assets.xcassets/AppIcon.appiconset/workout_any.png" width="150" style="border: 3px solid white; border-radius: 15px; vertical-align: middle; margin-right: 20px;">
   <h1 style="display: inline-block; vertical-align: middle;">Workout</h1>
 </div>
 
