@@ -11,6 +11,7 @@ struct ExerciseDetailView: View {
     private let exercise: Exercise
     private let exerciseSetSummaries: [ExerciseSetSummary]
     @Environment(\.colorScheme) var colorScheme
+    @State private var showEditSheet = false
 
     private let backgroundGradient = LinearGradient(
         stops: [
@@ -27,6 +28,7 @@ struct ExerciseDetailView: View {
         self.exerciseSetSummaries = exerciseSetSummaries
     }
 
+    // MARK: - Main View
     var body: some View {
         NavigationStack {
             ZStack {
@@ -35,13 +37,9 @@ struct ExerciseDetailView: View {
                 ScrollView {
                     VStack(spacing: 10) {
                        // moodSection
-                        Text(exercise.name ?? "No Exercise Name")
-                        Gauge(value: 30, in: 0...100) {
-                            Text("Weight")
-                        } currentValueLabel: {
-                            Text("\(Int(30))%")
-                        }
-                        .gaugeStyle(.accessoryCircular)
+                        Text("Goals")
+                        goalPerformanceSection
+
                         chartSection
                         Spacer()
                     }
@@ -50,6 +48,43 @@ struct ExerciseDetailView: View {
             }
                 .navigationTitle(exercise.name ?? "Empty Name")
         }
+    }
+
+    private var goalPerformanceSection: some View {
+        HStack {
+            // Weight
+            Gauge(value: 10, in: 0...100) {
+                Text("Weight")
+            } currentValueLabel: {
+                Text("\(Int(10))%")
+            }
+            .gaugeStyle(.accessoryCircular)
+            .padding(.horizontal, 10)
+
+            // Reps
+            Gauge(value: 55, in: 0...100) {
+                Text("Reps")
+            } currentValueLabel: {
+                Text("\(Int(55))%")
+            }
+            .gaugeStyle(.accessoryCircular)
+            .padding(.horizontal, 10)
+
+            // Duration
+            Gauge(value: 95, in: 0...100) {
+                Text("Duration")
+            } currentValueLabel: {
+                Text("\(Int(95))%")
+            }
+            .gaugeStyle(.accessoryCircular)
+            .padding(.horizontal, 10)
+        }
+        .padding(40)
+        .background {
+            glassBackground
+
+        }
+        .padding(.all, 10)
     }
 
     private var chartSection: some View {
