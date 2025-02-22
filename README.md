@@ -19,7 +19,7 @@ A simple SwiftUI app that shows a client's workout performance over time.
   </div>
 </div>
 
-## Screenshots:
+## Screenshots (to be added):
 
 Here are some screenshots showcasing the app's features:
 
@@ -34,9 +34,7 @@ Here are some screenshots showcasing the app's features:
   </div>
 </div>
 
-## Recorded Demo:
+## Recorded Demo (to be added):
 
 [Watch the Recorded Demo](https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/WorkoutVideo.mov)
-
-## Key Features:
 
