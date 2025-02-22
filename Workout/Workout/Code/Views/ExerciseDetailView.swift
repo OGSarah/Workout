@@ -43,7 +43,7 @@ struct ExerciseDetailView: View {
                         chartSection
                         Spacer()
                     }
-                    .padding(.top)
+                    .padding()
                 }
             }
                 .navigationTitle(exercise.name ?? "Empty Name")
@@ -57,8 +57,12 @@ struct ExerciseDetailView: View {
                 Text("Weight")
             } currentValueLabel: {
                 Text("\(Int(10))%")
+                    .font(.headline)
             }
             .gaugeStyle(.accessoryCircular)
+            .tint(.brightCoralRed)
+            .shadow(radius: 1)
+            .scaleEffect(1.5)
             .padding(.horizontal, 10)
 
             // Reps
@@ -66,17 +70,25 @@ struct ExerciseDetailView: View {
                 Text("Reps")
             } currentValueLabel: {
                 Text("\(Int(55))%")
+                    .font(.headline)
             }
             .gaugeStyle(.accessoryCircular)
-            .padding(.horizontal, 10)
+            .tint(.brightYellow)
+            .shadow(radius: 1)
+            .scaleEffect(1.5)
+            .padding(.horizontal, 30)
 
             // Duration
             Gauge(value: 95, in: 0...100) {
                 Text("Duration")
             } currentValueLabel: {
                 Text("\(Int(95))%")
+                    .font(.headline)
             }
             .gaugeStyle(.accessoryCircular)
+            .tint(.brightLimeGreen)
+            .shadow(radius: 1)
+            .scaleEffect(1.5)
             .padding(.horizontal, 10)
         }
         .padding(40)
