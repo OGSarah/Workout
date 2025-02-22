@@ -79,10 +79,11 @@ struct ExerciseProgressChartView: View {
     }
 }
 
-/*
-#Preview {
+// Mark - Previews
+#Preview("Light Mode") {
+    let sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
     let sampleSummaries = [
-        ExerciseSetSummary(
+        ExerciseSetSummary.sample(
             id: "1",
             exerciseSetID: "set1",
             workoutSummaryID: nil,
@@ -91,9 +92,9 @@ struct ExerciseProgressChartView: View {
             timeSpentActive: 60,
             weight: 20.0,
             repsReported: 10,
-            exerciseSet: ExerciseSet(id: "set1", exercise: Exercise(id: "ex1", name: "Pushups"))
+            exerciseSet: ExerciseSet.sample(id: "set1", exercise: sampleExercise)
         ),
-        ExerciseSetSummary(
+        ExerciseSetSummary.sample(
             id: "2",
             exerciseSetID: "set2",
             workoutSummaryID: nil,
@@ -102,9 +103,9 @@ struct ExerciseProgressChartView: View {
             timeSpentActive: 60,
             weight: 25.0,
             repsReported: 12,
-            exerciseSet: ExerciseSet(id: "set2", exercise: Exercise(id: "ex1", name: "Pushups"))
+            exerciseSet: ExerciseSet.sample(id: "set2", exercise: sampleExercise)
         ),
-        ExerciseSetSummary(
+        ExerciseSetSummary.sample(
             id: "3",
             exerciseSetID: "set3",
             workoutSummaryID: nil,
@@ -113,10 +114,50 @@ struct ExerciseProgressChartView: View {
             timeSpentActive: 60,
             weight: 30.0,
             repsReported: 15,
-            exerciseSet: ExerciseSet(id: "set3", exercise: Exercise(id: "ex1", name: "Pushups"))
+            exerciseSet: ExerciseSet.sample(id: "set3", exercise: sampleExercise)
         )
     ]
     ExerciseProgressChartView(exerciseSetSummaries: sampleSummaries, exerciseName: "Pushups")
+        .preferredColorScheme(.light)
 }
 
-*/
+#Preview("Dark Mode") {
+    let sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
+    let sampleSummaries = [
+        ExerciseSetSummary.sample(
+            id: "1",
+            exerciseSetID: "set1",
+            workoutSummaryID: nil,
+            startedAt: Date().addingTimeInterval(-86400 * 2), // 2 days ago
+            completedAt: Date().addingTimeInterval(-86400 * 2),
+            timeSpentActive: 60,
+            weight: 20.0,
+            repsReported: 10,
+            exerciseSet: ExerciseSet.sample(id: "set1", exercise: sampleExercise)
+        ),
+        ExerciseSetSummary.sample(
+            id: "2",
+            exerciseSetID: "set2",
+            workoutSummaryID: nil,
+            startedAt: Date().addingTimeInterval(-86400), // 1 day ago
+            completedAt: Date().addingTimeInterval(-86400),
+            timeSpentActive: 60,
+            weight: 25.0,
+            repsReported: 12,
+            exerciseSet: ExerciseSet.sample(id: "set2", exercise: sampleExercise)
+        ),
+        ExerciseSetSummary.sample(
+            id: "3",
+            exerciseSetID: "set3",
+            workoutSummaryID: nil,
+            startedAt: Date(), // Today
+            completedAt: Date(),
+            timeSpentActive: 60,
+            weight: 30.0,
+            repsReported: 15,
+            exerciseSet: ExerciseSet.sample(id: "set3", exercise: sampleExercise)
+        )
+    ]
+    ExerciseProgressChartView(exerciseSetSummaries: sampleSummaries, exerciseName: "Pushups")
+        .preferredColorScheme(.dark)
+}
