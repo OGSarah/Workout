@@ -5,6 +5,13 @@
 
 A simple SwiftUI app that shows a client's workout performance over time.
 
+### Requirements:
+- Shows a single client their progress over time for each exercise.
+- Data must be glancable, could be in table format but must have an additional format to quickly indicate to the client what their progress is.
+- List of exercises.
+- Progress will be derived from comparing ExerciseSetSummaries for an Exercise over time, instead of comparing it to the Exercise Set.
+- Use the WorkoutsController to load in the WorkoutSummaries.
+
 ## Screenshots:
 
 Here are some screenshots showcasing the app's features:
