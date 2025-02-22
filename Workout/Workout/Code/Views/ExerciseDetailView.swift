@@ -36,6 +36,12 @@ struct ExerciseDetailView: View {
                     VStack(spacing: 10) {
                        // moodSection
                         Text(exercise.name ?? "No Exercise Name")
+                        Gauge(value: 30, in: 0...100) {
+                            Text("Weight")
+                        } currentValueLabel: {
+                            Text("\(Int(30))%")
+                        }
+                        .gaugeStyle(.accessoryCircular)
                         chartSection
                         Spacer()
                     }
@@ -49,7 +55,7 @@ struct ExerciseDetailView: View {
     private var chartSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Text("Weekly Mood Overview")
+                Text("Exercise Progress Overview")
                     .font(.title3)
                     .fontWeight(.bold)
                     .frame(maxWidth: .infinity, alignment: .center)
