@@ -15,6 +15,7 @@ struct ContentView: View {
         }
     }
 
+// MARK: - Previews
 #Preview("Light Mode") {
     ContentView()
         .preferredColorScheme(.light)

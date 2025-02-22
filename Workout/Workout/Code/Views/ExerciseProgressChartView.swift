@@ -79,7 +79,7 @@ struct ExerciseProgressChartView: View {
     }
 }
 
-// Mark - Previews
+// MARK: - Previews
 #Preview("Light Mode") {
     let sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
     let sampleSummaries = [
