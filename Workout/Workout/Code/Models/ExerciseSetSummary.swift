@@ -72,6 +72,7 @@ extension ExerciseSetSummary {
 
 // Helper to create an ExerciseSetSummary from JSON data for preview.
 extension ExerciseSetSummary {
+    // swiftlint:disable function_parameter_count
     static func sample(
         id: String?,
         exerciseSetID: String,
@@ -82,6 +83,7 @@ extension ExerciseSetSummary {
         weight: Float?,
         repsReported: Int?,
         exerciseSet: ExerciseSet?
+        // swiftlint:enable function_parameter_count
     ) -> ExerciseSetSummary {
         var json = """
         {
@@ -95,12 +97,17 @@ extension ExerciseSetSummary {
         if let weight = weight { json += ", \"weight\": \(weight)" }
         if let repsReported = repsReported { json += ", \"reps_reported\": \(repsReported)" }
         if let exerciseSet = exerciseSet {
-            json += ", \"set\": {\"id\": \"\(exerciseSet.id)\", \"exercise\": {\"id\": \"\(exerciseSet.exercise!.id)\", \"name\": \"\(exerciseSet.exercise!.name ?? "")\"}}"
+            json += ", \"set\": {\"id\": \"\(exerciseSet.id)\", "
+            json += "\"exercise\": {\"id\": \"\(exerciseSet.exercise!.id)\", "
+            json += "\"name\": \"\(exerciseSet.exercise!.name ?? "")\"}}"
         }
         json += "}"
 
-        let data = json.data(using: .utf8)!
-        return try! JSONDecoder().decode(ExerciseSetSummary.self, from: data)
+        guard let data = json.data(using: .utf8),
+              let summary = try? JSONDecoder().decode(ExerciseSetSummary.self, from: data) else {
+            fatalError("Failed to create ExerciseSetSummary sample")
+        }
+        return summary
     }
 
 }

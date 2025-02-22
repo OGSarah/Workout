@@ -15,7 +15,11 @@ extension Date {
 
     public static let iso8601DateFormatter: ISO8601DateFormatter = {
         let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withDashSeparatorInDate, .withColonSeparatorInTime, .withColonSeparatorInTimeZone, .withTimeZone]
+        formatter.formatOptions = [.withInternetDateTime,
+                                   .withDashSeparatorInDate,
+                                   .withColonSeparatorInTime,
+                                   .withColonSeparatorInTimeZone,
+                                   .withTimeZone]
         return formatter
     }()
 

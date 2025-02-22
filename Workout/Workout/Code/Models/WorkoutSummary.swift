@@ -76,10 +76,8 @@ extension WorkoutSummary {
     public func setSummariesFor(exerciseSetID: String) -> [ExerciseSetSummary] {
         var setSummaries: [ExerciseSetSummary] = []
 
-        for setSummary in self.setSummaries {
-            if setSummary.exerciseSetID == exerciseSetID {
+        for setSummary in self.setSummaries where setSummary.exerciseSetID == exerciseSetID {
                 setSummaries.append(setSummary)
-            }
         }
 
         return setSummaries

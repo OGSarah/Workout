@@ -154,8 +154,11 @@ extension ExerciseSet {
             }
         }
         """
-        let data = json.data(using: .utf8)!
-        return try! JSONDecoder().decode(ExerciseSet.self, from: data)
+        guard let data = json.data(using: .utf8),
+              let summary = try? JSONDecoder().decode(ExerciseSet.self, from: data) else {
+            fatalError("Failed to create ExerciseSet sample")
+        }
+        return summary
     }
 
 }

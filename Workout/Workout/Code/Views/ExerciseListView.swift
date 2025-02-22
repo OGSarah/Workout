@@ -84,12 +84,12 @@ struct ExerciseListView: View {
         // Sort alphabetically by name, with nil names at the end.
         return exercises.sorted { (lhs, rhs) in
             switch (lhs.name, rhs.name) {
-                case let (left?, right?):
-                    return left < right // Compare non-nil names alphabetically
-                case (nil, _):
-                    return false // nil goes to the end
-                case (_, nil):
-                    return true // non-nil comes before nil
+            case let (left?, right?):
+                return left < right // Compare non-nil names alphabetically
+            case (nil, _):
+                return false // nil goes to the end
+            case (_, nil):
+                return true // non-nil comes before nil
             }
         }
     }
