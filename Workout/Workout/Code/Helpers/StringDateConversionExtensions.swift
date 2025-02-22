@@ -36,7 +36,14 @@ extension Date {
             return Date.iso8601DateFormatter.string(from: self)
         }
     }
+}
 
+// TODO: Do I really need to add this?
+extension Date {
+    func asString() -> String {
+        let formatter = ISO8601DateFormatter()
+        return formatter.string(from: self)
+    }
 }
 
 extension String {

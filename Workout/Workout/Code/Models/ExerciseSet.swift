@@ -141,3 +141,21 @@ public enum Intensity: String {
         }
     }
 }
+
+// Helper to create an ExerciseSet from JSON data for preview.
+extension ExerciseSet {
+    static func sample(id: String, exercise: Exercise) -> ExerciseSet {
+        let json = """
+        {
+            "id": "\(id)",
+            "exercise": {
+                "id": "\(exercise.id)",
+                "name": "\(exercise.name ?? "")"
+            }
+        }
+        """
+        let data = json.data(using: .utf8)!
+        return try! JSONDecoder().decode(ExerciseSet.self, from: data)
+    }
+
+}

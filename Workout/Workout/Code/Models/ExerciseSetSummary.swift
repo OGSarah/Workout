@@ -69,3 +69,38 @@ extension ExerciseSetSummary {
     }
 
 }
+
+// Helper to create an ExerciseSetSummary from JSON data for preview.
+extension ExerciseSetSummary {
+    static func sample(
+        id: String?,
+        exerciseSetID: String,
+        workoutSummaryID: String?,
+        startedAt: Date?,
+        completedAt: Date?,
+        timeSpentActive: Int?,
+        weight: Float?,
+        repsReported: Int?,
+        exerciseSet: ExerciseSet?
+    ) -> ExerciseSetSummary {
+        var json = """
+        {
+            "set_id": "\(exerciseSetID)"
+        """
+        if let id = id { json += ", \"id\": \"\(id)\"" }
+        if let workoutSummaryID = workoutSummaryID { json += ", \"summary_id\": \"\(workoutSummaryID)\"" }
+        if let startedAt = startedAt { json += ", \"started_at\": \"\(startedAt.asString())\"" }
+        if let completedAt = completedAt { json += ", \"completed_at\": \"\(completedAt.asString())\"" }
+        if let timeSpentActive = timeSpentActive { json += ", \"time_spent_active\": \(timeSpentActive)" }
+        if let weight = weight { json += ", \"weight\": \(weight)" }
+        if let repsReported = repsReported { json += ", \"reps_reported\": \(repsReported)" }
+        if let exerciseSet = exerciseSet {
+            json += ", \"set\": {\"id\": \"\(exerciseSet.id)\", \"exercise\": {\"id\": \"\(exerciseSet.exercise!.id)\", \"name\": \"\(exerciseSet.exercise!.name ?? "")\"}}"
+        }
+        json += "}"
+
+        let data = json.data(using: .utf8)!
+        return try! JSONDecoder().decode(ExerciseSetSummary.self, from: data)
+    }
+
+}

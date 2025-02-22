@@ -36,7 +36,7 @@ struct ExerciseListView: View {
             List {
                 ForEach(filteredExercises) { exercise in
                     NavigationLink {
-                        ExerciseDetailView(exercise: exercise)
+                        ExerciseDetailView(exercise: exercise, exerciseSetSummaries: workoutsController.workoutSummaries.flatMap { $0.setSummaries })
                     } label: {
                         Text(exercise.name ?? "no exercise name")
                             .foregroundStyle(.secondary)

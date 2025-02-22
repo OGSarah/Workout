@@ -101,3 +101,18 @@ public enum Side: String {
     }
 
 }
+
+// Helper to create an Exercise from JSON data for preview.
+extension Exercise {
+    static func sample(id: String, name: String) -> Exercise {
+        let json = """
+        {
+            "id": "\(id)",
+            "name": "\(name)"
+        }
+        """
+        let data = json.data(using: .utf8)!
+        return try! JSONDecoder().decode(Exercise.self, from: data)
+    }
+
+}
