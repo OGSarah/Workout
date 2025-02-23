@@ -58,27 +58,39 @@ struct ExerciseDetailView: View {
                                 .padding(.horizontal, -15)
                         }
 
-                        WeightProgressChart(exerciseSetSummaries: exerciseSetSummaries, exerciseName: exercise.name ?? "No Exercise Name")
-                            .padding(.horizontal, 10)
-                            .padding(.top, 20)
-                            .background {
-                                glassBackground
-                                    .padding(.top, -10)
-                            }
+                        WeightProgressChart(
+                            exerciseSetSummaries: exerciseSetSummaries,
+                            exerciseName: exercise.name ?? "No Exercise Name",
+                            timePeriod: timePeriod
+                        )
+                        .padding(.horizontal, 10)
+                        .padding(.top, 20)
+                        .background {
+                            glassBackground
+                                .padding(.top, -10)
+                        }
 
-                        RepsProgressChart(exerciseSetSummaries: exerciseSetSummaries, exerciseName: exercise.name ?? "No Exercise Name")
-                            .padding(.horizontal, 10)
-                            .padding(.top, 20)
-                            .background {
-                                glassBackground
-                            }
+                        RepsProgressChart(
+                            exerciseSetSummaries: exerciseSetSummaries,
+                            exerciseName: exercise.name ?? "No Exercise Name",
+                            timePeriod: timePeriod
+                        )
+                        .padding(.horizontal, 10)
+                        .padding(.top, 20)
+                        .background {
+                            glassBackground
+                        }
 
-                        DurationProgressChart(exerciseSetSummaries: exerciseSetSummaries, exerciseName: exercise.name ?? "No Exercise Name")
-                            .padding(.horizontal, 10)
-                            .padding(.top, 20)
-                            .background {
-                                glassBackground
-                            }
+                        DurationProgressChart(
+                            exerciseSetSummaries: exerciseSetSummaries,
+                            exerciseName: exercise.name ?? "No Exercise Name",
+                            timePeriod: timePeriod
+                        )
+                        .padding(.horizontal, 10)
+                        .padding(.top, 20)
+                        .background {
+                            glassBackground
+                        }
                     }
                     .padding(.horizontal)
                     .sheet(isPresented: $showEditSheet) {
@@ -100,27 +112,6 @@ struct ExerciseDetailView: View {
         }
         .pickerStyle(.segmented)
         .padding(.horizontal)
-    }
-
-    private var filteredSummaries: [ExerciseSetSummary] {
-        let now = Date()
-        return exerciseSetSummaries.filter { summary in
-            guard let date = summary.completedAt ?? summary.startedAt else { return false }
-            switch timePeriod {
-            case.day:
-                return Calendar.current.isDate(date, inSameDayAs: now)
-            case.week:
-                return Calendar.current.isDate(date, equalTo: now, toGranularity: .weekOfYear)
-            case.month:
-                return Calendar.current.isDate(date, equalTo: now, toGranularity: .month)
-            case.sixMonths:
-                guard let sixMonthsAgo = Calendar.current.date(byAdding: .month, value: -6, to: now) else { return false }
-                return date >= sixMonthsAgo && date <= now
-            case.year:
-                guard let yearAgo = Calendar.current.date(byAdding: .year, value: -1, to: now) else { return false }
-                return date >= yearAgo && date <= now
-            }
-        }
     }
 
     private var glassBackground: some View {

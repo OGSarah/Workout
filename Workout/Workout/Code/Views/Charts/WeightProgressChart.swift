@@ -5,24 +5,26 @@
 //  Created by Sarah Clark on 2/22/25.
 //
 
-// WeightProgressChart.swift
 import Charts
 import SwiftUI
 
 struct WeightProgressChart: View {
     let exerciseSetSummaries: [ExerciseSetSummary]
     let exerciseName: String
+    let timePeriod: TimePeriod
 
     private var weightData: [(date: Date, value: Double)] {
-        exerciseSetSummaries
+        let filteredSummaries = filterSummariesByTimePeriod(exerciseSetSummaries, for: timePeriod)
+        return filteredSummaries
             .filter { $0.exerciseSet?.exercise?.name == exerciseName }
-            .compactMap { summary -> (date: Date, value: Double)? in // Explicitly specify return type as optional tuple
+            .compactMap { summary -> (date: Date, value: Double)? in
                 guard let date = summary.completedAt ?? summary.startedAt else { return nil }
                 guard let weightFloat = summary.weightUsed ?? summary.exerciseSet?.weight else { return nil }
-                guard let weight = weightFloat.doubleValue else { return nil }
-                return (date: date, value: Double(weight))
+                // Convert Float to optional Double
+                guard let weight = Double(exactly: weightFloat) else { return nil }
+                return (date: date, value: weight)
             }
-            .sorted { $0.date < $1.date } // Sort by date
+            .sorted { $0.date < $1.date }
     }
 
     var body: some View {
@@ -79,7 +81,28 @@ struct WeightProgressChart: View {
     }
 
     private func maxValue(_ data: [(date: Date, value: Double)]) -> Double {
-        data.map { $0.value }.max() ?? 100.0 // Default to 100 if no data
+        data.map { $0.value }.max() ?? 100.0
+    }
+
+    private func filterSummariesByTimePeriod(_ summaries: [ExerciseSetSummary], for period: TimePeriod) -> [ExerciseSetSummary] {
+        let now = Date()
+        return summaries.filter { summary in
+            guard let date = summary.completedAt ?? summary.startedAt else { return false }
+            switch period {
+            case .day:
+                return Calendar.current.isDate(date, inSameDayAs: now)
+            case .week:
+                return Calendar.current.isDate(date, equalTo: now, toGranularity: .weekOfYear)
+            case .month:
+                return Calendar.current.isDate(date, equalTo: now, toGranularity: .month)
+            case .sixMonths:
+                guard let sixMonthsAgo = Calendar.current.date(byAdding: .month, value: -6, to: now) else { return false }
+                return date >= sixMonthsAgo && date <= now
+            case .year:
+                guard let yearAgo = Calendar.current.date(byAdding: .year, value: -1, to: now) else { return false }
+                return date >= yearAgo && date <= now
+            }
+        }
     }
 }
 
@@ -121,8 +144,12 @@ struct WeightProgressChart: View {
             exerciseSet: ExerciseSet.sample(id: "set3", exercise: sampleExercise)
         )
     ]
-    WeightProgressChart(exerciseSetSummaries: sampleSummaries, exerciseName: "Pushups")
-        .preferredColorScheme(.light)
+    WeightProgressChart(
+        exerciseSetSummaries: sampleSummaries,
+        exerciseName: "Pushups",
+        timePeriod: .week
+    )
+    .preferredColorScheme(.light)
 }
 
 #Preview("Dark Mode") {
@@ -162,6 +189,10 @@ struct WeightProgressChart: View {
             exerciseSet: ExerciseSet.sample(id: "set3", exercise: sampleExercise)
         )
     ]
-    WeightProgressChart(exerciseSetSummaries: sampleSummaries, exerciseName: "Pushups")
-        .preferredColorScheme(.dark)
+    WeightProgressChart(
+        exerciseSetSummaries: sampleSummaries,
+        exerciseName: "Pushups",
+        timePeriod: .week
+    )
+    .preferredColorScheme(.dark)
 }

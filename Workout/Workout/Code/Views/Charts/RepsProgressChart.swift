@@ -11,13 +11,14 @@ import SwiftUI
 struct RepsProgressChart: View {
     let exerciseSetSummaries: [ExerciseSetSummary]
     let exerciseName: String
+    let timePeriod: TimePeriod // New parameter for time period
 
     private var repsData: [(date: Date, value: Double)] {
-        exerciseSetSummaries
+        let filteredSummaries = filterSummariesByTimePeriod(exerciseSetSummaries, for: timePeriod)
+        return filteredSummaries
             .filter { $0.exerciseSet?.exercise?.name == exerciseName }
-            .compactMap { summary in
+            .compactMap { summary -> (date: Date, value: Double)? in
                 guard let date = summary.completedAt ?? summary.startedAt else { return nil }
-                // Safely unwrap the optional Int to get an optional Double
                 guard let reps = (summary.repsCompleted ?? summary.exerciseSet?.reps).flatMap({ Double($0) }) else { return nil }
                 return (date: date, value: reps)
             }
@@ -78,7 +79,28 @@ struct RepsProgressChart: View {
     }
 
     private func maxValue(_ data: [(date: Date, value: Double)]) -> Double {
-        data.map { $0.value }.max() ?? 100.0 // Default to 100 if no data
+        data.map { $0.value }.max() ?? 100.0
+    }
+
+    private func filterSummariesByTimePeriod(_ summaries: [ExerciseSetSummary], for period: TimePeriod) -> [ExerciseSetSummary] {
+        let now = Date()
+        return summaries.filter { summary in
+            guard let date = summary.completedAt ?? summary.startedAt else { return false }
+            switch period {
+            case .day:
+                return Calendar.current.isDate(date, inSameDayAs: now)
+            case .week:
+                return Calendar.current.isDate(date, equalTo: now, toGranularity: .weekOfYear)
+            case .month:
+                return Calendar.current.isDate(date, equalTo: now, toGranularity: .month)
+            case .sixMonths:
+                guard let sixMonthsAgo = Calendar.current.date(byAdding: .month, value: -6, to: now) else { return false }
+                return date >= sixMonthsAgo && date <= now
+            case .year:
+                guard let yearAgo = Calendar.current.date(byAdding: .year, value: -1, to: now) else { return false }
+                return date >= yearAgo && date <= now
+            }
+        }
     }
 }
 
@@ -120,8 +142,12 @@ struct RepsProgressChart: View {
             exerciseSet: ExerciseSet.sample(id: "set3", exercise: sampleExercise)
         )
     ]
-    RepsProgressChart(exerciseSetSummaries: sampleSummaries, exerciseName: "Pushups")
-        .preferredColorScheme(.light)
+    RepsProgressChart(
+        exerciseSetSummaries: sampleSummaries,
+        exerciseName: "Pushups",
+        timePeriod: .week
+    )
+    .preferredColorScheme(.light)
 }
 
 #Preview("Dark Mode") {
@@ -161,6 +187,10 @@ struct RepsProgressChart: View {
             exerciseSet: ExerciseSet.sample(id: "set3", exercise: sampleExercise)
         )
     ]
-    RepsProgressChart(exerciseSetSummaries: sampleSummaries, exerciseName: "Pushups")
-        .preferredColorScheme(.dark)
+    RepsProgressChart(
+        exerciseSetSummaries: sampleSummaries,
+        exerciseName: "Pushups",
+        timePeriod: .week
+    )
+    .preferredColorScheme(.dark)
 }
