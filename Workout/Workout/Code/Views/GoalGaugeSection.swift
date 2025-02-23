@@ -16,9 +16,9 @@ struct GoalGaugeSection: View {
     let exerciseSetSummaries: [ExerciseSetSummary]
 
     // State to store goal values
-    @State private var goalWeight: Double = 0.0
-    @State private var goalReps: Int = 0
-    @State private var goalDuration: Int = 0
+    @Binding var goalWeight: Double
+    @Binding var goalReps: Int
+    @Binding var goalDuration: Int
 
     // Current max values of each that the client has achieved.
     @State private var currentMaxWeight: Double = 0.0
@@ -233,15 +233,20 @@ struct GoalGaugeSection: View {
 
 }
 
-// MARK: - Preview
+// MARK: - Previews
 #Preview("Light Mode") {
-    let sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
+    @Previewable @State var sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
+    @Previewable @State var showEditSheet = false
+    @Previewable @State var goalWeight: Double = 50.0
+    @Previewable @State var goalReps: Int = 20
+    @Previewable @State var goalDuration: Int = 90
+
     let sampleSummaries = [
         ExerciseSetSummary.sample(
             id: "1",
             exerciseSetID: "set1",
             workoutSummaryID: nil,
-            startedAt: Date().addingTimeInterval(-86400 * 2), // 2 days ago
+            startedAt: Date().addingTimeInterval(-86400 * 2),
             completedAt: Date().addingTimeInterval(-86400 * 2),
             timeSpentActive: 60,
             weight: 20.0,
@@ -252,7 +257,7 @@ struct GoalGaugeSection: View {
             id: "2",
             exerciseSetID: "set2",
             workoutSummaryID: nil,
-            startedAt: Date().addingTimeInterval(-86400), // 1 day ago
+            startedAt: Date().addingTimeInterval(-86400),
             completedAt: Date().addingTimeInterval(-86400),
             timeSpentActive: 60,
             weight: 25.0,
@@ -263,7 +268,7 @@ struct GoalGaugeSection: View {
             id: "3",
             exerciseSetID: "set3",
             workoutSummaryID: nil,
-            startedAt: Date(), // Today
+            startedAt: Date(),
             completedAt: Date(),
             timeSpentActive: 60,
             weight: 30.0,
@@ -271,10 +276,14 @@ struct GoalGaugeSection: View {
             exerciseSet: ExerciseSet.sample(id: "set3", exercise: sampleExercise)
         )
     ]
-    GoalGaugeSection(
-        exercise: .constant(sampleExercise),
-        showEditSheet: .constant(false),
-        exerciseSetSummaries: sampleSummaries
+
+    return GoalGaugeSection(
+        exercise: $sampleExercise,
+        showEditSheet: $showEditSheet,
+        exerciseSetSummaries: sampleSummaries,
+        goalWeight: $goalWeight,
+        goalReps: $goalReps,
+        goalDuration: $goalDuration
     )
     .preferredColorScheme(.light)
     .frame(width: 400, height: 200)
@@ -282,13 +291,18 @@ struct GoalGaugeSection: View {
 }
 
 #Preview("Dark Mode") {
-    let sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
+    @Previewable @State var sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
+    @Previewable @State var showEditSheet = false
+    @Previewable @State var goalWeight: Double = 50.0
+    @Previewable @State var goalReps: Int = 20
+    @Previewable @State var goalDuration: Int = 90
+
     let sampleSummaries = [
         ExerciseSetSummary.sample(
             id: "1",
             exerciseSetID: "set1",
             workoutSummaryID: nil,
-            startedAt: Date().addingTimeInterval(-86400 * 2), // 2 days ago
+            startedAt: Date().addingTimeInterval(-86400 * 2),
             completedAt: Date().addingTimeInterval(-86400 * 2),
             timeSpentActive: 60,
             weight: 20.0,
@@ -299,7 +313,7 @@ struct GoalGaugeSection: View {
             id: "2",
             exerciseSetID: "set2",
             workoutSummaryID: nil,
-            startedAt: Date().addingTimeInterval(-86400), // 1 day ago
+            startedAt: Date().addingTimeInterval(-86400),
             completedAt: Date().addingTimeInterval(-86400),
             timeSpentActive: 60,
             weight: 25.0,
@@ -310,7 +324,7 @@ struct GoalGaugeSection: View {
             id: "3",
             exerciseSetID: "set3",
             workoutSummaryID: nil,
-            startedAt: Date(), // Today
+            startedAt: Date(),
             completedAt: Date(),
             timeSpentActive: 60,
             weight: 30.0,
@@ -318,10 +332,14 @@ struct GoalGaugeSection: View {
             exerciseSet: ExerciseSet.sample(id: "set3", exercise: sampleExercise)
         )
     ]
-    GoalGaugeSection(
-        exercise: .constant(sampleExercise),
-        showEditSheet: .constant(false),
-        exerciseSetSummaries: sampleSummaries
+
+    return GoalGaugeSection(
+        exercise: $sampleExercise,
+        showEditSheet: $showEditSheet,
+        exerciseSetSummaries: sampleSummaries,
+        goalWeight: $goalWeight,
+        goalReps: $goalReps,
+        goalDuration: $goalDuration
     )
     .preferredColorScheme(.dark)
     .frame(width: 400, height: 200)

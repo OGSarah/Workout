@@ -17,6 +17,9 @@ struct ExerciseDetailView: View {
     @Environment(\.colorScheme) var colorScheme
     @State private var showEditSheet = false
     @State private var timePeriod: TimePeriod = .week
+    @State private var goalWeight: Double
+    @State private var goalReps: Int
+    @State private var goalDuration: Int
 
     private let backgroundGradient = LinearGradient(
         stops: [
@@ -28,9 +31,18 @@ struct ExerciseDetailView: View {
         endPoint: .bottom
     )
 
-    init(exercise: Exercise, exerciseSetSummaries: [ExerciseSetSummary]) {
-        self.exercise = exercise
-        self.exerciseSetSummaries = exerciseSetSummaries
+    init(
+        exercise: Exercise,
+        exerciseSetSummaries: [ExerciseSetSummary],
+        goalWeight: Double = 0.0,
+        goalReps: Int = 0,
+        goalDuration: Int = 0
+    ) {
+        self._exercise = State(initialValue: exercise)
+        self._exerciseSetSummaries = State(initialValue: exerciseSetSummaries)
+        self._goalWeight = State(initialValue: goalWeight)
+        self._goalReps = State(initialValue: goalReps)
+        self._goalDuration = State(initialValue: goalDuration)
     }
 
     // MARK: - Main View
@@ -39,70 +51,114 @@ struct ExerciseDetailView: View {
             ZStack {
                 backgroundGradient
                     .ignoresSafeArea()
-                ScrollView {
-                    VStack(alignment: .center, spacing: 20) {
-                        GoalGaugeSection(exercise: $exercise, showEditSheet: $showEditSheet, exerciseSetSummaries: exerciseSetSummaries)
-
-                        VStack(alignment: .leading) {
-                            HStack {
-                                Image(systemName: "clock")
-                                    .foregroundStyle(.gray)
-                                    .font(.subheadline)
-                                    .padding(.trailing, -5)
-                                Text("PERFORMANCE OVER TIME")
-                                    .foregroundStyle(.gray)
-                                    .font(.subheadline)
-                            }
-
-                            timePeriodPicker
-                                .padding(.horizontal, -15)
-                        }
-
-                        WeightProgressChart(
-                            exerciseSetSummaries: exerciseSetSummaries,
-                            exerciseName: exercise.name ?? "No Exercise Name",
-                            timePeriod: timePeriod
-                        )
-                        .padding(.horizontal, 10)
-                        .padding(.top, 20)
-                        .background {
-                            glassBackground
-                                .padding(.top, -10)
-                        }
-
-                        RepsProgressChart(
-                            exerciseSetSummaries: exerciseSetSummaries,
-                            exerciseName: exercise.name ?? "No Exercise Name",
-                            timePeriod: timePeriod
-                        )
-                        .padding(.horizontal, 10)
-                        .padding(.top, 20)
-                        .background {
-                            glassBackground
-                        }
-
-                        DurationProgressChart(
-                            exerciseSetSummaries: exerciseSetSummaries,
-                            exerciseName: exercise.name ?? "No Exercise Name",
-                            timePeriod: timePeriod
-                        )
-                        .padding(.horizontal, 10)
-                        .padding(.top, 20)
-                        .background {
-                            glassBackground
-                        }
-                    }
-                    .padding(.horizontal)
-                    .sheet(isPresented: $showEditSheet) {
-                        EditExerciseGoalsSheet(exercise: $exercise, showEditSheet: $showEditSheet, onSave: { weight, reps, duration in
-                            // Empty closure for preview purposes
-                            print("Saved: Weight: \(weight), Reps: \(reps), Duration: \(duration)")
-                        })
-                    }
-                }
+                mainScrollView
             }
             .navigationTitle(exercise.name ?? "Empty Name")
         }
+    }
+
+    // MARK: - Subviews
+    private var mainScrollView: some View {
+        ScrollView {
+            VStack(alignment: .center, spacing: 20) {
+                goalGaugeSection
+                performanceOverTimeSection
+                progressCharts
+            }
+            .padding(.horizontal)
+            .sheet(isPresented: $showEditSheet) {
+                editGoalsSheet
+            }
+        }
+    }
+
+    private var goalGaugeSection: some View {
+        GoalGaugeSection(
+            exercise: $exercise,
+            showEditSheet: $showEditSheet,
+            exerciseSetSummaries: exerciseSetSummaries,
+            goalWeight: $goalWeight,
+            goalReps: $goalReps,
+            goalDuration: $goalDuration
+        )
+    }
+
+    private var performanceOverTimeSection: some View {
+        VStack(alignment: .leading) {
+            performanceHeader
+            timePeriodPicker
+                .padding(.horizontal, -15)
+        }
+    }
+
+    private var performanceHeader: some View {
+        HStack {
+            Image(systemName: "clock")
+                .foregroundStyle(.gray)
+                .font(.subheadline)
+                .padding(.trailing, -5)
+            Text("PERFORMANCE OVER TIME")
+                .foregroundStyle(.gray)
+                .font(.subheadline)
+        }
+    }
+
+    private var progressCharts: some View {
+        VStack(spacing: 20) {
+            weightProgressChart
+            repsProgressChart
+            durationProgressChart
+        }
+    }
+
+    private var weightProgressChart: some View {
+        WeightProgressChart(
+            exerciseSetSummaries: exerciseSetSummaries,
+            exerciseName: exercise.name ?? "No Exercise Name",
+            timePeriod: timePeriod
+        )
+        .padding(.horizontal, 10)
+        .padding(.top, 20)
+        .background {
+            glassBackground
+                .padding(.top, -10)
+        }
+    }
+
+    private var repsProgressChart: some View {
+        RepsProgressChart(
+            exerciseSetSummaries: exerciseSetSummaries,
+            exerciseName: exercise.name ?? "No Exercise Name",
+            timePeriod: timePeriod
+        )
+        .padding(.horizontal, 10)
+        .padding(.top, 20)
+        .background {
+            glassBackground
+        }
+    }
+
+    private var durationProgressChart: some View {
+        DurationProgressChart(
+            exerciseSetSummaries: exerciseSetSummaries,
+            exerciseName: exercise.name ?? "No Exercise Name",
+            timePeriod: timePeriod
+        )
+        .padding(.horizontal, 10)
+        .padding(.top, 20)
+        .background {
+            glassBackground
+        }
+    }
+
+    private var editGoalsSheet: some View {
+        EditExerciseGoalsSheet(
+            exercise: $exercise,
+            showEditSheet: $showEditSheet,
+            goalWeight: $goalWeight,
+            goalReps: $goalReps,
+            goalDuration: $goalDuration
+        )
     }
 
     private var timePeriodPicker: some View {
@@ -157,7 +213,7 @@ struct ExerciseDetailView: View {
             id: "1",
             exerciseSetID: "set1",
             workoutSummaryID: nil,
-            startedAt: Date().addingTimeInterval(-86400 * 2), // 2 days ago
+            startedAt: Date().addingTimeInterval(-86400 * 2),
             completedAt: Date().addingTimeInterval(-86400 * 2),
             timeSpentActive: 60,
             weight: 20.0,
@@ -168,7 +224,7 @@ struct ExerciseDetailView: View {
             id: "2",
             exerciseSetID: "set2",
             workoutSummaryID: nil,
-            startedAt: Date().addingTimeInterval(-86400), // 1 day ago
+            startedAt: Date().addingTimeInterval(-86400),
             completedAt: Date().addingTimeInterval(-86400),
             timeSpentActive: 60,
             weight: 25.0,
@@ -179,7 +235,7 @@ struct ExerciseDetailView: View {
             id: "3",
             exerciseSetID: "set3",
             workoutSummaryID: nil,
-            startedAt: Date(), // Today
+            startedAt: Date(),
             completedAt: Date(),
             timeSpentActive: 60,
             weight: 30.0,
@@ -198,7 +254,7 @@ struct ExerciseDetailView: View {
             id: "1",
             exerciseSetID: "set1",
             workoutSummaryID: nil,
-            startedAt: Date().addingTimeInterval(-86400 * 2), // 2 days ago
+            startedAt: Date().addingTimeInterval(-86400 * 2),
             completedAt: Date().addingTimeInterval(-86400 * 2),
             timeSpentActive: 60,
             weight: 20.0,
@@ -209,7 +265,7 @@ struct ExerciseDetailView: View {
             id: "2",
             exerciseSetID: "set2",
             workoutSummaryID: nil,
-            startedAt: Date().addingTimeInterval(-86400), // 1 day ago
+            startedAt: Date().addingTimeInterval(-86400),
             completedAt: Date().addingTimeInterval(-86400),
             timeSpentActive: 60,
             weight: 25.0,
@@ -220,7 +276,7 @@ struct ExerciseDetailView: View {
             id: "3",
             exerciseSetID: "set3",
             workoutSummaryID: nil,
-            startedAt: Date(), // Today
+            startedAt: Date(),
             completedAt: Date(),
             timeSpentActive: 60,
             weight: 30.0,

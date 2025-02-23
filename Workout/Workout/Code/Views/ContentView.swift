@@ -12,8 +12,8 @@ struct ContentView: View {
 
     var body: some View {
             ExerciseListView(workoutsController: workoutsController)
-        }
     }
+}
 
 // MARK: - Previews
 #Preview("Light Mode") {
