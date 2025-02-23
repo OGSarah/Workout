@@ -151,6 +151,53 @@ struct GoalGaugeSection: View {
             }
             .padding(.top, 10)
     }
+
+    /*let maxValues = findMaxExerciseValues(from: summaries)
+
+    print("Max Weight: \(maxValues.maxWeight ?? 0)")
+    print("Max Reps: \(maxValues.maxReps ?? 0)")
+    print("Max Time: \(maxValues.maxTime ?? 0)")*/
+
+    // MARK: - Private functions
+
+    func findMaxExerciseValues(from summaries: [ExerciseSetSummary]) -> (maxWeight: Float?, maxReps: Int?, maxTime: Int?) {
+        // Initialize max values as nil
+        var maxWeight: Float?
+        var maxReps: Int?
+        var maxTime: Int?
+
+        // Iterate through all summaries to find maximum values
+        for summary in summaries {
+            // Update maxWeight if current weight is higher
+            if let currentWeight = summary.weightUsed {
+                if let existingMax = maxWeight {
+                    maxWeight = max(existingMax, currentWeight)
+                } else {
+                    maxWeight = currentWeight
+                }
+            }
+
+            // Update maxReps if current repsReported is higher
+            if let currentReps = summary.repsCompleted {
+                if let existingMax = maxReps {
+                    maxReps = max(existingMax, currentReps)
+                } else {
+                    maxReps = currentReps
+                }
+            }
+
+            // Update maxTime if current timeSpentActive is higher
+            if let currentTime = summary.timeSpentActive {
+                if let existingMax = maxTime {
+                    maxTime = max(existingMax, currentTime)
+                } else {
+                    maxTime = currentTime
+                }
+            }
+        }
+        return (maxWeight: maxWeight, maxReps: maxReps, maxTime: maxTime)
+    }
+
 }
 
 // MARK: - Preview

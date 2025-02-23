@@ -11,6 +11,9 @@ struct EditExerciseGoalsSheet: View {
     // @Binding var exerciseSetSummary: [ExerciseSetSummary]
     @Binding var exercise: Exercise
     @Binding var showEditSheet: Bool
+    @State var goalMaxWeight: Double = 0
+    @State var goalMaxReps: Int = 0
+    @State var goalMaxDuration: Int = 0
 
     var body: some View {
         NavigationStack {
@@ -44,4 +47,21 @@ struct EditExerciseGoalsSheet: View {
     }
 }
 
-// TODO: Add preview code
+// MARK: - Previews
+#Preview("Light Mode") {
+    let sampleExercise = Exercise.sample(id: "ex1", name: "Bench Press")
+    EditExerciseGoalsSheet(
+        exercise: .constant(sampleExercise),
+        showEditSheet: .constant(true)
+    )
+    .preferredColorScheme(.light)
+}
+
+#Preview("Dark Mode") {
+    let sampleExercise = Exercise.sample(id: "ex1", name: "Bench Press")
+    EditExerciseGoalsSheet(
+        exercise: .constant(sampleExercise),
+        showEditSheet: .constant(true)
+    )
+    .preferredColorScheme(.dark)
+}
