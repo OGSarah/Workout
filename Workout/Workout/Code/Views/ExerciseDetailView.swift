@@ -12,9 +12,6 @@ struct ExerciseDetailView: View {
     @State private var exerciseSetSummaries: [ExerciseSetSummary]
     @Environment(\.colorScheme) var colorScheme
     @State private var showEditSheet = false
-    let weightGradiant = Gradient(colors: [.lightPink, .brightCoralRed, .pink])
-    let repsGradiant = Gradient(colors: [.lightYellow, .yellow, .darkYellow])
-    let durationGradient = Gradient(colors: [.lightGreen, .brightLimeGreen, .green])
 
     private let backgroundGradient = LinearGradient(
         stops: [
@@ -39,9 +36,7 @@ struct ExerciseDetailView: View {
                     .ignoresSafeArea()
                 ScrollView {
                     VStack(spacing: 10) {
-                       // moodSection
-                        goalPerformanceSection
-
+                        GoalGaugeSection(exercise: $exercise, showEditSheet: $showEditSheet)
                         chartSection
                         Spacer()
                     }
@@ -51,78 +46,7 @@ struct ExerciseDetailView: View {
                     }
                 }
             }
-                .navigationTitle(exercise.name ?? "Empty Name")
-        }
-    }
-
-    // TODO: Refactor this so you're not repeating the same code.
-    private var goalPerformanceSection: some View {
-        VStack {
-            HStack {
-                Text("Performance Goals")
-                    .fontWeight(.bold)
-                Spacer()
-                Button(action: {
-                    showEditSheet.toggle()
-                }, label: {
-                    Text("Edit")
-                })
-            }
-            .padding(.horizontal, 20)
-            HStack {
-                // Weight
-                Gauge(value: 10, in: 0...100) {
-                    Image(systemName: "heart.fill")
-                } currentValueLabel: {
-                    Text("\(Int(10))%")
-                } minimumValueLabel: {
-                    Text("\(Int(0))")
-                } maximumValueLabel: {
-                    Text("\(Int(100))")
-                }
-                .gaugeStyle(.accessoryCircular)
-                .tint(weightGradiant)
-                .scaleEffect(1.5)
-                .padding(.horizontal, 10)
-
-                // Reps
-                Gauge(value: 55, in: 0...100) {
-                    Text("Reps")
-                } currentValueLabel: {
-                    Text("\(Int(55))%")
-                        .font(.headline)
-                } minimumValueLabel: {
-                    Text("\(Int(0))")
-                } maximumValueLabel: {
-                    Text("\(Int(10))")
-                }
-                .gaugeStyle(AccessoryCircularGaugeStyle())
-                .tint(repsGradiant)
-                .scaleEffect(1.5)
-                .padding(.horizontal, 30)
-
-                // Duration
-                Gauge(value: 95, in: 0...100) {
-                    Text("Duration")
-                } currentValueLabel: {
-                    Text("\(Int(95))%")
-                        .font(.headline)
-                } minimumValueLabel: {
-                    Text("\(Int(0))")
-                } maximumValueLabel: {
-                    Text("\(Int(90))")
-                }
-                .gaugeStyle(.accessoryCircular)
-                .tint(durationGradient)
-                .scaleEffect(1.5)
-                .padding(.horizontal, 10)
-            }
-            .padding(40)
-            .background {
-                glassBackground
-
-            }
-            .padding(.bottom, 10)
+            .navigationTitle(exercise.name ?? "Empty Name")
         }
     }
 
