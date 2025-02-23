@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct ExerciseDetailView: View {
-    private let exercise: Exercise
-    private let exerciseSetSummaries: [ExerciseSetSummary]
+    @State private var exercise: Exercise
+    @State private var exerciseSetSummaries: [ExerciseSetSummary]
     @Environment(\.colorScheme) var colorScheme
     @State private var showEditSheet = false
 
@@ -37,66 +37,82 @@ struct ExerciseDetailView: View {
                 ScrollView {
                     VStack(spacing: 10) {
                        // moodSection
-                        Text("Goals")
                         goalPerformanceSection
 
                         chartSection
                         Spacer()
                     }
                     .padding()
+                    .sheet(isPresented: $showEditSheet) {
+                        EditExerciseGoalsSheet(exercise: $exercise, showEditSheet: $showEditSheet)
+                    }
                 }
             }
                 .navigationTitle(exercise.name ?? "Empty Name")
         }
     }
 
+    // TODO: Refactor this so you're not repeating the same code.
     private var goalPerformanceSection: some View {
-        HStack {
-            // Weight
-            Gauge(value: 10, in: 0...100) {
-                Text("Weight")
-            } currentValueLabel: {
-                Text("\(Int(10))%")
-                    .font(.headline)
+        VStack {
+            HStack {
+                Text("Performance Goals")
+                    .fontWeight(.bold)
+                Spacer()
+                Button(action: {
+                    showEditSheet.toggle()
+                }, label: {
+                    Text("Edit")
+                })
             }
-            .gaugeStyle(.accessoryCircular)
-            .tint(.brightCoralRed)
-            .shadow(radius: 1)
-            .scaleEffect(1.5)
-            .padding(.horizontal, 10)
+            .padding(.horizontal, 20)
+            HStack {
+                // Weight
+                Gauge(value: 10, in: 0...100) {
+                    Text("Weight")
+                } currentValueLabel: {
+                    Text("\(Int(10))%")
+                        .font(.headline)
+                }
+                .gaugeStyle(.accessoryCircular)
+                .tint(.brightCoralRed)
+                .shadow(radius: 1)
+                .scaleEffect(1.5)
+                .padding(.horizontal, 10)
 
-            // Reps
-            Gauge(value: 55, in: 0...100) {
-                Text("Reps")
-            } currentValueLabel: {
-                Text("\(Int(55))%")
-                    .font(.headline)
-            }
-            .gaugeStyle(.accessoryCircular)
-            .tint(.brightYellow)
-            .shadow(radius: 1)
-            .scaleEffect(1.5)
-            .padding(.horizontal, 30)
+                // Reps
+                Gauge(value: 55, in: 0...100) {
+                    Text("Reps")
+                } currentValueLabel: {
+                    Text("\(Int(55))%")
+                        .font(.headline)
+                }
+                .gaugeStyle(.accessoryCircular)
+                .tint(.brightYellow)
+                .shadow(radius: 1)
+                .scaleEffect(1.5)
+                .padding(.horizontal, 30)
 
-            // Duration
-            Gauge(value: 95, in: 0...100) {
-                Text("Duration")
-            } currentValueLabel: {
-                Text("\(Int(95))%")
-                    .font(.headline)
+                // Duration
+                Gauge(value: 95, in: 0...100) {
+                    Text("Duration")
+                } currentValueLabel: {
+                    Text("\(Int(95))%")
+                        .font(.headline)
+                }
+                .gaugeStyle(.accessoryCircular)
+                .tint(.brightLimeGreen)
+                .shadow(radius: 1)
+                .scaleEffect(1.5)
+                .padding(.horizontal, 10)
             }
-            .gaugeStyle(.accessoryCircular)
-            .tint(.brightLimeGreen)
-            .shadow(radius: 1)
-            .scaleEffect(1.5)
-            .padding(.horizontal, 10)
+            .padding(40)
+            .background {
+                glassBackground
+
+            }
+            .padding(.bottom, 10)
         }
-        .padding(40)
-        .background {
-            glassBackground
-
-        }
-        .padding(.all, 10)
     }
 
     private var chartSection: some View {
