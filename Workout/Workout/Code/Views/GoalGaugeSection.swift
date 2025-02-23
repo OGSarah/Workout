@@ -45,12 +45,12 @@ struct GoalGaugeSection: View {
                     .gaugeStyle(.accessoryCircular)
                     .tint(weightGradient)
                     .scaleEffect(1.5)
-                    .padding(.horizontal, 10)
 
-                    Text("Weight(lbs)")
-                        .font(.callout)
-                        .foregroundColor(.gray)
-                        .padding(.top, 10)
+                        Text("Weight(lbs)")
+                            .font(.callout)
+                            .foregroundColor(.gray)
+                            .padding(.top, 10)
+                            .lineLimit(1)
                 }
 
                 // Reps
@@ -70,7 +70,7 @@ struct GoalGaugeSection: View {
                     .gaugeStyle(.accessoryCircular)
                     .tint(repsGradient)
                     .scaleEffect(1.5)
-                    .padding(.horizontal, 30)
+                    .padding(.horizontal, 20)
                     Text("Reps")
                         .font(.callout)
                         .foregroundColor(.gray)
@@ -94,15 +94,18 @@ struct GoalGaugeSection: View {
                     .gaugeStyle(.accessoryCircular)
                     .tint(durationGradient)
                     .scaleEffect(1.5)
-                    .padding(.horizontal, 10)
 
-                    Text("Duration")
+                    Text("Duration(min)")
                         .font(.callout)
                         .foregroundColor(.gray)
                         .padding(.top, 10)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.9)
                 }
             }
-            .padding(40)
+            .padding(.bottom, 20)
+            .padding(.top, 40)
+            .padding(.horizontal, 20)
             .background {
                 glassBackground
             }
