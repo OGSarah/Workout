@@ -79,10 +79,11 @@ struct DurationProgressChart: View {
     private func maxValue(_ data: [(date: Date, value: Double)]) -> Double {
         data.map { $0.value }.max() ?? 100.0 // Default to 100 if no data
     }
+
 }
 
-// MARK: - Previews for DurationProgressChart
-#Preview("Light Mode - Duration") {
+// MARK: - Previews
+#Preview("Light Mode") {
     let sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
     let sampleSummaries = [
         ExerciseSetSummary.sample(
@@ -123,7 +124,7 @@ struct DurationProgressChart: View {
         .preferredColorScheme(.light)
 }
 
-#Preview("Dark Mode - Duration") {
+#Preview("Dark Mode") {
     let sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
     let sampleSummaries = [
         ExerciseSetSummary.sample(

@@ -82,8 +82,8 @@ struct RepsProgressChart: View {
     }
 }
 
-// MARK: - Previews for RepsProgressChart
-#Preview("Light Mode - Reps") {
+// MARK: - Previews
+#Preview("Light Mode") {
     let sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
     let sampleSummaries = [
         ExerciseSetSummary.sample(
@@ -124,7 +124,7 @@ struct RepsProgressChart: View {
         .preferredColorScheme(.light)
 }
 
-#Preview("Dark Mode - Reps") {
+#Preview("Dark Mode") {
     let sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
     let sampleSummaries = [
         ExerciseSetSummary.sample(

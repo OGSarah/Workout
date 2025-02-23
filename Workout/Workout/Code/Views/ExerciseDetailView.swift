@@ -35,12 +35,31 @@ struct ExerciseDetailView: View {
                 backgroundGradient
                     .ignoresSafeArea()
                 ScrollView {
-                    VStack(spacing: 10) {
+                    VStack(alignment: .center, spacing: 20) {
                         GoalGaugeSection(exercise: $exercise, showEditSheet: $showEditSheet)
-                        chartSection
-                        Spacer()
+
+                        WeightProgressChart(exerciseSetSummaries: exerciseSetSummaries, exerciseName: exercise.name ?? "No Exercise Name")
+                            .padding(.horizontal, 10)
+                            .padding(.top, 20)
+                            .background {
+                                glassBackground
+                            }
+
+                        RepsProgressChart(exerciseSetSummaries: exerciseSetSummaries, exerciseName: exercise.name ?? "No Exercise Name")
+                            .padding(.horizontal, 10)
+                            .padding(.top, 20)
+                            .background {
+                                glassBackground
+                            }
+
+                        DurationProgressChart(exerciseSetSummaries: exerciseSetSummaries, exerciseName: exercise.name ?? "No Exercise Name")
+                            .padding(.horizontal, 10)
+                            .padding(.top, 20)
+                            .background {
+                                glassBackground
+                            }
                     }
-                    .padding()
+                    .padding(.horizontal)
                     .sheet(isPresented: $showEditSheet) {
                         EditExerciseGoalsSheet(exercise: $exercise, showEditSheet: $showEditSheet)
                     }
@@ -48,31 +67,6 @@ struct ExerciseDetailView: View {
             }
             .navigationTitle(exercise.name ?? "Empty Name")
         }
-    }
-
-    private var chartSection: some View {
-        VStack(alignment: .leading, spacing: 20) { // Increased spacing for better separation
-            HStack {
-                Text("Exercise Progress Overview")
-                    .font(.title3)
-                    .fontWeight(.bold)
-                    .frame(maxWidth: .infinity, alignment: .center)
-            }
-            .padding(.horizontal)
-            .padding(.top)
-
-            // Use the three separate chart views
-            WeightProgressChart(exerciseSetSummaries: exerciseSetSummaries, exerciseName: exercise.name ?? "No Exercise Name")
-                .padding(.horizontal, 10)
-            RepsProgressChart(exerciseSetSummaries: exerciseSetSummaries, exerciseName: exercise.name ?? "No Exercise Name")
-                .padding(.horizontal, 10)
-            DurationProgressChart(exerciseSetSummaries: exerciseSetSummaries, exerciseName: exercise.name ?? "No Exercise Name")
-                .padding(.horizontal, 10)
-        }
-        .background {
-            glassBackground
-        }
-        .padding(.horizontal)
     }
 
     private var glassBackground: some View {
