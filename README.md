@@ -12,6 +12,9 @@ A simple SwiftUI app that shows a client's workout performance over time.
 - Progress will be derived from comparing ExerciseSetSummaries for an Exercise over time, instead of comparing it to the Exercise Set.
 - Use the WorkoutsController to load in the WorkoutSummaries.
 
+## Notes:
+- I updated the data so that it was more recent since in a real world situation most exercise data would be within the past year.
+
 ## Ideation Phase:
 <div align="center">
   <div style="border: 2px solid white; border-radius: 10px;">
