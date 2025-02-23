@@ -8,35 +8,59 @@
 import SwiftUI
 
 struct EditExerciseGoalsSheet: View {
-    // @Binding var exerciseSetSummary: [ExerciseSetSummary]
     @Binding var exercise: Exercise
     @Binding var showEditSheet: Bool
     @State var goalMaxWeight: Double = 0
     @State var goalMaxReps: Int = 0
     @State var goalMaxDuration: Int = 0
 
+    // Add completion handler to pass updated goals back
+    let onSave: (Double, Int, Int) -> Void
+
     var body: some View {
         NavigationStack {
             Form {
                 Section(header: Text("Edit Goals")) {
-                    TextField("Weight", value: .constant(0.0), formatter: decimalFormatter)
-                    TextField("Reps", value: .constant(0), formatter: integerFormatter)
-                    TextField("Duration", value: .constant(0), formatter: integerFormatter)
+                    HStack {
+                        Text("Weight Goal (lbs)")
+                        Spacer()
+                        TextField("Weight", value: $goalMaxWeight, formatter: decimalFormatter)
+                            .multilineTextAlignment(.trailing)
+                            .keyboardType(.decimalPad)
+                    }
+                    HStack {
+                        Text("Reps Goal")
+                        Spacer()
+                        TextField("Reps", value: $goalMaxReps, formatter: integerFormatter)
+                            .multilineTextAlignment(.trailing)
+                            .keyboardType(.numberPad)
+                    }
+                    HStack {
+                        Text("Duration Goal (min)")
+                        Spacer()
+                        TextField("Duration", value: $goalMaxDuration, formatter: integerFormatter)
+                            .multilineTextAlignment(.trailing)
+                            .keyboardType(.numberPad)
+                    }
                 }
             }
-            .navigationTitle("Edit \(exercise.name ?? "Exercise")")
-            .navigationBarItems(leading: Button("Cancel") {
-                showEditSheet = false
-            }, trailing: Button("Save") {
-                showEditSheet = false
-            })
+            .navigationTitle("Edit \(exercise.name ?? "Exercise") goals")
+            .navigationBarItems(
+                leading: Button("Cancel") {
+                    showEditSheet = false
+                },
+                trailing: Button("Save") {
+                    onSave(goalMaxWeight, goalMaxReps, goalMaxDuration)
+                    showEditSheet = false
+                }
+            )
         }
     }
 
     private var decimalFormatter: NumberFormatter {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
-        formatter.maximumFractionDigits = 2 // Adjust as needed
+        formatter.maximumFractionDigits = 2
         return formatter
     }
 
@@ -52,7 +76,11 @@ struct EditExerciseGoalsSheet: View {
     let sampleExercise = Exercise.sample(id: "ex1", name: "Bench Press")
     EditExerciseGoalsSheet(
         exercise: .constant(sampleExercise),
-        showEditSheet: .constant(true)
+        showEditSheet: .constant(true),
+        onSave: { weight, reps, duration in
+            // Empty closure for preview purposes
+            print("Saved: Weight: \(weight), Reps: \(reps), Duration: \(duration)")
+        }
     )
     .preferredColorScheme(.light)
 }
@@ -61,7 +89,11 @@ struct EditExerciseGoalsSheet: View {
     let sampleExercise = Exercise.sample(id: "ex1", name: "Bench Press")
     EditExerciseGoalsSheet(
         exercise: .constant(sampleExercise),
-        showEditSheet: .constant(true)
+        showEditSheet: .constant(true),
+        onSave: { weight, reps, duration in
+            // Empty closure for preview purposes
+            print("Saved: Weight: \(weight), Reps: \(reps), Duration: \(duration)")
+        }
     )
     .preferredColorScheme(.dark)
 }

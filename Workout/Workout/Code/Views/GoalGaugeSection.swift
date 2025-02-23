@@ -14,6 +14,16 @@ struct GoalGaugeSection: View {
     let repsGradient = Gradient(colors: [.lightYellow, .yellow, .darkYellow])
     let durationGradient = Gradient(colors: [.lightGreen, .brightLimeGreen, .green])
 
+    // State to store goal values
+    @State private var goalWeight: Double = 100.0
+    @State private var goalReps: Int = 20
+    @State private var goalDuration: Int = 90
+
+    // Current max values of each that the client has achieved.
+    private let currentMaxWeight: Double = 0.0
+    private let currentMaxReps: Int = 0
+    private let currentMaxDuration: Int = 0
+
     var body: some View {
         VStack {
             HStack {
@@ -36,72 +46,65 @@ struct GoalGaugeSection: View {
 
             HStack(spacing: 40) {
                 VStack(spacing: 10) {
-                    // Weight
-                    Gauge(value: 10, in: 0...100) {
-                        Image(systemName: "heart.fill")
+                    Gauge(value: currentMaxWeight, in: 0...goalWeight) {
                     } currentValueLabel: {
-                        Text("\(Int(10))%")
+                        Text("\(Int(currentMaxWeight))")
                     } minimumValueLabel: {
-                        Text("\(Int(0))")
+                        Text("0")
                             .font(.caption2)
                     } maximumValueLabel: {
-                        Text("\(Int(100))")
+                        Text("\(Int(goalWeight))")
                             .font(.caption2)
                     }
                     .gaugeStyle(.accessoryCircular)
                     .tint(weightGradient)
                     .scaleEffect(1.5)
-
-                        Text("Weight(lbs)")
-                            .font(.callout)
-                            .foregroundColor(.gray)
-                            .padding(.top, 10)
-                            .lineLimit(1)
+                    Text("Weight (lbs)")
+                        .font(.callout)
+                        .foregroundColor(.gray)
+                        .padding(.top, 10)
+                        .lineLimit(1)
                 }
 
-                // Reps
                 VStack(spacing: 10) {
-                    Gauge(value: 55, in: 0...100) {
+                    Gauge(value: Double(currentMaxReps), in: 0...Double(goalReps)) {
                         Text("Reps")
                     } currentValueLabel: {
-                        Text("\(Int(55))%")
+                        Text("\(currentMaxReps)")
                             .font(.headline)
                     } minimumValueLabel: {
-                        Text("\(Int(0))")
+                        Text("0")
                             .font(.caption2)
                     } maximumValueLabel: {
-                        Text("\(Int(10))")
+                        Text("\(goalReps)")
                             .font(.caption2)
                     }
                     .gaugeStyle(.accessoryCircular)
                     .tint(repsGradient)
                     .scaleEffect(1.5)
-
                     Text("Reps")
                         .font(.callout)
                         .foregroundColor(.gray)
                         .padding(.top, 10)
                 }
 
-                // Duration
                 VStack(spacing: 10) {
-                    Gauge(value: 95, in: 0...100) {
-                        Text("Duration(min)")
+                    Gauge(value: Double(currentMaxDuration), in: 0...Double(goalDuration)) {
+                        Text("Duration")
                     } currentValueLabel: {
-                        Text("\(Int(95))%")
+                        Text("\(currentMaxDuration) min")
                             .font(.headline)
                     } minimumValueLabel: {
-                        Text("\(Int(0))")
+                        Text("0")
                             .font(.caption2)
                     } maximumValueLabel: {
-                        Text("\(Int(90))")
+                        Text("\(goalDuration)")
                             .font(.caption2)
                     }
                     .gaugeStyle(.accessoryCircular)
                     .tint(durationGradient)
                     .scaleEffect(1.5)
-
-                    Text("Duration(min)")
+                    Text("Duration (min)")
                         .font(.callout)
                         .foregroundColor(.gray)
                         .padding(.top, 10)
@@ -111,13 +114,24 @@ struct GoalGaugeSection: View {
             }
             .padding(.bottom, 20)
             .padding(.top, 50)
-            .padding(.leading, 20)
-            .padding(.trailing, 20)
-            .background {
-                glassBackground
-            }
+            .padding(.horizontal, 20)
+            .background(glassBackground)
             .padding(.bottom, 10)
             .padding(.top, -10)
+            .sheet(isPresented: $showEditSheet) {
+                EditExerciseGoalsSheet(
+                    exercise: $exercise,
+                    showEditSheet: $showEditSheet,
+                    goalMaxWeight: goalWeight,
+                    goalMaxReps: goalReps,
+                    goalMaxDuration: goalDuration,
+                    onSave: { weight, reps, duration in
+                        goalWeight = weight
+                        goalReps = reps
+                        goalDuration = duration
+                    }
+                )
+            }
         }
     }
 
@@ -129,10 +143,7 @@ struct GoalGaugeSection: View {
                 RoundedRectangle(cornerRadius: 15)
                     .stroke(
                         LinearGradient(
-                            colors: [
-                                .white.opacity(0.5),
-                                .white.opacity(0.2)
-                            ],
+                            colors: [.white.opacity(0.5), .white.opacity(0.2)],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         ),
@@ -140,35 +151,20 @@ struct GoalGaugeSection: View {
                     )
             }
             .overlay {
-                // Subtle inner shadow
                 RoundedRectangle(cornerRadius: 15)
-                    .stroke(
-                        .black.opacity(0.1),
-                        lineWidth: 1
-                    )
+                    .stroke(.black.opacity(0.1), lineWidth: 1)
                     .blur(radius: 1)
                     .mask(RoundedRectangle(cornerRadius: 15).fill(.black))
             }
             .padding(.top, 10)
     }
 
-    /*let maxValues = findMaxExerciseValues(from: summaries)
-
-    print("Max Weight: \(maxValues.maxWeight ?? 0)")
-    print("Max Reps: \(maxValues.maxReps ?? 0)")
-    print("Max Time: \(maxValues.maxTime ?? 0)")*/
-
     // MARK: - Private functions
 
-    func findMaxExerciseValues(from summaries: [ExerciseSetSummary]) -> (maxWeight: Float?, maxReps: Int?, maxTime: Int?) {
-        // Initialize max values as nil
+    func findMaxWeight(from summaries: [ExerciseSetSummary]) -> Float? {
         var maxWeight: Float?
-        var maxReps: Int?
-        var maxTime: Int?
 
-        // Iterate through all summaries to find maximum values
         for summary in summaries {
-            // Update maxWeight if current weight is higher
             if let currentWeight = summary.weightUsed {
                 if let existingMax = maxWeight {
                     maxWeight = max(existingMax, currentWeight)
@@ -176,8 +172,14 @@ struct GoalGaugeSection: View {
                     maxWeight = currentWeight
                 }
             }
+        }
+        return maxWeight
+    }
 
-            // Update maxReps if current repsReported is higher
+    func findMaxReps(from summaries: [ExerciseSetSummary]) -> Int? {
+        var maxReps: Int?
+
+        for summary in summaries {
             if let currentReps = summary.repsCompleted {
                 if let existingMax = maxReps {
                     maxReps = max(existingMax, currentReps)
@@ -185,8 +187,14 @@ struct GoalGaugeSection: View {
                     maxReps = currentReps
                 }
             }
+        }
+        return maxReps
+    }
 
-            // Update maxTime if current timeSpentActive is higher
+    func findMaxTime(from summaries: [ExerciseSetSummary]) -> Int? {
+        var maxTime: Int?
+
+        for summary in summaries {
             if let currentTime = summary.timeSpentActive {
                 if let existingMax = maxTime {
                     maxTime = max(existingMax, currentTime)
@@ -195,7 +203,7 @@ struct GoalGaugeSection: View {
                 }
             }
         }
-        return (maxWeight: maxWeight, maxReps: maxReps, maxTime: maxTime)
+        return maxTime
     }
 
 }

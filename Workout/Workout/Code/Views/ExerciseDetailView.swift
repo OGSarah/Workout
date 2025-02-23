@@ -94,7 +94,10 @@ struct ExerciseDetailView: View {
                     }
                     .padding(.horizontal)
                     .sheet(isPresented: $showEditSheet) {
-                        EditExerciseGoalsSheet(exercise: $exercise, showEditSheet: $showEditSheet)
+                        EditExerciseGoalsSheet(exercise: $exercise, showEditSheet: $showEditSheet, onSave: { weight, reps, duration in
+                            // Empty closure for preview purposes
+                            print("Saved: Weight: \(weight), Reps: \(reps), Duration: \(duration)")
+                        })
                     }
                 }
             }
