@@ -12,6 +12,9 @@ struct ExerciseDetailView: View {
     @State private var exerciseSetSummaries: [ExerciseSetSummary]
     @Environment(\.colorScheme) var colorScheme
     @State private var showEditSheet = false
+    let weightGradiant = Gradient(colors: [.lightPink, .brightCoralRed, .pink])
+    let repsGradiant = Gradient(colors: [.lightYellow, .yellow, .darkYellow])
+    let durationGradient = Gradient(colors: [.lightGreen, .brightLimeGreen, .green])
 
     private let backgroundGradient = LinearGradient(
         stops: [
@@ -69,14 +72,16 @@ struct ExerciseDetailView: View {
             HStack {
                 // Weight
                 Gauge(value: 10, in: 0...100) {
-                    Text("Weight")
+                    Image(systemName: "heart.fill")
                 } currentValueLabel: {
                     Text("\(Int(10))%")
-                        .font(.headline)
+                } minimumValueLabel: {
+                    Text("\(Int(0))")
+                } maximumValueLabel: {
+                    Text("\(Int(100))")
                 }
                 .gaugeStyle(.accessoryCircular)
-                .tint(.brightCoralRed)
-                .shadow(radius: 1)
+                .tint(weightGradiant)
                 .scaleEffect(1.5)
                 .padding(.horizontal, 10)
 
@@ -86,10 +91,13 @@ struct ExerciseDetailView: View {
                 } currentValueLabel: {
                     Text("\(Int(55))%")
                         .font(.headline)
+                } minimumValueLabel: {
+                    Text("\(Int(0))")
+                } maximumValueLabel: {
+                    Text("\(Int(10))")
                 }
-                .gaugeStyle(.accessoryCircular)
-                .tint(.brightYellow)
-                .shadow(radius: 1)
+                .gaugeStyle(AccessoryCircularGaugeStyle())
+                .tint(repsGradiant)
                 .scaleEffect(1.5)
                 .padding(.horizontal, 30)
 
@@ -99,10 +107,13 @@ struct ExerciseDetailView: View {
                 } currentValueLabel: {
                     Text("\(Int(95))%")
                         .font(.headline)
+                } minimumValueLabel: {
+                    Text("\(Int(0))")
+                } maximumValueLabel: {
+                    Text("\(Int(90))")
                 }
                 .gaugeStyle(.accessoryCircular)
-                .tint(.brightLimeGreen)
-                .shadow(radius: 1)
+                .tint(durationGradient)
                 .scaleEffect(1.5)
                 .padding(.horizontal, 10)
             }
