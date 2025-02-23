@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct EditExerciseGoalsSheet: View {
-    //@Binding var exerciseSetSummary: [ExerciseSetSummary]
+    // @Binding var exerciseSetSummary: [ExerciseSetSummary]
     @Binding var exercise: Exercise
     @Binding var showEditSheet: Bool
 

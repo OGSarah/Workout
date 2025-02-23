@@ -17,8 +17,13 @@ struct GoalGaugeSection: View {
     var body: some View {
         VStack {
             HStack {
-                Text("Performance Goals")
-                    .fontWeight(.bold)
+                Image(systemName: "figure.strengthtraining.traditional")
+                    .foregroundStyle(.gray)
+                    .font(.subheadline)
+                    .padding(.trailing, -5)
+                Text("PERFORMANCE GOALS")
+                    .foregroundStyle(.gray)
+                    .font(.subheadline)
                 Spacer()
                 Button(action: {
                     showEditSheet.toggle()
@@ -26,7 +31,8 @@ struct GoalGaugeSection: View {
                     Text("Edit")
                 })
             }
-            .padding(.horizontal, 20)
+            .padding(.horizontal, 10)
+            .padding(.top, 40)
 
             HStack(spacing: 40) {
                 VStack(spacing: 10) {
@@ -111,6 +117,7 @@ struct GoalGaugeSection: View {
                 glassBackground
             }
             .padding(.bottom, 10)
+            .padding(.top, -10)
         }
     }
 

@@ -7,11 +7,16 @@
 
 import SwiftUI
 
+enum TimePeriod {
+    case day, week, month, sixMonths, year
+}
+
 struct ExerciseDetailView: View {
     @State private var exercise: Exercise
     @State private var exerciseSetSummaries: [ExerciseSetSummary]
     @Environment(\.colorScheme) var colorScheme
     @State private var showEditSheet = false
+    @State private var timePeriod: TimePeriod = .week
 
     private let backgroundGradient = LinearGradient(
         stops: [
@@ -38,11 +43,27 @@ struct ExerciseDetailView: View {
                     VStack(alignment: .center, spacing: 20) {
                         GoalGaugeSection(exercise: $exercise, showEditSheet: $showEditSheet)
 
+                        VStack(alignment: .leading) {
+                            HStack {
+                                Image(systemName: "clock")
+                                    .foregroundStyle(.gray)
+                                    .font(.subheadline)
+                                    .padding(.trailing, -5)
+                                Text("PERFORMANCE OVER TIME")
+                                    .foregroundStyle(.gray)
+                                    .font(.subheadline)
+                            }
+
+                            timePeriodPicker
+                                .padding(.horizontal, -15)
+                        }
+
                         WeightProgressChart(exerciseSetSummaries: exerciseSetSummaries, exerciseName: exercise.name ?? "No Exercise Name")
                             .padding(.horizontal, 10)
                             .padding(.top, 20)
                             .background {
                                 glassBackground
+                                    .padding(.top, -10)
                             }
 
                         RepsProgressChart(exerciseSetSummaries: exerciseSetSummaries, exerciseName: exercise.name ?? "No Exercise Name")
@@ -66,6 +87,39 @@ struct ExerciseDetailView: View {
                 }
             }
             .navigationTitle(exercise.name ?? "Empty Name")
+        }
+    }
+
+    private var timePeriodPicker: some View {
+        Picker("Time Period", selection: $timePeriod) {
+            Text("Day").tag(TimePeriod.day)
+            Text("Week").tag(TimePeriod.week)
+            Text("Month").tag(TimePeriod.month)
+            Text("6 Months").tag(TimePeriod.sixMonths)
+            Text("Year").tag(TimePeriod.year)
+        }
+        .pickerStyle(.segmented)
+        .padding(.horizontal)
+    }
+
+    private var filteredSummaries: [ExerciseSetSummary] {
+        let now = Date()
+        return exerciseSetSummaries.filter { summary in
+            guard let date = summary.completedAt ?? summary.startedAt else { return false }
+            switch timePeriod {
+            case.day:
+                return Calendar.current.isDate(date, inSameDayAs: now)
+            case.week:
+                return Calendar.current.isDate(date, equalTo: now, toGranularity: .weekOfYear)
+            case.month:
+                return Calendar.current.isDate(date, equalTo: now, toGranularity: .month)
+            case.sixMonths:
+                guard let sixMonthsAgo = Calendar.current.date(byAdding: .month, value: -6, to: now) else { return false }
+                return date >= sixMonthsAgo && date <= now
+            case.year:
+                guard let yearAgo = Calendar.current.date(byAdding: .year, value: -1, to: now) else { return false }
+                return date >= yearAgo && date <= now
+            }
         }
     }
 
