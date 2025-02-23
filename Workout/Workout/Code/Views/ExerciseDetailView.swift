@@ -51,7 +51,7 @@ struct ExerciseDetailView: View {
     }
 
     private var chartSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 20) { // Increased spacing for better separation
             HStack {
                 Text("Exercise Progress Overview")
                     .font(.title3)
@@ -61,7 +61,12 @@ struct ExerciseDetailView: View {
             .padding(.horizontal)
             .padding(.top)
 
-            ExerciseProgressChartView(exerciseSetSummaries: exerciseSetSummaries, exerciseName: exercise.name ?? "No Exercise Name")
+            // Use the three separate chart views
+            WeightProgressChart(exerciseSetSummaries: exerciseSetSummaries, exerciseName: exercise.name ?? "No Exercise Name")
+                .padding(.horizontal, 10)
+            RepsProgressChart(exerciseSetSummaries: exerciseSetSummaries, exerciseName: exercise.name ?? "No Exercise Name")
+                .padding(.horizontal, 10)
+            DurationProgressChart(exerciseSetSummaries: exerciseSetSummaries, exerciseName: exercise.name ?? "No Exercise Name")
                 .padding(.horizontal, 10)
         }
         .background {
