@@ -41,7 +41,7 @@ struct ExerciseDetailView: View {
                     .ignoresSafeArea()
                 ScrollView {
                     VStack(alignment: .center, spacing: 20) {
-                        GoalGaugeSection(exercise: $exercise, showEditSheet: $showEditSheet)
+                        GoalGaugeSection(exercise: $exercise, showEditSheet: $showEditSheet, exerciseSetSummaries: exerciseSetSummaries)
 
                         VStack(alignment: .leading) {
                             HStack {

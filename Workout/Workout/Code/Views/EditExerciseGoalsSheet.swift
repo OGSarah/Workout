@@ -10,12 +10,9 @@ import SwiftUI
 struct EditExerciseGoalsSheet: View {
     @Binding var exercise: Exercise
     @Binding var showEditSheet: Bool
-    @State var goalMaxWeight: Double = 0
-    @State var goalMaxReps: Int = 0
-    @State var goalMaxDuration: Int = 0
-
-    // Add completion handler to pass updated goals back
-    let onSave: (Double, Int, Int) -> Void
+    @Binding var goalWeight: Double
+    @Binding var goalReps: Int
+    @Binding var goalDuration: Int
 
     var body: some View {
         NavigationStack {
@@ -24,21 +21,21 @@ struct EditExerciseGoalsSheet: View {
                     HStack {
                         Text("Weight Goal (lbs)")
                         Spacer()
-                        TextField("Weight", value: $goalMaxWeight, formatter: decimalFormatter)
+                        TextField("Weight", value: $goalWeight, formatter: decimalFormatter)
                             .multilineTextAlignment(.trailing)
                             .keyboardType(.decimalPad)
                     }
                     HStack {
                         Text("Reps Goal")
                         Spacer()
-                        TextField("Reps", value: $goalMaxReps, formatter: integerFormatter)
+                        TextField("Reps", value: $goalReps, formatter: integerFormatter)
                             .multilineTextAlignment(.trailing)
                             .keyboardType(.numberPad)
                     }
                     HStack {
                         Text("Duration Goal (min)")
                         Spacer()
-                        TextField("Duration", value: $goalMaxDuration, formatter: integerFormatter)
+                        TextField("Duration", value: $goalDuration, formatter: integerFormatter)
                             .multilineTextAlignment(.trailing)
                             .keyboardType(.numberPad)
                     }
@@ -50,7 +47,6 @@ struct EditExerciseGoalsSheet: View {
                     showEditSheet = false
                 },
                 trailing: Button("Save") {
-                    onSave(goalMaxWeight, goalMaxReps, goalMaxDuration)
                     showEditSheet = false
                 }
             )
@@ -73,27 +69,35 @@ struct EditExerciseGoalsSheet: View {
 
 // MARK: - Previews
 #Preview("Light Mode") {
-    let sampleExercise = Exercise.sample(id: "ex1", name: "Bench Press")
-    EditExerciseGoalsSheet(
-        exercise: .constant(sampleExercise),
-        showEditSheet: .constant(true),
-        onSave: { weight, reps, duration in
-            // Empty closure for preview purposes
-            print("Saved: Weight: \(weight), Reps: \(reps), Duration: \(duration)")
-        }
+    @Previewable @State var sampleExercise = Exercise.sample(id: "ex1", name: "Bench Press")
+    @Previewable @State var showSheet = true
+    @Previewable @State var weight: Double = 100.0
+    @Previewable @State var reps: Int = 8
+    @Previewable @State var duration: Int = 60
+
+    return EditExerciseGoalsSheet(
+        exercise: $sampleExercise,
+        showEditSheet: $showSheet,
+        goalWeight: $weight,
+        goalReps: $reps,
+        goalDuration: $duration
     )
     .preferredColorScheme(.light)
 }
 
 #Preview("Dark Mode") {
-    let sampleExercise = Exercise.sample(id: "ex1", name: "Bench Press")
-    EditExerciseGoalsSheet(
-        exercise: .constant(sampleExercise),
-        showEditSheet: .constant(true),
-        onSave: { weight, reps, duration in
-            // Empty closure for preview purposes
-            print("Saved: Weight: \(weight), Reps: \(reps), Duration: \(duration)")
-        }
+    @Previewable @State var sampleExercise = Exercise.sample(id: "ex1", name: "Bench Press")
+    @Previewable @State var showSheet = true
+    @Previewable @State var weight: Double = 100.0
+    @Previewable @State var reps: Int = 8
+    @Previewable @State var duration: Int = 60
+
+    return EditExerciseGoalsSheet(
+        exercise: $sampleExercise,
+        showEditSheet: $showSheet,
+        goalWeight: $weight,
+        goalReps: $reps,
+        goalDuration: $duration
     )
     .preferredColorScheme(.dark)
 }

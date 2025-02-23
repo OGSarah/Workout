@@ -13,16 +13,22 @@ struct GoalGaugeSection: View {
     let weightGradient = Gradient(colors: [.lightPink, .brightCoralRed, .pink])
     let repsGradient = Gradient(colors: [.lightYellow, .yellow, .darkYellow])
     let durationGradient = Gradient(colors: [.lightGreen, .brightLimeGreen, .green])
+    let exerciseSetSummaries: [ExerciseSetSummary]
 
     // State to store goal values
-    @State private var goalWeight: Double = 100.0
-    @State private var goalReps: Int = 20
-    @State private var goalDuration: Int = 90
+    @State private var goalWeight: Double = 0.0
+    @State private var goalReps: Int = 0
+    @State private var goalDuration: Int = 0
 
     // Current max values of each that the client has achieved.
-    private let currentMaxWeight: Double = 0.0
-    private let currentMaxReps: Int = 0
-    private let currentMaxDuration: Int = 0
+    @State private var currentMaxWeight: Double = 0.0
+    @State private var currentMaxReps: Int = 0
+    @State private var currentMaxDuration: Int = 0
+
+    // Current percentages for each.
+    @State private var goalWeightProgress: Int = 0
+    @State private var goalRepsProgress: Int = 0
+    @State private var goalDurationProgress: Int = 0
 
     var body: some View {
         VStack {
@@ -48,7 +54,8 @@ struct GoalGaugeSection: View {
                 VStack(spacing: 10) {
                     Gauge(value: currentMaxWeight, in: 0...goalWeight) {
                     } currentValueLabel: {
-                        Text("\(Int(currentMaxWeight))")
+                        Text("\(goalWeightProgress)%")
+                            .font(.headline)
                     } minimumValueLabel: {
                         Text("0")
                             .font(.caption2)
@@ -70,7 +77,7 @@ struct GoalGaugeSection: View {
                     Gauge(value: Double(currentMaxReps), in: 0...Double(goalReps)) {
                         Text("Reps")
                     } currentValueLabel: {
-                        Text("\(currentMaxReps)")
+                        Text("\(goalRepsProgress)%")
                             .font(.headline)
                     } minimumValueLabel: {
                         Text("0")
@@ -92,7 +99,7 @@ struct GoalGaugeSection: View {
                     Gauge(value: Double(currentMaxDuration), in: 0...Double(goalDuration)) {
                         Text("Duration")
                     } currentValueLabel: {
-                        Text("\(currentMaxDuration) min")
+                        Text("\(goalDurationProgress)%")
                             .font(.headline)
                     } minimumValueLabel: {
                         Text("0")
@@ -122,15 +129,23 @@ struct GoalGaugeSection: View {
                 EditExerciseGoalsSheet(
                     exercise: $exercise,
                     showEditSheet: $showEditSheet,
-                    goalMaxWeight: goalWeight,
-                    goalMaxReps: goalReps,
-                    goalMaxDuration: goalDuration,
-                    onSave: { weight, reps, duration in
-                        goalWeight = weight
-                        goalReps = reps
-                        goalDuration = duration
-                    }
+                    goalWeight: $goalWeight,
+                    goalReps: $goalReps,
+                    goalDuration: $goalDuration
                 )
+            }
+            .onAppear {
+                // Set current max values when view appears
+                if let maxWeight = findMaxWeight(from: exerciseSetSummaries) {
+                    currentMaxWeight = Double(maxWeight)
+                }
+                if let maxReps = findMaxReps(from: exerciseSetSummaries) {
+                    currentMaxReps = maxReps
+                }
+                if let maxTime = findMaxTime(from: exerciseSetSummaries) {
+                    currentMaxDuration = maxTime
+                }
+                updateProgressValues()
             }
         }
     }
@@ -160,6 +175,16 @@ struct GoalGaugeSection: View {
     }
 
     // MARK: - Private functions
+    private func updateProgressValues() {
+        // Calculate weight progress
+        goalWeightProgress = goalWeight > 0 ? Int((currentMaxWeight / goalWeight) * 100) : 0
+
+        // Calculate reps progress
+        goalRepsProgress = goalReps > 0 ? Int((Double(currentMaxReps) / Double(goalReps)) * 100) : 0
+
+        // Calculate duration progress
+        goalDurationProgress = goalDuration > 0 ? Int((Double(currentMaxDuration) / Double(goalDuration)) * 100) : 0
+    }
 
     func findMaxWeight(from summaries: [ExerciseSetSummary]) -> Float? {
         var maxWeight: Float?
@@ -248,7 +273,8 @@ struct GoalGaugeSection: View {
     ]
     GoalGaugeSection(
         exercise: .constant(sampleExercise),
-        showEditSheet: .constant(false)
+        showEditSheet: .constant(false),
+        exerciseSetSummaries: sampleSummaries
     )
     .preferredColorScheme(.light)
     .frame(width: 400, height: 200)
@@ -294,7 +320,8 @@ struct GoalGaugeSection: View {
     ]
     GoalGaugeSection(
         exercise: .constant(sampleExercise),
-        showEditSheet: .constant(false)
+        showEditSheet: .constant(false),
+        exerciseSetSummaries: sampleSummaries
     )
     .preferredColorScheme(.dark)
     .frame(width: 400, height: 200)
