@@ -13,6 +13,10 @@ struct WeightProgressChart: View {
     let exerciseName: String
     let timePeriod: TimePeriod
 
+    private var maxValuePlusTen: Double {
+        (weightData.map { $0.value }.max() ?? 0) + 10.0
+    }
+
     private var weightData: [(date: Date, value: Double)] {
         let filteredSummaries = filterSummariesByTimePeriod(exerciseSetSummaries, for: timePeriod)
         return filteredSummaries
@@ -36,25 +40,18 @@ struct WeightProgressChart: View {
 
                 Chart {
                     ForEach(weightData, id: \.date) { dataPoint in
-                        LineMark(
+                        BarMark(
                             x: .value("Date", dataPoint.date),
                             y: .value("Weight", dataPoint.value)
                         )
-                        .interpolationMethod(.catmullRom)
-                        .symbol(Circle())
-                        .symbolSize(30)
                         .foregroundStyle(Gradient(colors: [.red, .red.opacity(0.5)]))
-
-                        AreaMark(
-                            x: .value("Date", dataPoint.date),
-                            y: .value("Weight", dataPoint.value)
-                        )
-                        .interpolationMethod(.catmullRom)
-                        .foregroundStyle(Gradient(colors: [.red.opacity(0.2), .red.opacity(0.05)]))
                     }
+                        RuleMark(y: .value("Goal", 35))
+                            .foregroundStyle(.teal)
+                            .lineStyle(StrokeStyle(lineWidth: 4, dash: [5]))
                 }
-                .frame(height: 200)
-                .chartYScale(domain: 0...maxValue(weightData))
+                .frame(height: 300)
+                .chartYScale(domain: 0...maxValuePlusTen)
                 .chartXAxis {
                     AxisMarks(values: .stride(by: .day)) {
                         AxisGridLine()
@@ -75,7 +72,6 @@ struct WeightProgressChart: View {
                 }
                 .padding()
                 .cornerRadius(10)
-                .shadow(radius: 5)
             }
         }
     }
@@ -104,6 +100,7 @@ struct WeightProgressChart: View {
             }
         }
     }
+
 }
 
 // MARK: - Previews
@@ -150,6 +147,7 @@ struct WeightProgressChart: View {
         timePeriod: .week
     )
     .preferredColorScheme(.light)
+    .padding(20)
 }
 
 #Preview("Dark Mode") {
@@ -195,4 +193,5 @@ struct WeightProgressChart: View {
         timePeriod: .week
     )
     .preferredColorScheme(.dark)
+    .padding(20)
 }

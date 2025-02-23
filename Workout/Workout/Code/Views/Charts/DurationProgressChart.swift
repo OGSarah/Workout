@@ -43,7 +43,7 @@ struct DurationProgressChart: View {
                         .symbolSize(30)
                         .foregroundStyle(Gradient(colors: [.green, .green.opacity(0.5)]))
 
-                        AreaMark(
+                        RectangleMark(
                             x: .value("Date", dataPoint.date),
                             y: .value("Duration", dataPoint.value)
                         )
