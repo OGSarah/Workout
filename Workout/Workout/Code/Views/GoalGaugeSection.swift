@@ -28,7 +28,7 @@ struct GoalGaugeSection: View {
             }
             .padding(.horizontal, 20)
 
-            HStack(spacing: 20) {
+            HStack(spacing: 40) {
                 VStack(spacing: 10) {
                     // Weight
                     Gauge(value: 10, in: 0...100) {
@@ -70,7 +70,7 @@ struct GoalGaugeSection: View {
                     .gaugeStyle(.accessoryCircular)
                     .tint(repsGradient)
                     .scaleEffect(1.5)
-                    .padding(.horizontal, 20)
+
                     Text("Reps")
                         .font(.callout)
                         .foregroundColor(.gray)
@@ -104,8 +104,9 @@ struct GoalGaugeSection: View {
                 }
             }
             .padding(.bottom, 20)
-            .padding(.top, 40)
-            .padding(.horizontal, 20)
+            .padding(.top, 50)
+            .padding(.leading, 20)
+            .padding(.trailing, 20)
             .background {
                 glassBackground
             }

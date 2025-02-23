@@ -62,7 +62,7 @@ struct ExerciseDetailView: View {
             .padding(.top)
 
             ExerciseProgressChartView(exerciseSetSummaries: exerciseSetSummaries, exerciseName: exercise.name ?? "No Exercise Name")
-                .padding(.horizontal, 5)
+                .padding(.horizontal, 10)
         }
         .background {
             glassBackground
@@ -98,7 +98,6 @@ struct ExerciseDetailView: View {
                     .blur(radius: 1)
                     .mask(RoundedRectangle(cornerRadius: 15).fill(.black))
             }
-            .padding(.top, 10)
     }
 }
 
