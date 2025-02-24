@@ -11,6 +11,9 @@ struct ExerciseListView: View {
     @State private var exercises: [Exercise] = []
     @State private var searchText: String = ""
     let workoutsController: WorkoutsController
+    @Binding var goalWeight: Double
+    @Binding var goalReps: Int
+    @Binding var goalDuration: Int
 
     private let backgroundGradient = LinearGradient(
         stops: [
@@ -22,11 +25,19 @@ struct ExerciseListView: View {
         endPoint: .bottom
     )
 
-    init(workoutsController: WorkoutsController) {
+    init(
+        workoutsController: WorkoutsController,
+        goalWeight: Binding<Double>,
+        goalReps: Binding<Int>,
+        goalDuration: Binding<Int>
+    ) {
         self.workoutsController = workoutsController
-        _exercises = .init(initialValue: Self.extractExercises(from: workoutsController.workoutSummaries))
+        self._exercises = .init(initialValue: Self.extractExercises(from: workoutsController.workoutSummaries))
+        self._goalWeight = goalWeight
+        self._goalReps = goalReps
+        self._goalDuration = goalDuration
 
-        // Make the search field a custom color.
+        // Make the search field a custom color
         UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self])
             .backgroundColor = UIColor.lightGray.withAlphaComponent(0.3)
     }
@@ -36,7 +47,13 @@ struct ExerciseListView: View {
             List {
                 ForEach(filteredExercises) { exercise in
                     NavigationLink {
-                        ExerciseDetailView(exercise: exercise, exerciseSetSummaries: workoutsController.workoutSummaries.flatMap { $0.setSummaries })
+                        ExerciseDetailView(
+                            exercise: exercise,
+                            exerciseSetSummaries: workoutsController.workoutSummaries.flatMap { $0.setSummaries },
+                            goalWeight: $goalWeight,
+                            goalReps: $goalReps,
+                            goalDuration: $goalDuration
+                        )
                     } label: {
                         Text(exercise.name ?? "no exercise name")
                             .foregroundStyle(.secondary)
@@ -81,7 +98,7 @@ struct ExerciseListView: View {
             }
         }
 
-        // Sort alphabetically by name, with nil names at the end.
+        // Sort alphabetically by name, with nil names at the end
         return exercises.sorted { (lhs, rhs) in
             switch (lhs.name, rhs.name) {
             case let (left?, right?):
@@ -93,18 +110,27 @@ struct ExerciseListView: View {
             }
         }
     }
-
 }
 
 // MARK: - Previews
 #Preview("Light Mode") {
     let workoutsController = WorkoutsController()
-    ExerciseListView(workoutsController: workoutsController)
-        .preferredColorScheme(.light)
+    ExerciseListView(
+        workoutsController: workoutsController,
+        goalWeight: .constant(100.0),
+        goalReps: .constant(20),
+        goalDuration: .constant(90)
+    )
+    .preferredColorScheme(.light)
 }
 
 #Preview("Dark Mode") {
     let workoutsController = WorkoutsController()
-    ExerciseListView(workoutsController: workoutsController)
-        .preferredColorScheme(.dark)
+    ExerciseListView(
+        workoutsController: workoutsController,
+        goalWeight: .constant(100.0),
+        goalReps: .constant(20),
+        goalDuration: .constant(90)
+    )
+    .preferredColorScheme(.dark)
 }

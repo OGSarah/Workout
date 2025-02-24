@@ -10,8 +10,26 @@ import SwiftUI
 struct ContentView: View {
     let workoutsController = WorkoutsController()
 
+    @State private var goalWeight: Double = UserDefaults.standard.double(forKey: "goalWeight")
+    @State private var goalReps: Int = UserDefaults.standard.integer(forKey: "goalReps")
+    @State private var goalDuration: Int = UserDefaults.standard.integer(forKey: "goalDuration")
+
     var body: some View {
-            ExerciseListView(workoutsController: workoutsController)
+        ExerciseListView(
+            workoutsController: workoutsController,
+            goalWeight: $goalWeight,
+            goalReps: $goalReps,
+            goalDuration: $goalDuration
+        )
+        .onChange(of: goalWeight) { newValue in
+            UserDefaults.standard.set(newValue, forKey: "goalWeight")
+        }
+        .onChange(of: goalReps) { newValue in
+            UserDefaults.standard.set(newValue, forKey: "goalReps")
+        }
+        .onChange(of: goalDuration) { newValue in
+            UserDefaults.standard.set(newValue, forKey: "goalDuration")
+        }
     }
 }
 

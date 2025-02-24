@@ -17,9 +17,9 @@ struct ExerciseDetailView: View {
     @Environment(\.colorScheme) var colorScheme
     @State private var showEditSheet = false
     @State private var timePeriod: TimePeriod = .week
-    @State private var goalWeight: Double
-    @State private var goalReps: Int
-    @State private var goalDuration: Int
+    @Binding var goalWeight: Double
+    @Binding var goalReps: Int
+    @Binding var goalDuration: Int
 
     private let backgroundGradient = LinearGradient(
         stops: [
@@ -34,15 +34,15 @@ struct ExerciseDetailView: View {
     init(
         exercise: Exercise,
         exerciseSetSummaries: [ExerciseSetSummary],
-        goalWeight: Double = 0.0,
-        goalReps: Int = 0,
-        goalDuration: Int = 0
+        goalWeight: Binding<Double>,
+        goalReps: Binding<Int>,
+        goalDuration: Binding<Int>
     ) {
         self._exercise = State(initialValue: exercise)
         self._exerciseSetSummaries = State(initialValue: exerciseSetSummaries)
-        self._goalWeight = State(initialValue: goalWeight)
-        self._goalReps = State(initialValue: goalReps)
-        self._goalDuration = State(initialValue: goalDuration)
+        self._goalWeight = goalWeight
+        self._goalReps = goalReps
+        self._goalDuration = goalDuration
     }
 
     // MARK: - Main View
@@ -192,21 +192,20 @@ struct ExerciseDetailView: View {
                     )
             }
             .overlay {
-                // Subtle inner shadow
                 RoundedRectangle(cornerRadius: 15)
-                    .stroke(
-                        .black.opacity(0.1),
-                        lineWidth: 1
-                    )
+                    .stroke(.black.opacity(0.1), lineWidth: 1)
                     .blur(radius: 1)
                     .mask(RoundedRectangle(cornerRadius: 15).fill(.black))
             }
     }
-
 }
 
 // MARK: - Previews
 #Preview("Light Mode") {
+    @Previewable @State var previewGoalWeight: Double = 100.0
+    @Previewable @State var previewGoalReps: Int = 20
+    @Previewable @State var previewGoalDuration: Int = 90
+
     let sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
     let sampleSummaries = [
         ExerciseSetSummary.sample(
@@ -243,11 +242,22 @@ struct ExerciseDetailView: View {
             exerciseSet: ExerciseSet.sample(id: "set3", exercise: sampleExercise)
         )
     ]
-    ExerciseDetailView(exercise: sampleExercise, exerciseSetSummaries: sampleSummaries)
-        .preferredColorScheme(.light)
+
+    return ExerciseDetailView(
+        exercise: sampleExercise,
+        exerciseSetSummaries: sampleSummaries,
+        goalWeight: $previewGoalWeight,
+        goalReps: $previewGoalReps,
+        goalDuration: $previewGoalDuration
+    )
+    .preferredColorScheme(.light)
 }
 
 #Preview("Dark Mode") {
+    @Previewable @State var previewGoalWeight: Double = 100.0
+    @Previewable @State var previewGoalReps: Int = 20
+    @Previewable @State var previewGoalDuration: Int = 90
+
     let sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
     let sampleSummaries = [
         ExerciseSetSummary.sample(
@@ -284,6 +294,13 @@ struct ExerciseDetailView: View {
             exerciseSet: ExerciseSet.sample(id: "set3", exercise: sampleExercise)
         )
     ]
-    ExerciseDetailView(exercise: sampleExercise, exerciseSetSummaries: sampleSummaries)
-        .preferredColorScheme(.dark)
+
+    return ExerciseDetailView(
+        exercise: sampleExercise,
+        exerciseSetSummaries: sampleSummaries,
+        goalWeight: $previewGoalWeight,
+        goalReps: $previewGoalReps,
+        goalDuration: $previewGoalDuration
+    )
+    .preferredColorScheme(.dark)
 }
