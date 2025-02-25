@@ -11,9 +11,6 @@ struct ExerciseListView: View {
     @State private var exercises: [Exercise] = []
     @State private var searchText: String = ""
     let workoutsController: WorkoutsController
-    @Binding var goalWeight: Double
-    @Binding var goalReps: Int
-    @Binding var goalDuration: Int
 
     private let backgroundGradient = LinearGradient(
         stops: [
@@ -25,19 +22,9 @@ struct ExerciseListView: View {
         endPoint: .bottom
     )
 
-    init(
-        workoutsController: WorkoutsController,
-        goalWeight: Binding<Double>,
-        goalReps: Binding<Int>,
-        goalDuration: Binding<Int>
-    ) {
+    init(workoutsController: WorkoutsController) {
         self.workoutsController = workoutsController
         self._exercises = .init(initialValue: Self.extractExercises(from: workoutsController.workoutSummaries))
-        self._goalWeight = goalWeight
-        self._goalReps = goalReps
-        self._goalDuration = goalDuration
-
-        // Make the search field a custom color
         UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self])
             .backgroundColor = UIColor.lightGray.withAlphaComponent(0.3)
     }
@@ -49,10 +36,7 @@ struct ExerciseListView: View {
                     NavigationLink {
                         ExerciseDetailView(
                             exercise: exercise,
-                            exerciseSetSummaries: workoutsController.workoutSummaries.flatMap { $0.setSummaries },
-                            goalWeight: $goalWeight,
-                            goalReps: $goalReps,
-                            goalDuration: $goalDuration
+                            exerciseSetSummaries: workoutsController.workoutSummaries.flatMap { $0.setSummaries }
                         )
                     } label: {
                         Text(exercise.name ?? "no exercise name")
@@ -81,32 +65,29 @@ struct ExerciseListView: View {
         var exercises: [Exercise] = []
         var seenNames: Set<String> = []
 
-        // Collect and deduplicate exercises by name
         for summary in workoutSummaries {
             for setSummary in summary.setSummaries {
                 if let exerciseSet = setSummary.exerciseSet,
                    let exercise = exerciseSet.exercise,
-                   let name = exercise.name { // Only consider exercises with a name
+                   let name = exercise.name {
                     if seenNames.insert(name).inserted {
                         exercises.append(exercise)
                     }
                 } else if let exerciseSet = setSummary.exerciseSet,
                           let exercise = exerciseSet.exercise {
-                    // Include exercises with nil names as unique entries
                     exercises.append(exercise)
                 }
             }
         }
 
-        // Sort alphabetically by name, with nil names at the end
         return exercises.sorted { (lhs, rhs) in
             switch (lhs.name, rhs.name) {
             case let (left?, right?):
-                return left < right // Compare non-nil names alphabetically
+                return left < right
             case (nil, _):
-                return false // nil goes to the end
+                return false
             case (_, nil):
-                return true // non-nil comes before nil
+                return true
             }
         }
     }
@@ -115,22 +96,12 @@ struct ExerciseListView: View {
 // MARK: - Previews
 #Preview("Light Mode") {
     let workoutsController = WorkoutsController()
-    ExerciseListView(
-        workoutsController: workoutsController,
-        goalWeight: .constant(100.0),
-        goalReps: .constant(20),
-        goalDuration: .constant(90)
-    )
+    ExerciseListView(workoutsController: workoutsController)
     .preferredColorScheme(.light)
 }
 
 #Preview("Dark Mode") {
     let workoutsController = WorkoutsController()
-    ExerciseListView(
-        workoutsController: workoutsController,
-        goalWeight: .constant(100.0),
-        goalReps: .constant(20),
-        goalDuration: .constant(90)
-    )
+    ExerciseListView(workoutsController: workoutsController)
     .preferredColorScheme(.dark)
 }

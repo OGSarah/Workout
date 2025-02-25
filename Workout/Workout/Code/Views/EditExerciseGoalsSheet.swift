@@ -13,6 +13,7 @@ struct EditExerciseGoalsSheet: View {
     @Binding var goalWeight: Double
     @Binding var goalReps: Int
     @Binding var goalDuration: Int
+    let onSave: () -> Void
 
     var body: some View {
         NavigationStack {
@@ -47,6 +48,7 @@ struct EditExerciseGoalsSheet: View {
                     showEditSheet = false
                 },
                 trailing: Button("Save") {
+                    onSave()
                     showEditSheet = false
                 }
             )
@@ -69,35 +71,53 @@ struct EditExerciseGoalsSheet: View {
 
 // MARK: - Previews
 #Preview("Light Mode") {
-    @Previewable @State var sampleExercise = Exercise.sample(id: "ex1", name: "Bench Press")
-    @Previewable @State var showSheet = true
-    @Previewable @State var weight: Double = 100.0
-    @Previewable @State var reps: Int = 8
-    @Previewable @State var duration: Int = 60
+    struct PreviewWrapper: View {
+        @State private var sampleExercise = Exercise.sample(id: "ex1", name: "Bench Press")
+        @State private var showSheet = true
+        @State private var weight: Double = 100.0
+        @State private var reps: Int = 10
+        @State private var duration: Int = 60
 
-    return EditExerciseGoalsSheet(
-        exercise: $sampleExercise,
-        showEditSheet: $showSheet,
-        goalWeight: $weight,
-        goalReps: $reps,
-        goalDuration: $duration
-    )
-    .preferredColorScheme(.light)
+        var body: some View {
+            EditExerciseGoalsSheet(
+                exercise: $sampleExercise,
+                showEditSheet: $showSheet,
+                goalWeight: $weight,
+                goalReps: $reps,
+                goalDuration: $duration,
+                onSave: {
+                    // Preview save action
+                    print("Saved: Weight: \(weight), Reps: \(reps), Duration: \(duration)")
+                }
+            )
+            .preferredColorScheme(.light)
+        }
+    }
+    return PreviewWrapper()
 }
 
 #Preview("Dark Mode") {
-    @Previewable @State var sampleExercise = Exercise.sample(id: "ex1", name: "Bench Press")
-    @Previewable @State var showSheet = true
-    @Previewable @State var weight: Double = 100.0
-    @Previewable @State var reps: Int = 8
-    @Previewable @State var duration: Int = 60
+    struct PreviewWrapper: View {
+        @State private var sampleExercise = Exercise.sample(id: "ex1", name: "Bench Press")
+        @State private var showSheet = true
+        @State private var weight: Double = 100.0
+        @State private var reps: Int = 10
+        @State private var duration: Int = 60
 
-    return EditExerciseGoalsSheet(
-        exercise: $sampleExercise,
-        showEditSheet: $showSheet,
-        goalWeight: $weight,
-        goalReps: $reps,
-        goalDuration: $duration
-    )
-    .preferredColorScheme(.dark)
+        var body: some View {
+            EditExerciseGoalsSheet(
+                exercise: $sampleExercise,
+                showEditSheet: $showSheet,
+                goalWeight: $weight,
+                goalReps: $reps,
+                goalDuration: $duration,
+                onSave: {
+                    // Preview save action
+                    print("Saved: Weight: \(weight), Reps: \(reps), Duration: \(duration)")
+                }
+            )
+            .preferredColorScheme(.dark)
+        }
+    }
+    return PreviewWrapper()
 }

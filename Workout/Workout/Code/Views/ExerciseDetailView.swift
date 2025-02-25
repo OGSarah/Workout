@@ -17,9 +17,6 @@ struct ExerciseDetailView: View {
     @Environment(\.colorScheme) var colorScheme
     @State private var showEditSheet = false
     @State private var timePeriod: TimePeriod = .week
-    @Binding var goalWeight: Double
-    @Binding var goalReps: Int
-    @Binding var goalDuration: Int
 
     private let backgroundGradient = LinearGradient(
         stops: [
@@ -33,16 +30,10 @@ struct ExerciseDetailView: View {
 
     init(
         exercise: Exercise,
-        exerciseSetSummaries: [ExerciseSetSummary],
-        goalWeight: Binding<Double>,
-        goalReps: Binding<Int>,
-        goalDuration: Binding<Int>
+        exerciseSetSummaries: [ExerciseSetSummary]
     ) {
         self._exercise = State(initialValue: exercise)
         self._exerciseSetSummaries = State(initialValue: exerciseSetSummaries)
-        self._goalWeight = goalWeight
-        self._goalReps = goalReps
-        self._goalDuration = goalDuration
     }
 
     // MARK: - Main View
@@ -76,10 +67,7 @@ struct ExerciseDetailView: View {
         GoalGaugeSection(
             exercise: $exercise,
             showEditSheet: $showEditSheet,
-            exerciseSetSummaries: exerciseSetSummaries,
-            goalWeight: $goalWeight,
-            goalReps: $goalReps,
-            goalDuration: $goalDuration
+            exerciseSetSummaries: exerciseSetSummaries
         )
     }
 
@@ -152,12 +140,16 @@ struct ExerciseDetailView: View {
     }
 
     private var editGoalsSheet: some View {
+        // Updated to match the new EditExerciseGoalsSheet requirements
         EditExerciseGoalsSheet(
             exercise: $exercise,
             showEditSheet: $showEditSheet,
-            goalWeight: $goalWeight,
-            goalReps: $goalReps,
-            goalDuration: $goalDuration
+            goalWeight: .constant(0),  // Temporary binding, actual values managed by GoalGaugeSection
+            goalReps: .constant(0),
+            goalDuration: .constant(0),
+            onSave: {
+                // Save action is handled by GoalGaugeSection
+            }
         )
     }
 
@@ -202,10 +194,6 @@ struct ExerciseDetailView: View {
 
 // MARK: - Previews
 #Preview("Light Mode") {
-    @Previewable @State var previewGoalWeight: Double = 100.0
-    @Previewable @State var previewGoalReps: Int = 20
-    @Previewable @State var previewGoalDuration: Int = 90
-
     let sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
     let sampleSummaries = [
         ExerciseSetSummary.sample(
@@ -245,19 +233,12 @@ struct ExerciseDetailView: View {
 
     return ExerciseDetailView(
         exercise: sampleExercise,
-        exerciseSetSummaries: sampleSummaries,
-        goalWeight: $previewGoalWeight,
-        goalReps: $previewGoalReps,
-        goalDuration: $previewGoalDuration
+        exerciseSetSummaries: sampleSummaries
     )
     .preferredColorScheme(.light)
 }
 
 #Preview("Dark Mode") {
-    @Previewable @State var previewGoalWeight: Double = 100.0
-    @Previewable @State var previewGoalReps: Int = 20
-    @Previewable @State var previewGoalDuration: Int = 90
-
     let sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
     let sampleSummaries = [
         ExerciseSetSummary.sample(
@@ -297,10 +278,7 @@ struct ExerciseDetailView: View {
 
     return ExerciseDetailView(
         exercise: sampleExercise,
-        exerciseSetSummaries: sampleSummaries,
-        goalWeight: $previewGoalWeight,
-        goalReps: $previewGoalReps,
-        goalDuration: $previewGoalDuration
+        exerciseSetSummaries: sampleSummaries
     )
     .preferredColorScheme(.dark)
 }

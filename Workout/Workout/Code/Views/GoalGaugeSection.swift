@@ -7,6 +7,14 @@
 
 import SwiftUI
 
+struct ExerciseGoals: Codable {
+    var weight: Double
+    var reps: Int
+    var duration: Int
+
+    static let defaultGoals = ExerciseGoals(weight: 0.0, reps: 0, duration: 0)
+}
+
 struct GoalGaugeSection: View {
     @Binding var exercise: Exercise
     @Binding var showEditSheet: Bool
@@ -15,10 +23,7 @@ struct GoalGaugeSection: View {
     let durationGradient = Gradient(colors: [.lightGreen, .brightLimeGreen, .green])
     let exerciseSetSummaries: [ExerciseSetSummary]
 
-    // State to store goal values
-    @Binding var goalWeight: Double
-    @Binding var goalReps: Int
-    @Binding var goalDuration: Int
+    @AppStorage("exerciseGoals") private var exerciseGoalsData: Data = Data()
 
     // Current max values of each that the client has achieved.
     @State private var currentMaxWeight: Double = 0.0
@@ -29,6 +34,11 @@ struct GoalGaugeSection: View {
     @State private var goalWeightProgress: Int = 0
     @State private var goalRepsProgress: Int = 0
     @State private var goalDurationProgress: Int = 0
+
+    // Local state for editing
+    @State private var localGoalWeight: Double = 0.0
+    @State private var localGoalReps: Int = 0
+    @State private var localGoalDuration: Int = 0
 
     var body: some View {
         VStack {
@@ -52,7 +62,7 @@ struct GoalGaugeSection: View {
 
             HStack(spacing: 40) {
                 VStack(spacing: 10) {
-                    Gauge(value: currentMaxWeight, in: 0...goalWeight) {
+                    Gauge(value: currentMaxWeight, in: 0...localGoalWeight) {
                     } currentValueLabel: {
                         Text("\(goalWeightProgress)%")
                             .font(.headline)
@@ -60,7 +70,7 @@ struct GoalGaugeSection: View {
                         Text("0")
                             .font(.caption2)
                     } maximumValueLabel: {
-                        Text("\(Int(goalWeight))")
+                        Text("\(Int(localGoalWeight))")
                             .font(.caption2)
                     }
                     .gaugeStyle(.accessoryCircular)
@@ -74,7 +84,7 @@ struct GoalGaugeSection: View {
                 }
 
                 VStack(spacing: 10) {
-                    Gauge(value: Double(currentMaxReps), in: 0...Double(goalReps)) {
+                    Gauge(value: Double(currentMaxReps), in: 0...Double(localGoalReps)) {
                         Text("Reps")
                     } currentValueLabel: {
                         Text("\(goalRepsProgress)%")
@@ -83,7 +93,7 @@ struct GoalGaugeSection: View {
                         Text("0")
                             .font(.caption2)
                     } maximumValueLabel: {
-                        Text("\(goalReps)")
+                        Text("\(localGoalReps)")
                             .font(.caption2)
                     }
                     .gaugeStyle(.accessoryCircular)
@@ -96,7 +106,7 @@ struct GoalGaugeSection: View {
                 }
 
                 VStack(spacing: 10) {
-                    Gauge(value: Double(currentMaxDuration), in: 0...Double(goalDuration)) {
+                    Gauge(value: Double(currentMaxDuration), in: 0...Double(localGoalDuration)) {
                         Text("Duration")
                     } currentValueLabel: {
                         Text("\(goalDurationProgress)%")
@@ -105,7 +115,7 @@ struct GoalGaugeSection: View {
                         Text("0")
                             .font(.caption2)
                     } maximumValueLabel: {
-                        Text("\(goalDuration)")
+                        Text("\(localGoalDuration)")
                             .font(.caption2)
                     }
                     .gaugeStyle(.accessoryCircular)
@@ -129,13 +139,14 @@ struct GoalGaugeSection: View {
                 EditExerciseGoalsSheet(
                     exercise: $exercise,
                     showEditSheet: $showEditSheet,
-                    goalWeight: $goalWeight,
-                    goalReps: $goalReps,
-                    goalDuration: $goalDuration
+                    goalWeight: $localGoalWeight,
+                    goalReps: $localGoalReps,
+                    goalDuration: $localGoalDuration,
+                    onSave: saveGoals
                 )
             }
             .onAppear {
-                // Set current max values when view appears
+                loadGoals()
                 let sets = exerciseSetSummaries.compactMap { $0.exerciseSet }
                 if let maxWeight = getMaxWeightForExercise(exercise, in: sets) {
                     currentMaxWeight = Double(maxWeight)
@@ -148,9 +159,7 @@ struct GoalGaugeSection: View {
                 }
                 updateProgressValues()
             }
-            .onChange(of: goalWeight) { updateProgressValues() }
-            .onChange(of: goalReps) { updateProgressValues() }
-            .onChange(of: goalDuration) { updateProgressValues() }
+            .onChange(of: exercise) { loadGoals() }
         }
     }
 
@@ -178,16 +187,45 @@ struct GoalGaugeSection: View {
             .padding(.top, 10)
     }
 
-    // MARK: - Private functions
     private func updateProgressValues() {
-        // Calculate weight progress
-        goalWeightProgress = goalWeight > 0 ? Int((currentMaxWeight / goalWeight) * 100) : 0
+        goalWeightProgress = localGoalWeight > 0 ? Int((currentMaxWeight / localGoalWeight) * 100) : 0
+        goalRepsProgress = localGoalReps > 0 ? Int((Double(currentMaxReps) / Double(localGoalReps)) * 100) : 0
+        goalDurationProgress = localGoalDuration > 0 ? Int((Double(currentMaxDuration) / Double(localGoalDuration)) * 100) : 0
+    }
 
-        // Calculate reps progress
-        goalRepsProgress = goalReps > 0 ? Int((Double(currentMaxReps) / Double(goalReps)) * 100) : 0
+    private func loadGoals() {
+        if let data = try? JSONDecoder().decode([String: ExerciseGoals].self, from: exerciseGoalsData),
+           let exerciseName = exercise.name,
+           let goals = data[exerciseName] {
+            localGoalWeight = goals.weight
+            localGoalReps = goals.reps
+            localGoalDuration = goals.duration
+        } else {
+            localGoalWeight = 0.0
+            localGoalReps = 0
+            localGoalDuration = 0
+        }
+        updateProgressValues()
+    }
 
-        // Calculate duration progress
-        goalDurationProgress = goalDuration > 0 ? Int((Double(currentMaxDuration) / Double(goalDuration)) * 100) : 0
+    private func saveGoals() {
+        var goalsDict: [String: ExerciseGoals]
+        if let existingData = try? JSONDecoder().decode([String: ExerciseGoals].self, from: exerciseGoalsData) {
+            goalsDict = existingData
+        } else {
+            goalsDict = [:]
+        }
+
+        if let exerciseName = exercise.name {
+            goalsDict[exerciseName] = ExerciseGoals(
+                weight: localGoalWeight,
+                reps: localGoalReps,
+                duration: localGoalDuration
+            )
+            if let data = try? JSONEncoder().encode(goalsDict) {
+                exerciseGoalsData = data
+            }
+        }
     }
 
     func getMaxWeightForExercise(_ exercise: Exercise, in sets: [ExerciseSet]) -> Float? {
@@ -198,18 +236,10 @@ struct GoalGaugeSection: View {
     }
 
     func getMaxRepsForExercise(from summaries: [ExerciseSetSummary]) -> Int? {
-        var maxReps: Int?
-
-        for summary in summaries {
-            if let currentReps = summary.repsCompleted {
-                if let existingMax = maxReps {
-                    maxReps = max(existingMax, currentReps)
-                } else {
-                    maxReps = currentReps
-                }
-            }
-        }
-        return maxReps
+        summaries
+            .filter { $0.exerciseSet?.exercise?.id == exercise.id }
+            .compactMap { $0.repsCompleted }
+            .max()
     }
 
     func getMaxDurationForExercise(_ exercise: Exercise, in sets: [ExerciseSet]) -> Int? {
@@ -267,10 +297,7 @@ struct GoalGaugeSection: View {
     return GoalGaugeSection(
         exercise: $sampleExercise,
         showEditSheet: $showEditSheet,
-        exerciseSetSummaries: sampleSummaries,
-        goalWeight: $goalWeight,
-        goalReps: $goalReps,
-        goalDuration: $goalDuration
+        exerciseSetSummaries: sampleSummaries
     )
     .preferredColorScheme(.light)
     .frame(width: 400, height: 200)
@@ -323,10 +350,7 @@ struct GoalGaugeSection: View {
     return GoalGaugeSection(
         exercise: $sampleExercise,
         showEditSheet: $showEditSheet,
-        exerciseSetSummaries: sampleSummaries,
-        goalWeight: $goalWeight,
-        goalReps: $goalReps,
-        goalDuration: $goalDuration
+        exerciseSetSummaries: sampleSummaries
     )
     .preferredColorScheme(.dark)
     .frame(width: 400, height: 200)
