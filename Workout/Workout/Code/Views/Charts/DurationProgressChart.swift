@@ -39,41 +39,27 @@ struct DurationProgressChart: View {
                             y: .value("Duration", dataPoint.value)
                         )
                         .interpolationMethod(.catmullRom)
-                        .symbol(Circle())
-                        .symbolSize(30)
-                        .foregroundStyle(Gradient(colors: [.green, .green.opacity(0.5)]))
+                        .foregroundStyle(Color.brightLimeGreen)
 
-                        RectangleMark(
+                        PointMark(
                             x: .value("Date", dataPoint.date),
                             y: .value("Duration", dataPoint.value)
                         )
-                        .interpolationMethod(.catmullRom)
-                        .foregroundStyle(Gradient(colors: [.green.opacity(0.2), .green.opacity(0.05)]))
+                        .symbol(Circle().strokeBorder(lineWidth: 2))
+                        .symbolSize(50)
+                        .foregroundStyle(.green)
                     }
                 }
-                .frame(height: 200)
                 .chartYScale(domain: 0...maxValue(timeSpentActiveData))
                 .chartXAxis {
-                    AxisMarks(values: .stride(by: .day)) {
-                        AxisGridLine()
-                        AxisTick()
-                        AxisValueLabel(format: .dateTime.weekday())
-                    }
+                    AxisMarks(values: .stride(by: .day)) { AxisGridLine(); AxisTick(); AxisValueLabel(format: .dateTime.day()) }
                 }
                 .chartYAxis {
-                    AxisMarks { value in
-                        AxisGridLine()
-                        AxisTick()
-                        AxisValueLabel {
-                            if let doubleValue = value.as(Double.self) {
-                                Text("\(Int(doubleValue))")
-                            }
-                        }
-                    }
+                    AxisMarks { AxisGridLine(); AxisTick(); AxisValueLabel() }
                 }
+                .frame(height: 200)
                 .padding()
                 .cornerRadius(10)
-                .shadow(radius: 5)
             }
         }
     }

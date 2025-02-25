@@ -13,22 +13,21 @@ struct WeightProgressChart: View {
     let exerciseName: String
     let timePeriod: TimePeriod
 
-    private var maxValuePlusTen: Double {
-        (weightData.map { $0.value }.max() ?? 0) + 10.0
-    }
-
     private var weightData: [(date: Date, value: Double)] {
         let filteredSummaries = filterSummariesByTimePeriod(exerciseSetSummaries, for: timePeriod)
         return filteredSummaries
-            .filter { $0.exerciseSet?.exercise?.name == exerciseName }
+            .filter { $0.exerciseSet?.exercise?.id == exerciseSetSummaries.first?.exerciseSet?.exercise?.id }
             .compactMap { summary -> (date: Date, value: Double)? in
-                guard let date = summary.completedAt ?? summary.startedAt else { return nil }
-                guard let weightFloat = summary.weightUsed ?? summary.exerciseSet?.weight else { return nil }
-                // Convert Float to optional Double
-                guard let weight = Double(exactly: weightFloat) else { return nil }
-                return (date: date, value: weight)
+                guard let date = summary.completedAt ?? summary.startedAt,
+                      let set = summary.exerciseSet,
+                      let weight = set.weight else { return nil }
+                return (date: date, value: Double(weight))
             }
             .sorted { $0.date < $1.date }
+    }
+
+    private var maxValuePlusTen: Double {
+        (weightData.map { $0.value }.max() ?? 0) + 10.0
     }
 
     var body: some View {
@@ -40,17 +39,34 @@ struct WeightProgressChart: View {
 
                 Chart {
                     ForEach(weightData, id: \.date) { dataPoint in
-                        BarMark(
+                        LineMark(
                             x: .value("Date", dataPoint.date),
                             y: .value("Weight", dataPoint.value)
                         )
-                        .foregroundStyle(Gradient(colors: [.red, .red.opacity(0.5)]))
+                        .interpolationMethod(.catmullRom)
+                        .foregroundStyle(Color.brightCoralRed)
+
+                        PointMark(
+                            x: .value("Date", dataPoint.date),
+                            y: .value("Weight", dataPoint.value)
+                        )
+                        .symbol(Circle().strokeBorder(lineWidth: 2))
+                        .symbolSize(50)
+                        .foregroundStyle(Color.brightCoralRed)
                     }
-                        RuleMark(y: .value("Goal", 35))
-                            .foregroundStyle(.teal)
-                            .lineStyle(StrokeStyle(lineWidth: 4, dash: [5]))
+                    RuleMark(y: .value("Goal", 300.0))
+                        .foregroundStyle(.teal)
+                        .lineStyle(StrokeStyle(lineWidth: 2, dash: [5, 5]))
+                        .annotation(position: .top, alignment: .trailing) {
+                            Text("Goal: \(Int(300.0)) lbs")
+                                .font(.caption)
+                                .foregroundColor(.teal)
+                                .padding(2)
+                                .background(Color.teal.opacity(0.1))
+                                .cornerRadius(4)
+                        }
                 }
-                .frame(height: 300)
+                .frame(height: 200)
                 .chartYScale(domain: 0...maxValuePlusTen)
                 .chartXAxis {
                     AxisMarks(values: .stride(by: .day)) {

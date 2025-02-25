@@ -22,7 +22,7 @@ struct RepsProgressChart: View {
                 guard let reps = (summary.repsCompleted ?? summary.exerciseSet?.reps).flatMap({ Double($0) }) else { return nil }
                 return (date: date, value: reps)
             }
-            .sorted { $0.date < $1.date } // Sort by date
+            .sorted { $0.date < $1.date }
     }
 
     var body: some View {
@@ -34,52 +34,34 @@ struct RepsProgressChart: View {
 
                 Chart {
                     ForEach(repsData, id: \.date) { dataPoint in
-                        LineMark(
+                        BarMark(
                             x: .value("Date", dataPoint.date),
                             y: .value("Reps", dataPoint.value)
                         )
-                        .interpolationMethod(.catmullRom)
-                        .symbol(Circle())
-                        .symbolSize(30)
-                        .foregroundStyle(Gradient(colors: [.yellow, .yellow.opacity(0.5)]))
-
-                        AreaMark(
-                            x: .value("Date", dataPoint.date),
-                            y: .value("Reps", dataPoint.value)
-                        )
-                        .interpolationMethod(.catmullRom)
-                        .foregroundStyle(Gradient(colors: [.yellow.opacity(0.2), .yellow.opacity(0.05)]))
-                    }
-                }
-                .frame(height: 200)
-                .chartYScale(domain: 0...maxValue(repsData))
-                .chartXAxis {
-                    AxisMarks(values: .stride(by: .day)) {
-                        AxisGridLine()
-                        AxisTick()
-                        AxisValueLabel(format: .dateTime.weekday())
-                    }
-                }
-                .chartYAxis {
-                    AxisMarks { value in
-                        AxisGridLine()
-                        AxisTick()
-                        AxisValueLabel {
-                            if let doubleValue = value.as(Double.self) {
-                                Text("\(Int(doubleValue))")
-                            }
+                        .foregroundStyle(.yellow)
+                        .annotation(position: .top) {
+                            Text("\(Int(dataPoint.value))")
+                                .font(.caption)
+                                .foregroundColor(Color.darkYellow)
                         }
                     }
                 }
+                .chartYScale(domain: 0...maxValue(repsData))
+                .chartXAxis {
+                    AxisMarks(values: .stride(by: .day)) { AxisGridLine(); AxisTick(); AxisValueLabel(format: .dateTime.day()) }
+                }
+                .chartYAxis {
+                    AxisMarks { AxisGridLine(); AxisTick(); AxisValueLabel() }
+                }
+                .frame(height: 200)
                 .padding()
                 .cornerRadius(10)
-                .shadow(radius: 5)
             }
         }
     }
 
     private func maxValue(_ data: [(date: Date, value: Double)]) -> Double {
-        data.map { $0.value }.max() ?? 100.0
+        (data.map { $0.value }.max() ?? 100.0) + 10.0
     }
 
     private func filterSummariesByTimePeriod(_ summaries: [ExerciseSetSummary], for period: TimePeriod) -> [ExerciseSetSummary] {
