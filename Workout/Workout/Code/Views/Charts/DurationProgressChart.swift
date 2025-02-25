@@ -73,8 +73,6 @@ struct DurationProgressChart: View {
         return summaries.filter { summary in
             guard let date = summary.completedAt ?? summary.startedAt else { return false }
             switch period {
-            case .day:
-                return Calendar.current.isDate(date, inSameDayAs: now)
             case .week:
                 return Calendar.current.isDate(date, equalTo: now, toGranularity: .weekOfYear)
             case .month:

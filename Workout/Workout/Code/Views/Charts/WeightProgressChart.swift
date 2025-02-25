@@ -69,7 +69,7 @@ struct WeightProgressChart: View {
                 .frame(height: 200)
                 .chartYScale(domain: 0...maxValuePlusTen)
                 .chartXAxis {
-                    AxisMarks(values: .stride(by: .day)) {
+                    AxisMarks(values: .stride(by: .day)) { value in
                         AxisGridLine()
                         AxisTick()
                         AxisValueLabel(format: .dateTime.weekday())
@@ -92,17 +92,11 @@ struct WeightProgressChart: View {
         }
     }
 
-    private func maxValue(_ data: [(date: Date, value: Double)]) -> Double {
-        data.map { $0.value }.max() ?? 100.0
-    }
-
     private func filterSummariesByTimePeriod(_ summaries: [ExerciseSetSummary], for period: TimePeriod) -> [ExerciseSetSummary] {
         let now = Date()
         return summaries.filter { summary in
             guard let date = summary.completedAt ?? summary.startedAt else { return false }
             switch period {
-            case .day:
-                return Calendar.current.isDate(date, inSameDayAs: now)
             case .week:
                 return Calendar.current.isDate(date, equalTo: now, toGranularity: .weekOfYear)
             case .month:

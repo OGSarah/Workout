@@ -8,7 +8,7 @@
 import SwiftUI
 
 enum TimePeriod {
-    case day, week, month, sixMonths, year
+    case week, month, sixMonths, year
 }
 
 struct ExerciseDetailView: View {
@@ -155,7 +155,6 @@ struct ExerciseDetailView: View {
 
     private var timePeriodPicker: some View {
         Picker("Time Period", selection: $timePeriod) {
-            Text("Day").tag(TimePeriod.day)
             Text("Week").tag(TimePeriod.week)
             Text("Month").tag(TimePeriod.month)
             Text("6 Months").tag(TimePeriod.sixMonths)
