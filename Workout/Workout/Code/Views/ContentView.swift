@@ -21,13 +21,13 @@ struct ContentView: View {
             goalReps: $goalReps,
             goalDuration: $goalDuration
         )
-        .onChange(of: goalWeight) { newValue in
+        .onChange(of: goalWeight) {_, newValue in
             UserDefaults.standard.set(newValue, forKey: "goalWeight")
         }
-        .onChange(of: goalReps) { newValue in
+        .onChange(of: goalReps) {_, newValue in
             UserDefaults.standard.set(newValue, forKey: "goalReps")
         }
-        .onChange(of: goalDuration) { newValue in
+        .onChange(of: goalDuration) {_, newValue in
             UserDefaults.standard.set(newValue, forKey: "goalDuration")
         }
     }

@@ -147,9 +147,9 @@ struct GoalGaugeSection: View {
                 }
                 updateProgressValues()
             }
-            .onChange(of: goalWeight) { _ in updateProgressValues() }
-            .onChange(of: goalReps) { _ in updateProgressValues() }
-            .onChange(of: goalDuration) { _ in updateProgressValues() }
+            .onChange(of: goalWeight) { updateProgressValues() }
+            .onChange(of: goalReps) { updateProgressValues() }
+            .onChange(of: goalDuration) { updateProgressValues() }
         }
     }
 
@@ -236,7 +236,6 @@ struct GoalGaugeSection: View {
 
 }
 
-/*
 // MARK: - Previews
 #Preview("Light Mode") {
     @Previewable @State var sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
@@ -349,4 +348,3 @@ struct GoalGaugeSection: View {
     .frame(width: 400, height: 200)
     .padding()
 }
-*/
