@@ -76,7 +76,7 @@ struct GoalGaugeSection: View {
                     .gaugeStyle(.accessoryCircular)
                     .tint(weightGradient)
                     .scaleEffect(1.5)
-                    Text("Weight (lbs)")
+                    Text("Weight(lbs)")
                         .font(.callout)
                         .foregroundColor(.gray)
                         .padding(.top, 10)
@@ -121,7 +121,7 @@ struct GoalGaugeSection: View {
                     .gaugeStyle(.accessoryCircular)
                     .tint(durationGradient)
                     .scaleEffect(1.5)
-                    Text("Duration (min)")
+                    Text("Duration(min)")
                         .font(.callout)
                         .foregroundColor(.gray)
                         .padding(.top, 10)
@@ -147,19 +147,10 @@ struct GoalGaugeSection: View {
             }
             .onAppear {
                 loadGoals()
-                let sets = exerciseSetSummaries.compactMap { $0.exerciseSet }
-                if let maxWeight = getMaxWeightForExercise(exercise, in: sets) {
-                    currentMaxWeight = Double(maxWeight)
-                }
-                if let maxReps = getMaxRepsForExercise(from: exerciseSetSummaries) {
-                    currentMaxReps = maxReps
-                }
-                if let maxTime = getMaxDurationForExercise(exercise, in: sets) {
-                    currentMaxDuration = maxTime
-                }
-                updateProgressValues()
+                updateMaxValues()
             }
             .onChange(of: exercise) { loadGoals() }
+            .onChange(of: exerciseGoalsData) { loadGoals() }
         }
     }
 
@@ -185,6 +176,21 @@ struct GoalGaugeSection: View {
                     .mask(RoundedRectangle(cornerRadius: 15).fill(.black))
             }
             .padding(.top, 10)
+    }
+
+    // MARK: - Private functions
+    private func updateMaxValues() {
+        let sets = exerciseSetSummaries.compactMap { $0.exerciseSet }
+        if let maxWeight = getMaxWeightForExercise(exercise, in: sets) {
+            currentMaxWeight = Double(maxWeight)
+        }
+        if let maxReps = getMaxRepsForExercise(from: exerciseSetSummaries) {
+            currentMaxReps = maxReps
+        }
+        if let maxTime = getMaxDurationForExercise(exercise, in: sets) {
+            currentMaxDuration = maxTime
+        }
+        updateProgressValues()
     }
 
     private func updateProgressValues() {
