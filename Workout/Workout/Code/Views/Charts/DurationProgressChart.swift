@@ -13,46 +13,89 @@ struct DurationProgressChart: View {
     let exerciseName: String
     let timePeriod: TimePeriod
 
-    private var timeSpentActiveData: [(date: Date, value: Double)] {
+    private var durationData: [(date: Date, value: Double)] {
         let filteredSummaries = filterSummariesByTimePeriod(exerciseSetSummaries, for: timePeriod)
         return filteredSummaries
-            .filter { $0.exerciseSet?.exercise?.name == exerciseName }
+            .filter { $0.exerciseSet?.exercise?.id == exerciseSetSummaries.first?.exerciseSet?.exercise?.id }
             .compactMap { summary -> (date: Date, value: Double)? in
-                guard let date = summary.completedAt ?? summary.startedAt else { return nil }
-                guard let time = summary.timeSpentActive.flatMap({ Double($0) }) else { return nil }
-                return (date: date, value: time)
+                guard let date = summary.completedAt ?? summary.startedAt,
+                      let set = summary.exerciseSet,
+                      let duration = set.duration else { return nil }
+                return (date: date, value: Double(duration))
             }
             .sorted { $0.date < $1.date }
     }
 
     var body: some View {
-        if !timeSpentActiveData.isEmpty {
+        if !durationData.isEmpty {
             VStack(alignment: .leading, spacing: 10) {
                 Text("Duration Progress (min)")
                     .font(.headline)
                     .padding(.horizontal)
 
                 Chart {
-                    ForEach(timeSpentActiveData, id: \.date) { dataPoint in
+                    ForEach(durationData, id: \.date) { dataPoint in
                         LineMark(
                             x: .value("Date", dataPoint.date),
-                            y: .value("Duration", dataPoint.value)
+                            y: .value("Duration", dataPoint.value / 60) // Convert to minutes
                         )
                         .interpolationMethod(.catmullRom)
-                        .foregroundStyle(Color.brightLimeGreen)
+                        .foregroundStyle(.green) // Replaced brightLimeGreen with .green
 
                         PointMark(
                             x: .value("Date", dataPoint.date),
-                            y: .value("Duration", dataPoint.value)
+                            y: .value("Duration", dataPoint.value / 60)
                         )
                         .symbol(Circle().strokeBorder(lineWidth: 2))
                         .symbolSize(50)
                         .foregroundStyle(.green)
                     }
                 }
-                .chartYScale(domain: 0...maxValue(timeSpentActiveData))
+                .chartYScale(domain: 0...maxValue(durationData))
                 .chartXAxis {
-                    AxisMarks(values: .stride(by: .day)) { AxisGridLine(); AxisTick(); AxisValueLabel(format: .dateTime.day()) }
+                    switch timePeriod {
+                    case .week:
+                        AxisMarks(values: .stride(by: .day)) { value in
+                            AxisGridLine()
+                            AxisTick()
+                            AxisValueLabel {
+                                if let date = value.as(Date.self) {
+                                    Text(date, format: .dateTime.weekday(.abbreviated)) // e.g., "Mon"
+                                }
+                            }
+                        }
+                    case .month:
+                        AxisMarks(values: weekStartDatesForMonth()) { value in
+                            AxisGridLine()
+                            AxisTick()
+                            AxisValueLabel {
+                                if let date = value.as(Date.self) {
+                                    Text(date, format: .dateTime.day()) // e.g., "3" for first Monday
+                                }
+                            }
+                        }
+                    case .sixMonths:
+                        AxisMarks(values: monthStartDatesForSixMonths()) { value in
+                            AxisGridLine()
+                            AxisTick()
+                            AxisValueLabel {
+                                if let date = value.as(Date.self) {
+                                    Text(date, format: .dateTime.month(.abbreviated)) // e.g., "Feb"
+                                }
+                            }
+                        }
+                    case .year:
+                        AxisMarks(values: monthStartDatesForYear()) { value in
+                            AxisGridLine()
+                            AxisTick()
+                            AxisValueLabel {
+                                if let date = value.as(Date.self) {
+                                    let monthName = date.formatted(.dateTime.month(.abbreviated))
+                                    Text(monthName.prefix(1)) // e.g., "F" for February
+                                }
+                            }
+                        }
+                    }
                 }
                 .chartYAxis {
                     AxisMarks { AxisGridLine(); AxisTick(); AxisValueLabel() }
@@ -65,7 +108,7 @@ struct DurationProgressChart: View {
     }
 
     private func maxValue(_ data: [(date: Date, value: Double)]) -> Double {
-        data.map { $0.value }.max() ?? 100.0 // Default to 100 if no data
+        (data.map { $0.value / 60 }.max() ?? 100.0) // Convert to minutes
     }
 
     private func filterSummariesByTimePeriod(_ summaries: [ExerciseSetSummary], for period: TimePeriod) -> [ExerciseSetSummary] {
@@ -86,10 +129,52 @@ struct DurationProgressChart: View {
             }
         }
     }
+
+    private func weekStartDatesForMonth() -> [Date] {
+        let calendar = Calendar.current
+        let now = Date()
+        guard let monthRange = calendar.range(of: .day, in: .month, for: now),
+              let monthStart = calendar.date(from: calendar.dateComponents([.year, .month], from: now)) else { return [] }
+
+        var dates: [Date] = []
+        for day in monthRange {
+            if let date = calendar.date(byAdding: .day, value: day - 1, to: monthStart),
+               calendar.component(.weekday, from: date) == 2 { // Monday = 2
+                dates.append(date)
+            }
+        }
+        return dates
+    }
+
+    private func monthStartDatesForSixMonths() -> [Date] {
+        let calendar = Calendar.current
+        let now = Date()
+        var dates: [Date] = []
+        for num in 0..<6 {
+            if let date = calendar.date(byAdding: .month, value: -num, to: now),
+               let monthStart = calendar.date(from: calendar.dateComponents([.year, .month], from: date)) {
+                dates.append(monthStart)
+            }
+        }
+        return dates.reversed()
+    }
+
+    private func monthStartDatesForYear() -> [Date] {
+        let calendar = Calendar.current
+        let now = Date()
+        var dates: [Date] = []
+        for num in 0..<12 {
+            if let date = calendar.date(byAdding: .month, value: -num, to: now),
+               let monthStart = calendar.date(from: calendar.dateComponents([.year, .month], from: date)) {
+                dates.append(monthStart)
+            }
+        }
+        return dates.reversed()
+    }
 }
 
 // MARK: - Previews
-#Preview("Light Mode") {
+#Preview("Light Mode - Week") {
     let sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
     let sampleSummaries = [
         ExerciseSetSummary.sample(
@@ -101,7 +186,7 @@ struct DurationProgressChart: View {
             timeSpentActive: 60,
             weight: 20.0,
             repsReported: 10,
-            exerciseSet: ExerciseSet.sample(id: "set1", exercise: sampleExercise)
+            exerciseSet: ExerciseSet.sample(id: "set1", exercise: sampleExercise, weight: 20.0, reps: 10, duration: 60)
         ),
         ExerciseSetSummary.sample(
             id: "2",
@@ -112,7 +197,7 @@ struct DurationProgressChart: View {
             timeSpentActive: 60,
             weight: 25.0,
             repsReported: 12,
-            exerciseSet: ExerciseSet.sample(id: "set2", exercise: sampleExercise)
+            exerciseSet: ExerciseSet.sample(id: "set2", exercise: sampleExercise, weight: 25.0, reps: 12, duration: 60)
         ),
         ExerciseSetSummary.sample(
             id: "3",
@@ -123,10 +208,10 @@ struct DurationProgressChart: View {
             timeSpentActive: 60,
             weight: 30.0,
             repsReported: 15,
-            exerciseSet: ExerciseSet.sample(id: "set3", exercise: sampleExercise)
+            exerciseSet: ExerciseSet.sample(id: "set3", exercise: sampleExercise, weight: 30.0, reps: 15, duration: 60)
         )
     ]
-    DurationProgressChart(
+    return DurationProgressChart(
         exerciseSetSummaries: sampleSummaries,
         exerciseName: "Pushups",
         timePeriod: .week
@@ -134,30 +219,30 @@ struct DurationProgressChart: View {
     .preferredColorScheme(.light)
 }
 
-#Preview("Dark Mode") {
+#Preview("Dark Mode - Month") {
     let sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
     let sampleSummaries = [
         ExerciseSetSummary.sample(
             id: "1",
             exerciseSetID: "set1",
             workoutSummaryID: nil,
-            startedAt: Date().addingTimeInterval(-86400 * 2),
-            completedAt: Date().addingTimeInterval(-86400 * 2),
+            startedAt: Date().addingTimeInterval(-86400 * 20),
+            completedAt: Date().addingTimeInterval(-86400 * 20),
             timeSpentActive: 60,
             weight: 20.0,
             repsReported: 10,
-            exerciseSet: ExerciseSet.sample(id: "set1", exercise: sampleExercise)
+            exerciseSet: ExerciseSet.sample(id: "set1", exercise: sampleExercise, weight: 20.0, reps: 10, duration: 60)
         ),
         ExerciseSetSummary.sample(
             id: "2",
             exerciseSetID: "set2",
             workoutSummaryID: nil,
-            startedAt: Date().addingTimeInterval(-86400),
-            completedAt: Date().addingTimeInterval(-86400),
+            startedAt: Date().addingTimeInterval(-86400 * 10),
+            completedAt: Date().addingTimeInterval(-86400 * 10),
             timeSpentActive: 60,
             weight: 25.0,
             repsReported: 12,
-            exerciseSet: ExerciseSet.sample(id: "set2", exercise: sampleExercise)
+            exerciseSet: ExerciseSet.sample(id: "set2", exercise: sampleExercise, weight: 25.0, reps: 12, duration: 60)
         ),
         ExerciseSetSummary.sample(
             id: "3",
@@ -168,13 +253,13 @@ struct DurationProgressChart: View {
             timeSpentActive: 60,
             weight: 30.0,
             repsReported: 15,
-            exerciseSet: ExerciseSet.sample(id: "set3", exercise: sampleExercise)
+            exerciseSet: ExerciseSet.sample(id: "set3", exercise: sampleExercise, weight: 30.0, reps: 15, duration: 60)
         )
     ]
-    DurationProgressChart(
+    return DurationProgressChart(
         exerciseSetSummaries: sampleSummaries,
         exerciseName: "Pushups",
-        timePeriod: .week
+        timePeriod: .month
     )
     .preferredColorScheme(.dark)
 }

@@ -52,7 +52,7 @@ struct WeightProgressChart: View {
                         )
                         .symbol(Circle().strokeBorder(lineWidth: 2))
                         .symbolSize(50)
-                        .foregroundStyle(Color.brightCoralRed)
+                        .foregroundStyle(Color.red)
                     }
                     RuleMark(y: .value("Goal", 300.0))
                         .foregroundStyle(.teal)
@@ -69,10 +69,48 @@ struct WeightProgressChart: View {
                 .frame(height: 200)
                 .chartYScale(domain: 0...maxValuePlusTen)
                 .chartXAxis {
-                    AxisMarks(values: .stride(by: .day)) { value in
-                        AxisGridLine()
-                        AxisTick()
-                        AxisValueLabel(format: .dateTime.weekday())
+                    switch timePeriod {
+                    case .week:
+                        AxisMarks(values: .stride(by: .day)) { value in
+                            AxisGridLine()
+                            AxisTick()
+                            AxisValueLabel {
+                                if let date = value.as(Date.self) {
+                                    Text(date, format: .dateTime.weekday(.abbreviated)) // e.g., "Mon"
+                                }
+                            }
+                        }
+                    case .month:
+                        AxisMarks(values: weekStartDatesForMonth()) { value in
+                            AxisGridLine()
+                            AxisTick()
+                            AxisValueLabel {
+                                if let date = value.as(Date.self) {
+                                    Text(date, format: .dateTime.day()) // e.g., "3" for first Monday
+                                }
+                            }
+                        }
+                    case .sixMonths:
+                        AxisMarks(values: monthStartDatesForSixMonths()) { value in
+                            AxisGridLine()
+                            AxisTick()
+                            AxisValueLabel {
+                                if let date = value.as(Date.self) {
+                                    Text(date, format: .dateTime.month(.abbreviated)) // e.g., "Feb"
+                                }
+                            }
+                        }
+                    case .year:
+                        AxisMarks(values: monthStartDatesForYear()) { value in
+                            AxisGridLine()
+                            AxisTick()
+                            AxisValueLabel {
+                                if let date = value.as(Date.self) {
+                                    let monthName = date.formatted(.dateTime.month(.abbreviated))
+                                    Text(monthName.prefix(1)) // e.g., "F" for February
+                                }
+                            }
+                        }
                     }
                 }
                 .chartYAxis {
@@ -111,10 +149,54 @@ struct WeightProgressChart: View {
         }
     }
 
+    // Helper to get Monday start dates for the current month
+    private func weekStartDatesForMonth() -> [Date] {
+        let calendar = Calendar.current
+        let now = Date()
+        guard let monthRange = calendar.range(of: .day, in: .month, for: now),
+              let monthStart = calendar.date(from: calendar.dateComponents([.year, .month], from: now)) else { return [] }
+
+        var dates: [Date] = []
+        for day in monthRange {
+            if let date = calendar.date(byAdding: .day, value: day - 1, to: monthStart),
+               calendar.component(.weekday, from: date) == 2 { // Monday is 2 in weekday numbering
+                dates.append(date)
+            }
+        }
+        return dates
+    }
+
+    // Helper to get start dates for the last 6 months
+    private func monthStartDatesForSixMonths() -> [Date] {
+        let calendar = Calendar.current
+        let now = Date()
+        var dates: [Date] = []
+        for num in 0..<6 {
+            if let date = calendar.date(byAdding: .month, value: -num, to: now),
+               let monthStart = calendar.date(from: calendar.dateComponents([.year, .month], from: date)) {
+                dates.append(monthStart)
+            }
+        }
+        return dates.reversed() // Reverse to show oldest to newest
+    }
+
+    // Helper to get start dates for the last 12 months
+    private func monthStartDatesForYear() -> [Date] {
+        let calendar = Calendar.current
+        let now = Date()
+        var dates: [Date] = []
+        for num in 0..<12 {
+            if let date = calendar.date(byAdding: .month, value: -num, to: now),
+               let monthStart = calendar.date(from: calendar.dateComponents([.year, .month], from: date)) {
+                dates.append(monthStart)
+            }
+        }
+        return dates.reversed() // Reverse to show oldest to newest
+    }
 }
 
 // MARK: - Previews
-#Preview("Light Mode") {
+#Preview("Week - Light Mode") {
     let sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
     let sampleSummaries = [
         ExerciseSetSummary.sample(
@@ -151,7 +233,7 @@ struct WeightProgressChart: View {
             exerciseSet: ExerciseSet.sample(id: "set3", exercise: sampleExercise)
         )
     ]
-    WeightProgressChart(
+    return WeightProgressChart(
         exerciseSetSummaries: sampleSummaries,
         exerciseName: "Pushups",
         timePeriod: .week
@@ -160,15 +242,15 @@ struct WeightProgressChart: View {
     .padding(20)
 }
 
-#Preview("Dark Mode") {
+#Preview("Month - Dark Mode") {
     let sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
     let sampleSummaries = [
         ExerciseSetSummary.sample(
             id: "1",
             exerciseSetID: "set1",
             workoutSummaryID: nil,
-            startedAt: Date().addingTimeInterval(-86400 * 2),
-            completedAt: Date().addingTimeInterval(-86400 * 2),
+            startedAt: Date().addingTimeInterval(-86400 * 20), // Earlier in month
+            completedAt: Date().addingTimeInterval(-86400 * 20),
             timeSpentActive: 60,
             weight: 20.0,
             repsReported: 10,
@@ -178,8 +260,8 @@ struct WeightProgressChart: View {
             id: "2",
             exerciseSetID: "set2",
             workoutSummaryID: nil,
-            startedAt: Date().addingTimeInterval(-86400),
-            completedAt: Date().addingTimeInterval(-86400),
+            startedAt: Date().addingTimeInterval(-86400 * 10),
+            completedAt: Date().addingTimeInterval(-86400 * 10),
             timeSpentActive: 60,
             weight: 25.0,
             repsReported: 12,
@@ -197,10 +279,10 @@ struct WeightProgressChart: View {
             exerciseSet: ExerciseSet.sample(id: "set3", exercise: sampleExercise)
         )
     ]
-    WeightProgressChart(
+    return WeightProgressChart(
         exerciseSetSummaries: sampleSummaries,
         exerciseName: "Pushups",
-        timePeriod: .week
+        timePeriod: .month
     )
     .preferredColorScheme(.dark)
     .padding(20)

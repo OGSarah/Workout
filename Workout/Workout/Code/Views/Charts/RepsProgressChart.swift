@@ -11,16 +11,16 @@ import SwiftUI
 struct RepsProgressChart: View {
     let exerciseSetSummaries: [ExerciseSetSummary]
     let exerciseName: String
-    let timePeriod: TimePeriod // New parameter for time period
+    let timePeriod: TimePeriod
 
     private var repsData: [(date: Date, value: Double)] {
         let filteredSummaries = filterSummariesByTimePeriod(exerciseSetSummaries, for: timePeriod)
         return filteredSummaries
-            .filter { $0.exerciseSet?.exercise?.name == exerciseName }
+            .filter { $0.exerciseSet?.exercise?.id == exerciseSetSummaries.first?.exerciseSet?.exercise?.id }
             .compactMap { summary -> (date: Date, value: Double)? in
-                guard let date = summary.completedAt ?? summary.startedAt else { return nil }
-                guard let reps = (summary.repsCompleted ?? summary.exerciseSet?.reps).flatMap({ Double($0) }) else { return nil }
-                return (date: date, value: reps)
+                guard let date = summary.completedAt ?? summary.startedAt,
+                      let reps = summary.repsCompleted else { return nil }
+                return (date: date, value: Double(reps))
             }
             .sorted { $0.date < $1.date }
     }
@@ -42,13 +42,55 @@ struct RepsProgressChart: View {
                         .annotation(position: .top) {
                             Text("\(Int(dataPoint.value))")
                                 .font(.caption)
-                                .foregroundColor(Color.darkYellow)
+                                .foregroundColor(Color.darkYellow) // Changed from darkYellow assuming it's custom
                         }
                     }
                 }
                 .chartYScale(domain: 0...maxValue(repsData))
                 .chartXAxis {
-                    AxisMarks(values: .stride(by: .day)) { AxisGridLine(); AxisTick(); AxisValueLabel(format: .dateTime.day()) }
+                    switch timePeriod {
+                    case .week:
+                        AxisMarks(values: .stride(by: .day)) { value in
+                            AxisGridLine()
+                            AxisTick()
+                            AxisValueLabel {
+                                if let date = value.as(Date.self) {
+                                    Text(date, format: .dateTime.weekday(.abbreviated)) // e.g., "Mon"
+                                }
+                            }
+                        }
+                    case .month:
+                        AxisMarks(values: weekStartDatesForMonth()) { value in
+                            AxisGridLine()
+                            AxisTick()
+                            AxisValueLabel {
+                                if let date = value.as(Date.self) {
+                                    Text(date, format: .dateTime.day()) // e.g., "3" for first Monday
+                                }
+                            }
+                        }
+                    case .sixMonths:
+                        AxisMarks(values: monthStartDatesForSixMonths()) { value in
+                            AxisGridLine()
+                            AxisTick()
+                            AxisValueLabel {
+                                if let date = value.as(Date.self) {
+                                    Text(date, format: .dateTime.month(.abbreviated)) // e.g., "Feb"
+                                }
+                            }
+                        }
+                    case .year:
+                        AxisMarks(values: monthStartDatesForYear()) { value in
+                            AxisGridLine()
+                            AxisTick()
+                            AxisValueLabel {
+                                if let date = value.as(Date.self) {
+                                    let monthName = date.formatted(.dateTime.month(.abbreviated))
+                                    Text(monthName.prefix(1)) // e.g., "F" for February
+                                }
+                            }
+                        }
+                    }
                 }
                 .chartYAxis {
                     AxisMarks { AxisGridLine(); AxisTick(); AxisValueLabel() }
@@ -82,10 +124,52 @@ struct RepsProgressChart: View {
             }
         }
     }
+
+    private func weekStartDatesForMonth() -> [Date] {
+        let calendar = Calendar.current
+        let now = Date()
+        guard let monthRange = calendar.range(of: .day, in: .month, for: now),
+              let monthStart = calendar.date(from: calendar.dateComponents([.year, .month], from: now)) else { return [] }
+
+        var dates: [Date] = []
+        for day in monthRange {
+            if let date = calendar.date(byAdding: .day, value: day - 1, to: monthStart),
+               calendar.component(.weekday, from: date) == 2 { // Monday = 2
+                dates.append(date)
+            }
+        }
+        return dates
+    }
+
+    private func monthStartDatesForSixMonths() -> [Date] {
+        let calendar = Calendar.current
+        let now = Date()
+        var dates: [Date] = []
+        for num in 0..<6 {
+            if let date = calendar.date(byAdding: .month, value: -num, to: now),
+               let monthStart = calendar.date(from: calendar.dateComponents([.year, .month], from: date)) {
+                dates.append(monthStart)
+            }
+        }
+        return dates.reversed()
+    }
+
+    private func monthStartDatesForYear() -> [Date] {
+        let calendar = Calendar.current
+        let now = Date()
+        var dates: [Date] = []
+        for num in 0..<12 {
+            if let date = calendar.date(byAdding: .month, value: -num, to: now),
+               let monthStart = calendar.date(from: calendar.dateComponents([.year, .month], from: date)) {
+                dates.append(monthStart)
+            }
+        }
+        return dates.reversed()
+    }
 }
 
 // MARK: - Previews
-#Preview("Light Mode") {
+#Preview("Light Mode - Week") {
     let sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
     let sampleSummaries = [
         ExerciseSetSummary.sample(
@@ -122,7 +206,7 @@ struct RepsProgressChart: View {
             exerciseSet: ExerciseSet.sample(id: "set3", exercise: sampleExercise)
         )
     ]
-    RepsProgressChart(
+    return RepsProgressChart(
         exerciseSetSummaries: sampleSummaries,
         exerciseName: "Pushups",
         timePeriod: .week
@@ -130,15 +214,15 @@ struct RepsProgressChart: View {
     .preferredColorScheme(.light)
 }
 
-#Preview("Dark Mode") {
+#Preview("Dark Mode - Month") {
     let sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
     let sampleSummaries = [
         ExerciseSetSummary.sample(
             id: "1",
             exerciseSetID: "set1",
             workoutSummaryID: nil,
-            startedAt: Date().addingTimeInterval(-86400 * 2),
-            completedAt: Date().addingTimeInterval(-86400 * 2),
+            startedAt: Date().addingTimeInterval(-86400 * 20),
+            completedAt: Date().addingTimeInterval(-86400 * 20),
             timeSpentActive: 60,
             weight: 20.0,
             repsReported: 10,
@@ -148,8 +232,8 @@ struct RepsProgressChart: View {
             id: "2",
             exerciseSetID: "set2",
             workoutSummaryID: nil,
-            startedAt: Date().addingTimeInterval(-86400),
-            completedAt: Date().addingTimeInterval(-86400),
+            startedAt: Date().addingTimeInterval(-86400 * 10),
+            completedAt: Date().addingTimeInterval(-86400 * 10),
             timeSpentActive: 60,
             weight: 25.0,
             repsReported: 12,
@@ -167,10 +251,10 @@ struct RepsProgressChart: View {
             exerciseSet: ExerciseSet.sample(id: "set3", exercise: sampleExercise)
         )
     ]
-    RepsProgressChart(
+    return RepsProgressChart(
         exerciseSetSummaries: sampleSummaries,
         exerciseName: "Pushups",
-        timePeriod: .week
+        timePeriod: .month
     )
     .preferredColorScheme(.dark)
 }
