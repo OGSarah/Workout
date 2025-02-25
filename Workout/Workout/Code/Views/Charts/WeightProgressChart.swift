@@ -65,17 +65,17 @@ struct WeightProgressChart: View {
                                 .cornerRadius(4)
                         }
                 }
-                .frame(height: 200)
+                .frame(width: 300, height: 200)
                 .chartYScale(domain: 0...maxValuePlusTen)
                 .chartXAxis {
                     switch timePeriod {
                     case .week:
-                        AxisMarks(values: .stride(by: .day)) { value in
+                        AxisMarks(values: allWeekDays()) { value in
                             AxisGridLine()
                             AxisTick()
                             AxisValueLabel {
                                 if let date = value.as(Date.self) {
-                                    Text(date, format: .dateTime.weekday(.abbreviated)) // e.g., "Mon"
+                                    Text(date, format: .dateTime.weekday(.abbreviated))
                                 }
                             }
                         }
@@ -146,6 +146,16 @@ struct WeightProgressChart: View {
                 return date >= yearAgo && date <= now
             }
         }
+    }
+
+    private func allWeekDays() -> [Date] {
+        let calendar = Calendar.current
+        let now = Date()
+        // Get the start of the week (Monday) by finding the previous Sunday and adding 1 day
+        var components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: now)
+        components.weekday = 2 // Monday (Sunday = 1, Monday = 2, etc.)
+        guard let mondayStart = calendar.date(from: components) else { return [] }
+        return (0..<7).compactMap { calendar.date(byAdding: .day, value: $0, to: mondayStart) }
     }
 
     // Helper to get Monday start dates for the current month

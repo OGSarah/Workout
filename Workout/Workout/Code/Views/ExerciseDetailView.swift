@@ -106,7 +106,8 @@ struct ExerciseDetailView: View {
             timePeriod: timePeriod
         )
         .padding(.horizontal, 10)
-        .padding(.top, 20)
+        .padding(.top, 10)
+        .padding(.bottom, 10)
         .background {
             glassBackground
                 .padding(.top, -10)
@@ -120,7 +121,8 @@ struct ExerciseDetailView: View {
             timePeriod: timePeriod
         )
         .padding(.horizontal, 10)
-        .padding(.top, 20)
+        .padding(.top, 10)
+        .padding(.bottom, 10)
         .background {
             glassBackground
         }
@@ -133,7 +135,8 @@ struct ExerciseDetailView: View {
             timePeriod: timePeriod
         )
         .padding(.horizontal, 10)
-        .padding(.top, 20)
+        .padding(.top, 10)
+        .padding(.bottom, 10)
         .background {
             glassBackground
         }
