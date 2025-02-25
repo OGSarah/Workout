@@ -254,6 +254,7 @@ struct GoalGaugeSection: View {
             .compactMap { $0.duration }
             .max()
     }
+
 }
 
 // MARK: - Previews

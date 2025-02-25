@@ -144,14 +144,17 @@ public enum Intensity: String {
 
 // Helper to create an ExerciseSet from JSON data for preview.
 extension ExerciseSet {
-    static func sample(id: String, exercise: Exercise) -> ExerciseSet {
+    static func sample(id: String, exercise: Exercise, weight: Float? = nil, reps: Int? = nil, duration: Int? = nil) -> ExerciseSet {
         let json = """
         {
             "id": "\(id)",
             "exercise": {
                 "id": "\(exercise.id)",
                 "name": "\(exercise.name ?? "")"
-            }
+            },
+            "weight": \(weight.map { "\($0)" } ?? "null"),
+            "reps": \(reps.map { "\($0)" } ?? "null"),
+            "duration": \(duration.map { "\($0)" } ?? "null")
         }
         """
         guard let data = json.data(using: .utf8),
@@ -160,5 +163,4 @@ extension ExerciseSet {
         }
         return summary
     }
-
 }
