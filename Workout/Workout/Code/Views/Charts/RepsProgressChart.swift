@@ -16,11 +16,11 @@ struct RepsProgressChart: View {
     private var repsData: [(date: Date, value: Double)] {
         let filteredSummaries = filterSummariesByTimePeriod(exerciseSetSummaries, for: timePeriod)
         return filteredSummaries
-            .filter { $0.exerciseSet?.exercise?.id == exerciseSetSummaries.first?.exerciseSet?.exercise?.id }
+            .filter { $0.exerciseSet?.exercise?.name == exerciseName }
             .compactMap { summary -> (date: Date, value: Double)? in
-                guard let date = summary.completedAt ?? summary.startedAt,
-                      let reps = summary.repsCompleted else { return nil }
-                return (date: date, value: Double(reps))
+                guard let date = summary.completedAt ?? summary.startedAt else { return nil }
+                guard let reps = (summary.repsCompleted ?? summary.exerciseSet?.reps).flatMap({ Double($0) }) else { return nil }
+                return (date: date, value: reps)
             }
             .sorted { $0.date < $1.date }
     }
@@ -42,7 +42,7 @@ struct RepsProgressChart: View {
                         .annotation(position: .top) {
                             Text("\(Int(dataPoint.value))")
                                 .font(.caption)
-                                .foregroundColor(Color.darkYellow) // Changed from darkYellow assuming it's custom
+                                .foregroundColor(Color.darkYellow)
                         }
                     }
                 }

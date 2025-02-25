@@ -16,12 +16,11 @@ struct DurationProgressChart: View {
     private var durationData: [(date: Date, value: Double)] {
         let filteredSummaries = filterSummariesByTimePeriod(exerciseSetSummaries, for: timePeriod)
         return filteredSummaries
-            .filter { $0.exerciseSet?.exercise?.id == exerciseSetSummaries.first?.exerciseSet?.exercise?.id }
+            .filter { $0.exerciseSet?.exercise?.id == exerciseName }
             .compactMap { summary -> (date: Date, value: Double)? in
-                guard let date = summary.completedAt ?? summary.startedAt,
-                      let set = summary.exerciseSet,
-                      let duration = set.duration else { return nil }
-                return (date: date, value: Double(duration))
+                guard let date = summary.completedAt ?? summary.startedAt else { return nil }
+                guard let time = summary.timeSpentActive.flatMap({ Double($0) }) else { return nil }
+                return (date: date, value: time)
             }
             .sorted { $0.date < $1.date }
     }
@@ -37,14 +36,14 @@ struct DurationProgressChart: View {
                     ForEach(durationData, id: \.date) { dataPoint in
                         LineMark(
                             x: .value("Date", dataPoint.date),
-                            y: .value("Duration", dataPoint.value / 60) // Convert to minutes
+                            y: .value("Duration", dataPoint.value)
                         )
                         .interpolationMethod(.catmullRom)
-                        .foregroundStyle(.green) // Replaced brightLimeGreen with .green
+                        .foregroundStyle(Color.brightLimeGreen)
 
                         PointMark(
                             x: .value("Date", dataPoint.date),
-                            y: .value("Duration", dataPoint.value / 60)
+                            y: .value("Duration", dataPoint.value)
                         )
                         .symbol(Circle().strokeBorder(lineWidth: 2))
                         .symbolSize(50)
@@ -108,7 +107,7 @@ struct DurationProgressChart: View {
     }
 
     private func maxValue(_ data: [(date: Date, value: Double)]) -> Double {
-        (data.map { $0.value / 60 }.max() ?? 100.0) // Convert to minutes
+        (data.map { $0.value }.max() ?? 100.0)
     }
 
     private func filterSummariesByTimePeriod(_ summaries: [ExerciseSetSummary], for period: TimePeriod) -> [ExerciseSetSummary] {
