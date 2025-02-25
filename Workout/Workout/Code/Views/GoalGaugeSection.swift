@@ -136,13 +136,14 @@ struct GoalGaugeSection: View {
             }
             .onAppear {
                 // Set current max values when view appears
-                if let maxWeight = findMaxWeight(from: exerciseSetSummaries) {
+                let sets = exerciseSetSummaries.compactMap { $0.exerciseSet }
+                if let maxWeight = getMaxWeightForExercise(exercise, in: sets) {
                     currentMaxWeight = Double(maxWeight)
                 }
-                if let maxReps = findMaxReps(from: exerciseSetSummaries) {
+                if let maxReps = getMaxRepsForExercise(from: exerciseSetSummaries) {
                     currentMaxReps = maxReps
                 }
-                if let maxTime = findMaxTime(from: exerciseSetSummaries) {
+                if let maxTime = getMaxDurationForExercise(exercise, in: sets) {
                     currentMaxDuration = maxTime
                 }
                 updateProgressValues()
@@ -189,22 +190,14 @@ struct GoalGaugeSection: View {
         goalDurationProgress = goalDuration > 0 ? Int((Double(currentMaxDuration) / Double(goalDuration)) * 100) : 0
     }
 
-    func findMaxWeight(from summaries: [ExerciseSetSummary]) -> Float? {
-        var maxWeight: Float?
-
-        for summary in summaries {
-            if let currentWeight = summary.weightUsed {
-                if let existingMax = maxWeight {
-                    maxWeight = max(existingMax, currentWeight)
-                } else {
-                    maxWeight = currentWeight
-                }
-            }
-        }
-        return maxWeight
+    func getMaxWeightForExercise(_ exercise: Exercise, in sets: [ExerciseSet]) -> Float? {
+        sets
+            .filter { $0.exercise?.id == exercise.id }
+            .compactMap { $0.weight }
+            .max()
     }
 
-    func findMaxReps(from summaries: [ExerciseSetSummary]) -> Int? {
+    func getMaxRepsForExercise(from summaries: [ExerciseSetSummary]) -> Int? {
         var maxReps: Int?
 
         for summary in summaries {
@@ -219,21 +212,12 @@ struct GoalGaugeSection: View {
         return maxReps
     }
 
-    func findMaxTime(from summaries: [ExerciseSetSummary]) -> Int? {
-        var maxTime: Int?
-
-        for summary in summaries {
-            if let currentTime = summary.timeSpentActive {
-                if let existingMax = maxTime {
-                    maxTime = max(existingMax, currentTime)
-                } else {
-                    maxTime = currentTime
-                }
-            }
-        }
-        return maxTime
+    func getMaxDurationForExercise(_ exercise: Exercise, in sets: [ExerciseSet]) -> Int? {
+        sets
+            .filter { $0.exercise?.id == exercise.id }
+            .compactMap { $0.duration }
+            .max()
     }
-
 }
 
 // MARK: - Previews
