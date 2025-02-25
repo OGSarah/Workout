@@ -46,7 +46,7 @@ struct RepsProgressChart: View {
                         }
                     }
                 }
-                .frame(width: 300, height: 200)
+                .frame(height: 200)
                 .chartYScale(domain: 0...maxValue(repsData))
                 .chartXAxis {
                     switch timePeriod {
@@ -132,7 +132,7 @@ struct RepsProgressChart: View {
         var components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: now)
         components.weekday = 2 // Monday (Sunday = 1, Monday = 2, etc.)
         guard let mondayStart = calendar.date(from: components) else { return [] }
-        return (0..<7).compactMap { calendar.date(byAdding: .day, value: $0, to: mondayStart) }
+        return (0...7).compactMap { calendar.date(byAdding: .day, value: $0, to: mondayStart) }
     }
 
     private func weekStartDatesForMonth() -> [Date] {

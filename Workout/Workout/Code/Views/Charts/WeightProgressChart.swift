@@ -65,7 +65,7 @@ struct WeightProgressChart: View {
                                 .cornerRadius(4)
                         }
                 }
-                .frame(width: 300, height: 200)
+                .frame(height: 200)
                 .chartYScale(domain: 0...maxValuePlusTen)
                 .chartXAxis {
                     switch timePeriod {
@@ -155,7 +155,7 @@ struct WeightProgressChart: View {
         var components = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: now)
         components.weekday = 2 // Monday (Sunday = 1, Monday = 2, etc.)
         guard let mondayStart = calendar.date(from: components) else { return [] }
-        return (0..<7).compactMap { calendar.date(byAdding: .day, value: $0, to: mondayStart) }
+        return (0...7).compactMap { calendar.date(byAdding: .day, value: $0, to: mondayStart) }
     }
 
     // Helper to get Monday start dates for the current month
