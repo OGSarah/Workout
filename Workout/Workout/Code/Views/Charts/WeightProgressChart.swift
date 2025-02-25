@@ -16,12 +16,11 @@ struct WeightProgressChart: View {
     private var weightData: [(date: Date, value: Double)] {
         let filteredSummaries = filterSummariesByTimePeriod(exerciseSetSummaries, for: timePeriod)
         return filteredSummaries
-            .filter { $0.exerciseSet?.exercise?.id == exerciseSetSummaries.first?.exerciseSet?.exercise?.id }
+            .filter { $0.exerciseSet?.exercise?.name == exerciseName }
             .compactMap { summary -> (date: Date, value: Double)? in
-                guard let date = summary.completedAt ?? summary.startedAt,
-                      let set = summary.exerciseSet,
-                      let weight = set.weight else { return nil }
-                return (date: date, value: Double(weight))
+                guard let date = summary.completedAt ?? summary.startedAt else { return nil }
+                guard let weight = (summary.exerciseSet?.weight).flatMap({ Double($0) }) else { return nil }
+                return (date: date, value: weight)
             }
             .sorted { $0.date < $1.date }
     }
@@ -51,7 +50,7 @@ struct WeightProgressChart: View {
                             y: .value("Weight", dataPoint.value)
                         )
                         .symbol(Circle().strokeBorder(lineWidth: 2))
-                        .symbolSize(50)
+                        .symbolSize(CGSize(width: 10, height: 10))
                         .foregroundStyle(Color.red)
                     }
                     RuleMark(y: .value("Goal", 300.0))

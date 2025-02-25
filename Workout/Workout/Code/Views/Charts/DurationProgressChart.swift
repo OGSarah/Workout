@@ -16,7 +16,7 @@ struct DurationProgressChart: View {
     private var durationData: [(date: Date, value: Double)] {
         let filteredSummaries = filterSummariesByTimePeriod(exerciseSetSummaries, for: timePeriod)
         return filteredSummaries
-            .filter { $0.exerciseSet?.exercise?.id == exerciseName }
+            .filter { $0.exerciseSet?.exercise?.id == exerciseSetSummaries.first?.exerciseSet?.exercise?.id }
             .compactMap { summary -> (date: Date, value: Double)? in
                 guard let date = summary.completedAt ?? summary.startedAt else { return nil }
                 guard let time = summary.timeSpentActive.flatMap({ Double($0) }) else { return nil }
@@ -46,7 +46,7 @@ struct DurationProgressChart: View {
                             y: .value("Duration", dataPoint.value)
                         )
                         .symbol(Circle().strokeBorder(lineWidth: 2))
-                        .symbolSize(50)
+                        .symbolSize(CGSize(width: 10, height: 10))
                         .foregroundStyle(.green)
                     }
                 }
@@ -107,7 +107,7 @@ struct DurationProgressChart: View {
     }
 
     private func maxValue(_ data: [(date: Date, value: Double)]) -> Double {
-        (data.map { $0.value }.max() ?? 100.0)
+        (data.map { $0.value }.max() ?? 100.0) + 10.0
     }
 
     private func filterSummariesByTimePeriod(_ summaries: [ExerciseSetSummary], for period: TimePeriod) -> [ExerciseSetSummary] {
