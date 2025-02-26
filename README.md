@@ -58,10 +58,13 @@ Here are some screenshots showcasing the app's features:
 </div>
 
 ## If I had more time I would have:
-- Used MVVM architecture for better separate of code and easier testing.
-- Used Core Data to save all of the model related data and goals, rather than having to fetch and iterate through the raw json each time.
+
+- Used MVVM architecture for better separation of code and easier testing.
+- Used Core Data to save all of the model-related data and goals, rather than having to fetch and iterate through the raw JSON each time and rely on AppStorage for saving goals.
 - Added unit and UI tests.
-- Refactored the code so there isn't duplicate functionality throughout the charts.
+- Refactored the code so there isn’t duplicate functionality throughout the chart code.
 - Fixed the runtime Swift Charts warning.
-- Fixed some minor UI bugs (for example: the GoalGaugeSection not streching across the screen properly in landscape mode and values on charts being slightly to the left).
+- Fixed some minor UI bugs (for example: the GoalGaugeSection not stretching across the screen properly in landscape mode and values on charts being slightly to the left).
+- Added a description for each exercise on the ExerciseDetails screen since some of the lesser known exercises aren't as obvious as to what they are.
+- Added better preview data code, perhaps using more realistic data similar to the json data provided.
 
