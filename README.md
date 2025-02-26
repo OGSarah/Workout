@@ -47,4 +47,5 @@ Here are some screenshots showcasing the app's features:
 - Added unit and UI tests.
 - Refactored the code so there isn't duplicate functionality throughout the charts.
 - Fixed the runtime Swift Charts warning.
+- Fixed some minor UI bugs (for example: the GoalGaugeSection not streching across the screen properly in landscape mode and the goal background being slightly brighter for the Reps chart).
 
