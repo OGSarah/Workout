@@ -42,116 +42,135 @@ struct GoalGaugeSection: View {
 
     var body: some View {
         VStack {
-            HStack {
-                Image(systemName: "figure.strengthtraining.traditional")
-                    .foregroundStyle(.gray)
-                    .font(.subheadline)
-                    .padding(.trailing, -5)
-                Text("PERFORMANCE GOALS")
-                    .foregroundStyle(.gray)
-                    .font(.subheadline)
-                Spacer()
-                Button(action: {
-                    showEditSheet.toggle()
-                }, label: {
-                    Text("Edit")
-                })
-            }
-            .padding(.horizontal, 10)
-            .padding(.top, 40)
-
-            HStack(spacing: 40) {
-                VStack(spacing: 10) {
-                    Gauge(value: currentMaxWeight, in: 0...localGoalWeight) {
-                    } currentValueLabel: {
-                        Text("\(goalWeightProgress)%")
-                            .font(.headline)
-                    } minimumValueLabel: {
-                        Text("0")
-                            .font(.caption2)
-                    } maximumValueLabel: {
-                        Text("\(Int(localGoalWeight))")
-                            .font(.caption2)
-                    }
-                    .gaugeStyle(.accessoryCircular)
-                    .tint(weightGradient)
-                    .scaleEffect(1.5)
-                    Text("Weight(lbs)")
-                        .font(.callout)
-                        .foregroundColor(.gray)
-                        .padding(.top, 10)
-                        .lineLimit(1)
-                }
-
-                VStack(spacing: 10) {
-                    Gauge(value: Double(currentMaxReps), in: 0...Double(localGoalReps)) {
-                        Text("Reps")
-                    } currentValueLabel: {
-                        Text("\(goalRepsProgress)%")
-                            .font(.headline)
-                    } minimumValueLabel: {
-                        Text("0")
-                            .font(.caption2)
-                    } maximumValueLabel: {
-                        Text("\(localGoalReps)")
-                            .font(.caption2)
-                    }
-                    .gaugeStyle(.accessoryCircular)
-                    .tint(repsGradient)
-                    .scaleEffect(1.5)
-                    Text("Reps")
-                        .font(.callout)
-                        .foregroundColor(.gray)
-                        .padding(.top, 10)
-                }
-
-                VStack(spacing: 10) {
-                    Gauge(value: Double(currentMaxDuration), in: 0...Double(localGoalDuration)) {
-                        Text("Duration")
-                    } currentValueLabel: {
-                        Text("\(goalDurationProgress)%")
-                            .font(.headline)
-                    } minimumValueLabel: {
-                        Text("0")
-                            .font(.caption2)
-                    } maximumValueLabel: {
-                        Text("\(localGoalDuration)")
-                            .font(.caption2)
-                    }
-                    .gaugeStyle(.accessoryCircular)
-                    .tint(durationGradient)
-                    .scaleEffect(1.5)
-                    Text("Duration(min)")
-                        .font(.callout)
-                        .foregroundColor(.gray)
-                        .padding(.top, 10)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.9)
-                }
-            }
-            .padding(.bottom, 20)
-            .padding(.top, 50)
-            .padding(.horizontal, 20)
-            .background(glassBackground)
-            .padding(.bottom, 10)
-            .padding(.top, -10)
-            .sheet(isPresented: $showEditSheet) {
-                EditExerciseGoalsSheet(
-                    exercise: $exercise,
-                    showEditSheet: $showEditSheet,
-                    goalWeight: $localGoalWeight,
-                    goalReps: $localGoalReps,
-                    goalDuration: $localGoalDuration,
-                    onSave: saveGoals
+            headerView
+            if localGoalWeight <= 0 && localGoalReps <= 0 && localGoalDuration <= 0 {
+                ContentUnavailableView(
+                    "No Goals Set",
+                    systemImage: "target",
+                    description: Text("Set some performance goals to track your progress!")
                 )
+                .padding()
+                .background(glassBackground)
+                .padding(.bottom, 10)
+                .padding(.top, -10)
+            } else {
+                HStack(spacing: 40) {
+                        VStack(spacing: 10) {
+                            Gauge(value: currentMaxWeight, in: 0...localGoalWeight) {
+                            } currentValueLabel: {
+                                Text("\(goalWeightProgress)%")
+                                    .font(.headline)
+                            } minimumValueLabel: {
+                                Text("0")
+                                    .font(.caption2)
+                            } maximumValueLabel: {
+                                Text("\(Int(localGoalWeight))")
+                                    .font(.caption2)
+                            }
+                            .gaugeStyle(.accessoryCircular)
+                            .tint(weightGradient)
+                            .scaleEffect(1.5)
+                            Text("Weight(lbs)")
+                                .font(.callout)
+                                .foregroundColor(.gray)
+                                .padding(.top, 10)
+                                .lineLimit(1)
+                        }
+
+                        VStack(spacing: 10) {
+                            Gauge(value: Double(currentMaxReps), in: 0...Double(localGoalReps)) {
+                                Text("Reps")
+                            } currentValueLabel: {
+                                Text("\(goalRepsProgress)%")
+                                    .font(.headline)
+                            } minimumValueLabel: {
+                                Text("0")
+                                    .font(.caption2)
+                            } maximumValueLabel: {
+                                Text("\(localGoalReps)")
+                                    .font(.caption2)
+                            }
+                            .gaugeStyle(.accessoryCircular)
+                            .tint(repsGradient)
+                            .scaleEffect(1.5)
+                            Text("Reps")
+                                .font(.callout)
+                                .foregroundColor(.gray)
+                                .padding(.top, 10)
+                        }
+
+                        VStack(spacing: 10) {
+                            Gauge(value: Double(currentMaxDuration), in: 0...Double(localGoalDuration)) {
+                                Text("Duration")
+                            } currentValueLabel: {
+                                Text("\(goalDurationProgress)%")
+                                    .font(.headline)
+                            } minimumValueLabel: {
+                                Text("0")
+                                    .font(.caption2)
+                            } maximumValueLabel: {
+                                Text("\(localGoalDuration)")
+                                    .font(.caption2)
+                            }
+                            .gaugeStyle(.accessoryCircular)
+                            .tint(durationGradient)
+                            .scaleEffect(1.5)
+                            Text("Duration(min)")
+                                .font(.callout)
+                                .foregroundColor(.gray)
+                                .padding(.top, 10)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.9)
+                    }
+                }
+                .padding(.bottom, 20)
+                .padding(.top, 50)
+                .padding(.horizontal, 20)
+                .background(glassBackground)
+                .padding(.bottom, 10)
+                .padding(.top, -10)
             }
-            .onAppear {
-                loadGoals()
-                updateMaxValues()
-            }
-            .onChange(of: exercise) { loadGoals() }
-            .onChange(of: exerciseGoalsData) { loadGoals() }
         }
+        .sheet(isPresented: $showEditSheet) {
+            EditExerciseGoalsSheet(
+                exercise: $exercise,
+                showEditSheet: $showEditSheet,
+                goalWeight: $localGoalWeight,
+                goalReps: $localGoalReps,
+                goalDuration: $localGoalDuration,
+                onSave: saveGoals
+            )
+        }
+        .onAppear {
+            loadGoals()
+            updateMaxValues()
+        }
+        .onChange(of: exercise) { loadGoals() }
+        .onChange(of: exerciseGoalsData) { loadGoals() }
+    }
+
+    private var headerView: some View {
+        HStack {
+            Image(systemName: "figure.strengthtraining.traditional")
+                .foregroundStyle(.gray)
+                .font(.subheadline)
+                .padding(.trailing, -5)
+            Text("PERFORMANCE GOALS")
+                .foregroundStyle(.gray)
+                .font(.subheadline)
+            Spacer()
+            Button(action: {
+                showEditSheet.toggle()
+            }, label: {
+                if localGoalWeight <= 0 && localGoalReps <= 0 && localGoalDuration <= 0 {
+                    Text("Add Goals")
+                } else {
+                    Text("Edit Goals")
+                }
+            })
+        }
+        .padding(.horizontal, 10)
+        .padding(.top, 40)
     }
 
     private var glassBackground: some View {
@@ -178,7 +197,7 @@ struct GoalGaugeSection: View {
             .padding(.top, 10)
     }
 
-    // MARK: - Private functions
+    // MARK: - Private Functions
     private func updateMaxValues() {
         let sets = exerciseSetSummaries.compactMap { $0.exerciseSet }
         if let maxWeight = getMaxWeightForExercise(exercise, in: sets) {
@@ -254,16 +273,12 @@ struct GoalGaugeSection: View {
             .compactMap { $0.duration }
             .max()
     }
-
 }
 
 // MARK: - Previews
 #Preview("Light Mode") {
     @Previewable @State var sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
     @Previewable @State var showEditSheet = false
-    @Previewable @State var goalWeight: Double = 50.0
-    @Previewable @State var goalReps: Int = 20
-    @Previewable @State var goalDuration: Int = 90
 
     let sampleSummaries = [
         ExerciseSetSummary.sample(
@@ -276,28 +291,6 @@ struct GoalGaugeSection: View {
             weight: 20.0,
             repsReported: 10,
             exerciseSet: ExerciseSet.sample(id: "set1", exercise: sampleExercise)
-        ),
-        ExerciseSetSummary.sample(
-            id: "2",
-            exerciseSetID: "set2",
-            workoutSummaryID: nil,
-            startedAt: Date().addingTimeInterval(-86400),
-            completedAt: Date().addingTimeInterval(-86400),
-            timeSpentActive: 60,
-            weight: 25.0,
-            repsReported: 12,
-            exerciseSet: ExerciseSet.sample(id: "set2", exercise: sampleExercise)
-        ),
-        ExerciseSetSummary.sample(
-            id: "3",
-            exerciseSetID: "set3",
-            workoutSummaryID: nil,
-            startedAt: Date(),
-            completedAt: Date(),
-            timeSpentActive: 60,
-            weight: 30.0,
-            repsReported: 15,
-            exerciseSet: ExerciseSet.sample(id: "set3", exercise: sampleExercise)
         )
     ]
 
@@ -314,9 +307,6 @@ struct GoalGaugeSection: View {
 #Preview("Dark Mode") {
     @Previewable @State var sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
     @Previewable @State var showEditSheet = false
-    @Previewable @State var goalWeight: Double = 50.0
-    @Previewable @State var goalReps: Int = 20
-    @Previewable @State var goalDuration: Int = 90
 
     let sampleSummaries = [
         ExerciseSetSummary.sample(
@@ -329,28 +319,6 @@ struct GoalGaugeSection: View {
             weight: 20.0,
             repsReported: 10,
             exerciseSet: ExerciseSet.sample(id: "set1", exercise: sampleExercise)
-        ),
-        ExerciseSetSummary.sample(
-            id: "2",
-            exerciseSetID: "set2",
-            workoutSummaryID: nil,
-            startedAt: Date().addingTimeInterval(-86400),
-            completedAt: Date().addingTimeInterval(-86400),
-            timeSpentActive: 60,
-            weight: 25.0,
-            repsReported: 12,
-            exerciseSet: ExerciseSet.sample(id: "set2", exercise: sampleExercise)
-        ),
-        ExerciseSetSummary.sample(
-            id: "3",
-            exerciseSetID: "set3",
-            workoutSummaryID: nil,
-            startedAt: Date(),
-            completedAt: Date(),
-            timeSpentActive: 60,
-            weight: 30.0,
-            repsReported: 15,
-            exerciseSet: ExerciseSet.sample(id: "set3", exercise: sampleExercise)
         )
     ]
 

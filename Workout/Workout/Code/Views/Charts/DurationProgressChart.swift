@@ -103,6 +103,10 @@ struct DurationProgressChart: View {
                 .padding()
                 .cornerRadius(10)
             }
+        } else {
+            ContentUnavailableView("No duration data for this time period.",
+                                   systemImage: "chart.xyaxis.line",
+                                   description: Text("Try another time period."))
         }
     }
 

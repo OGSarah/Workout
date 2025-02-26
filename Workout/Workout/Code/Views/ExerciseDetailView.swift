@@ -143,7 +143,6 @@ struct ExerciseDetailView: View {
     }
 
     private var editGoalsSheet: some View {
-        // Updated to match the new EditExerciseGoalsSheet requirements
         EditExerciseGoalsSheet(
             exercise: $exercise,
             showEditSheet: $showEditSheet,

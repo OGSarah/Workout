@@ -99,6 +99,10 @@ struct RepsProgressChart: View {
                 .padding()
                 .cornerRadius(10)
             }
+        } else {
+            ContentUnavailableView("No reps data for this time period.",
+                                   systemImage: "chart.bar.xaxis",
+                                   description: Text("Try another time period."))
         }
     }
 
