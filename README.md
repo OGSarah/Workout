@@ -28,12 +28,28 @@ Here are some screenshots showcasing the app's features:
 
 <div align="center">
   <div style="border: 2px solid white; border-radius: 10px;">
-    <img width="16%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/recipelistdarkmode.png">
-    <img width="16%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/recipelistlightmode.png">
-    <img width="16%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/recipedetaildarkmode.png">
-    <img width="16%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/recipedetaillightmode.png">
-    <img width="16%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/searchfunctionality.png">
-    <img width="16%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/webview.png">
+    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/listview_dark.png">
+    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/listview_light.png">
+    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/nogoals_dark.png">
+    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/nogoals_light.png">
+      </div>
+</div>
+
+<div align="center">
+  <div style="border: 2px solid white; border-radius: 10px;">
+    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/editsheet_dark.png">
+    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/editsheet_light.png">
+    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/nodataCharts_dark.png">
+    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/nodatacharts_light.png">
+     </div>
+</div>
+
+<div align="center">
+  <div style="border: 2px solid white; border-radius: 10px;">
+    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/withgoals_dark.png">
+    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/withgoals_light.png">
+    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/restofscreenwithgoals_dark.png">
+    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/restofscreenwithgoals_light.png">    
   </div>
 </div>
 
