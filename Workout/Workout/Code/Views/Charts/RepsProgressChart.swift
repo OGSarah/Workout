@@ -27,6 +27,14 @@ struct RepsProgressChart: View {
             .sorted { $0.date < $1.date }
     }
 
+    private var maxValuePlusTen: Double {
+        if goalReps > 0 {
+            return Double(goalReps) + 10.0
+        } else {
+            return Double(repsData.map { $0.value }.max() ?? 0) + 10.0
+        }
+    }
+
     private var goalReps: Int {
         if let data = try? JSONDecoder().decode([String: ExerciseGoals].self, from: exerciseGoalsData),
            let goals = data[exerciseName] {
@@ -50,11 +58,6 @@ struct RepsProgressChart: View {
                             y: .value("Reps", dataPoint.value)
                         )
                         .foregroundStyle(.yellow)
-                        .annotation(position: .top) {
-                            Text("\(Int(dataPoint.value))")
-                                .font(.caption)
-                                .foregroundColor(Color.darkYellow)
-                        }
                         RuleMark(y: .value("Goal", goalReps))
                             .foregroundStyle(.teal)
                             .lineStyle(StrokeStyle(lineWidth: 2, dash: [5, 5]))
@@ -69,7 +72,7 @@ struct RepsProgressChart: View {
                     }
                 }
                 .frame(height: 200)
-                .chartYScale(domain: 0...maxValue(repsData))
+                .chartYScale(domain: 0...maxValuePlusTen)
                 .chartXAxis {
                     switch timePeriod {
                     case .week:
@@ -129,14 +132,6 @@ struct RepsProgressChart: View {
     }
 
     // MARK: - Private Functions
-    private func maxValue(_ data: [(date: Date, value: Double)]) -> Double {
-        if goalReps > 0 {
-            return Double(goalReps)
-        } else {
-            return Double(data.map { $0.value }.max() ?? 100.0) + 10.0
-        }
-    }
-
     private func filterSummariesByTimePeriod(_ summaries: [ExerciseSetSummary], for period: TimePeriod) -> [ExerciseSetSummary] {
         let now = Date()
         return summaries.filter { summary in
