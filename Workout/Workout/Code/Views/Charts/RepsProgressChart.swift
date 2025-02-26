@@ -37,7 +37,7 @@ struct RepsProgressChart: View {
 
     // MARK: - Main View
     var body: some View {
-        if !repsData.isEmpty {
+        if !repsData.isEmpty && repsData.contains(where: { $0.value != 0 }) {
             VStack(alignment: .leading, spacing: 10) {
                 Text("Reps Progress")
                     .font(.headline)

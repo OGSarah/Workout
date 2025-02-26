@@ -29,7 +29,7 @@ struct WeightProgressChart: View {
 
     private var maxValuePlusTen: Double {
         if goalWeight > 0 {
-            return goalWeight + 10
+            return goalWeight + 10.0
         } else {
             return Double(weightData.map { $0.value }.max() ?? 0) + 10.0
         }
@@ -45,7 +45,7 @@ struct WeightProgressChart: View {
 
     // MARK: - Main View
     var body: some View {
-        if !weightData.isEmpty {
+        if !weightData.isEmpty && weightData.contains(where: { $0.value != 0 }) {
             VStack(alignment: .leading, spacing: 10) {
                 Text("Weight Progress (lbs)")
                     .font(.headline)

@@ -37,7 +37,7 @@ struct DurationProgressChart: View {
 
     // MARK: - Main View
     var body: some View {
-        if !durationData.isEmpty {
+        if !durationData.isEmpty && durationData.contains(where: { $0.value != 0 }) {
             VStack(alignment: .leading, spacing: 10) {
                 Text("Duration Progress (min)")
                     .font(.headline)
