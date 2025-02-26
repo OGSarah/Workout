@@ -46,6 +46,5 @@ Here are some screenshots showcasing the app's features:
 - Used Core Data to save all of the model related data and goals, rather than having to fetch and iterate through the raw json each time.
 - Added unit and UI tests.
 - Refactored the code so there isn't duplicate functionality throughout the charts.
-- Handled the cases where there was no data for weight, reps, or time.
-- Added UI for asking the user to input goals, rather than showing gauges all at 0%.
+- Fixed the runtime Swift Charts warning.
 
