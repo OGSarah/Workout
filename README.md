@@ -37,10 +37,6 @@ Here are some screenshots showcasing the app's features:
   </div>
 </div>
 
-## Recorded Demo (to be added):
-
-[Watch the Recorded Demo](https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/WorkoutVideo.mov)
-
 ## If I had more time I would have:
 - Used MVVM architecture for better separate of code and easier testing.
 - Used Core Data to save all of the model related data and goals, rather than having to fetch and iterate through the raw json each time.
