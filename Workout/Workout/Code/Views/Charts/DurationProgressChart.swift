@@ -66,7 +66,7 @@ struct DurationProgressChart: View {
                         .annotation(position: .top, alignment: .trailing) {
                             Text("Goal: \(goalDuration) min")
                                 .font(.caption)
-                                .foregroundColor(.teal)
+                                .foregroundStyle(.teal)
                                 .padding(2)
                                 .background(Color.teal.opacity(0.1))
                                 .cornerRadius(4)

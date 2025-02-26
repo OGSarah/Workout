@@ -74,7 +74,7 @@ struct WeightProgressChart: View {
                         .annotation(position: .top, alignment: .trailing) {
                             Text("Goal: \(Int(goalWeight)) lbs")
                                 .font(.caption)
-                                .foregroundColor(.teal)
+                                .foregroundStyle(.teal)
                                 .padding(2)
                                 .background(Color.teal.opacity(0.1))
                                 .cornerRadius(4)

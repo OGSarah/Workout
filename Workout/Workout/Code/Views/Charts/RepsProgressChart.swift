@@ -58,18 +58,18 @@ struct RepsProgressChart: View {
                             y: .value("Reps", dataPoint.value)
                         )
                         .foregroundStyle(.yellow)
+                    }
                         RuleMark(y: .value("Goal", goalReps))
                             .foregroundStyle(.teal)
                             .lineStyle(StrokeStyle(lineWidth: 2, dash: [5, 5]))
                             .annotation(position: .top, alignment: .trailing) {
-                                Text("Goal: \(goalReps)")
+                                Text("Goal: \(goalReps) reps")
                                     .font(.caption)
-                                    .foregroundColor(.teal)
+                                    .foregroundStyle(.teal)
                                     .padding(2)
                                     .background(Color.teal.opacity(0.1))
                                     .cornerRadius(4)
                             }
-                    }
                 }
                 .frame(height: 200)
                 .chartYScale(domain: 0...maxValuePlusTen)
