@@ -235,7 +235,7 @@ struct DurationProgressChart: View {
     .preferredColorScheme(.light)
 }
 
-#Preview("Light Mode") {
+#Preview("Dark Mode") {
     let sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
     let sampleSummaries = [
         ExerciseSetSummary.sample(
