@@ -40,6 +40,7 @@ struct GoalGaugeSection: View {
     @State private var localGoalReps: Int = 0
     @State private var localGoalDuration: Int = 0
 
+    // MARK: - Main View
     var body: some View {
         VStack {
             headerView
@@ -149,6 +150,7 @@ struct GoalGaugeSection: View {
         .onChange(of: exerciseGoalsData) { loadGoals() }
     }
 
+    // MARK: - Subviews
     private var headerView: some View {
         HStack {
             Image(systemName: "figure.strengthtraining.traditional")
@@ -253,26 +255,27 @@ struct GoalGaugeSection: View {
         }
     }
 
-    func getMaxWeightForExercise(_ exercise: Exercise, in sets: [ExerciseSet]) -> Float? {
+    private func getMaxWeightForExercise(_ exercise: Exercise, in sets: [ExerciseSet]) -> Float? {
         sets
             .filter { $0.exercise?.id == exercise.id }
             .compactMap { $0.weight }
             .max()
     }
 
-    func getMaxRepsForExercise(from summaries: [ExerciseSetSummary]) -> Int? {
+    private func getMaxRepsForExercise(from summaries: [ExerciseSetSummary]) -> Int? {
         summaries
             .filter { $0.exerciseSet?.exercise?.id == exercise.id }
             .compactMap { $0.repsCompleted }
             .max()
     }
 
-    func getMaxDurationForExercise(_ exercise: Exercise, in sets: [ExerciseSet]) -> Int? {
+    private func getMaxDurationForExercise(_ exercise: Exercise, in sets: [ExerciseSet]) -> Int? {
         sets
             .filter { $0.exercise?.id == exercise.id }
             .compactMap { $0.duration }
             .max()
     }
+
 }
 
 // MARK: - Previews

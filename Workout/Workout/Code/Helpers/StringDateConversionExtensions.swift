@@ -42,7 +42,6 @@ extension Date {
     }
 }
 
-// TODO: Do I really need to add this?
 extension Date {
     func asString() -> String {
         let formatter = ISO8601DateFormatter()

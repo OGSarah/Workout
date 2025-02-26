@@ -25,6 +25,7 @@ struct RepsProgressChart: View {
             .sorted { $0.date < $1.date }
     }
 
+    // MARK: - Main View
     var body: some View {
         if !repsData.isEmpty {
             VStack(alignment: .leading, spacing: 10) {
@@ -106,6 +107,7 @@ struct RepsProgressChart: View {
         }
     }
 
+    // MARK: - Private Functions
     private func maxValue(_ data: [(date: Date, value: Double)]) -> Double {
         (data.map { $0.value }.max() ?? 100.0) + 10.0
     }
@@ -180,18 +182,19 @@ struct RepsProgressChart: View {
         }
         return dates.reversed()
     }
+
 }
 
 // MARK: - Previews
-#Preview("Light Mode - Week") {
+#Preview("Dark Mode") {
     let sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
     let sampleSummaries = [
         ExerciseSetSummary.sample(
             id: "1",
             exerciseSetID: "set1",
             workoutSummaryID: nil,
-            startedAt: Date().addingTimeInterval(-86400 * 2),
-            completedAt: Date().addingTimeInterval(-86400 * 2),
+            startedAt: Date().addingTimeInterval(-86400 * 20),
+            completedAt: Date().addingTimeInterval(-86400 * 20),
             timeSpentActive: 60,
             weight: 20.0,
             repsReported: 10,
@@ -201,8 +204,8 @@ struct RepsProgressChart: View {
             id: "2",
             exerciseSetID: "set2",
             workoutSummaryID: nil,
-            startedAt: Date().addingTimeInterval(-86400),
-            completedAt: Date().addingTimeInterval(-86400),
+            startedAt: Date().addingTimeInterval(-86400 * 10),
+            completedAt: Date().addingTimeInterval(-86400 * 10),
             timeSpentActive: 60,
             weight: 25.0,
             repsReported: 12,
@@ -223,12 +226,12 @@ struct RepsProgressChart: View {
     return RepsProgressChart(
         exerciseSetSummaries: sampleSummaries,
         exerciseName: "Pushups",
-        timePeriod: .week
+        timePeriod: .month
     )
-    .preferredColorScheme(.light)
+    .preferredColorScheme(.dark)
 }
 
-#Preview("Dark Mode - Month") {
+#Preview("Dark Mode") {
     let sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
     let sampleSummaries = [
         ExerciseSetSummary.sample(

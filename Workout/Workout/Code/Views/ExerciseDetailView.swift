@@ -191,6 +191,7 @@ struct ExerciseDetailView: View {
                     .mask(RoundedRectangle(cornerRadius: 15).fill(.black))
             }
     }
+
 }
 
 // MARK: - Previews

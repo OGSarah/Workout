@@ -91,6 +91,7 @@ struct ExerciseListView: View {
             }
         }
     }
+
 }
 
 // MARK: - Previews

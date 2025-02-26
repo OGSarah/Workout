@@ -25,6 +25,7 @@ struct DurationProgressChart: View {
             .sorted { $0.date < $1.date }
     }
 
+    // MARK: - Main View
     var body: some View {
         if !durationData.isEmpty {
             VStack(alignment: .leading, spacing: 10) {
@@ -110,6 +111,7 @@ struct DurationProgressChart: View {
         }
     }
 
+    // MARK: Private Functions
     private func maxValue(_ data: [(date: Date, value: Double)]) -> Double {
         (data.map { $0.value }.max() ?? 100.0) + 10.0
     }
@@ -184,10 +186,11 @@ struct DurationProgressChart: View {
         }
         return dates.reversed()
     }
+
 }
 
 // MARK: - Previews
-#Preview("Light Mode - Week") {
+#Preview("Light Mode") {
     let sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
     let sampleSummaries = [
         ExerciseSetSummary.sample(
@@ -232,15 +235,15 @@ struct DurationProgressChart: View {
     .preferredColorScheme(.light)
 }
 
-#Preview("Dark Mode - Month") {
+#Preview("Light Mode") {
     let sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
     let sampleSummaries = [
         ExerciseSetSummary.sample(
             id: "1",
             exerciseSetID: "set1",
             workoutSummaryID: nil,
-            startedAt: Date().addingTimeInterval(-86400 * 20),
-            completedAt: Date().addingTimeInterval(-86400 * 20),
+            startedAt: Date().addingTimeInterval(-86400 * 2),
+            completedAt: Date().addingTimeInterval(-86400 * 2),
             timeSpentActive: 60,
             weight: 20.0,
             repsReported: 10,
@@ -250,8 +253,8 @@ struct DurationProgressChart: View {
             id: "2",
             exerciseSetID: "set2",
             workoutSummaryID: nil,
-            startedAt: Date().addingTimeInterval(-86400 * 10),
-            completedAt: Date().addingTimeInterval(-86400 * 10),
+            startedAt: Date().addingTimeInterval(-86400),
+            completedAt: Date().addingTimeInterval(-86400),
             timeSpentActive: 60,
             weight: 25.0,
             repsReported: 12,
@@ -272,7 +275,7 @@ struct DurationProgressChart: View {
     return DurationProgressChart(
         exerciseSetSummaries: sampleSummaries,
         exerciseName: "Pushups",
-        timePeriod: .month
+        timePeriod: .week
     )
     .preferredColorScheme(.dark)
 }

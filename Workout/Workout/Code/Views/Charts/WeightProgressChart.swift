@@ -133,6 +133,7 @@ struct WeightProgressChart: View {
         }
     }
 
+    // MARK: - Private Functions
     private func filterSummariesByTimePeriod(_ summaries: [ExerciseSetSummary], for period: TimePeriod) -> [ExerciseSetSummary] {
         let now = Date()
         return summaries.filter { summary in
@@ -162,7 +163,6 @@ struct WeightProgressChart: View {
         return (0...7).compactMap { calendar.date(byAdding: .day, value: $0, to: mondayStart) }
     }
 
-    // Helper to get Monday start dates for the current month
     private func weekStartDatesForMonth() -> [Date] {
         let calendar = Calendar.current
         let now = Date()
@@ -179,7 +179,6 @@ struct WeightProgressChart: View {
         return dates
     }
 
-    // Helper to get start dates for the last 6 months
     private func monthStartDatesForSixMonths() -> [Date] {
         let calendar = Calendar.current
         let now = Date()
@@ -193,7 +192,6 @@ struct WeightProgressChart: View {
         return dates.reversed() // Reverse to show oldest to newest
     }
 
-    // Helper to get start dates for the last 12 months
     private func monthStartDatesForYear() -> [Date] {
         let calendar = Calendar.current
         let now = Date()
@@ -209,7 +207,7 @@ struct WeightProgressChart: View {
 }
 
 // MARK: - Previews
-#Preview("Week - Light Mode") {
+#Preview("Light Mode") {
     let sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
     let sampleSummaries = [
         ExerciseSetSummary.sample(
@@ -255,15 +253,15 @@ struct WeightProgressChart: View {
     .padding(20)
 }
 
-#Preview("Month - Dark Mode") {
+#Preview("Dark Mode") {
     let sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
     let sampleSummaries = [
         ExerciseSetSummary.sample(
             id: "1",
             exerciseSetID: "set1",
             workoutSummaryID: nil,
-            startedAt: Date().addingTimeInterval(-86400 * 20), // Earlier in month
-            completedAt: Date().addingTimeInterval(-86400 * 20),
+            startedAt: Date().addingTimeInterval(-86400 * 2),
+            completedAt: Date().addingTimeInterval(-86400 * 2),
             timeSpentActive: 60,
             weight: 20.0,
             repsReported: 10,
@@ -273,8 +271,8 @@ struct WeightProgressChart: View {
             id: "2",
             exerciseSetID: "set2",
             workoutSummaryID: nil,
-            startedAt: Date().addingTimeInterval(-86400 * 10),
-            completedAt: Date().addingTimeInterval(-86400 * 10),
+            startedAt: Date().addingTimeInterval(-86400),
+            completedAt: Date().addingTimeInterval(-86400),
             timeSpentActive: 60,
             weight: 25.0,
             repsReported: 12,
@@ -295,7 +293,7 @@ struct WeightProgressChart: View {
     return WeightProgressChart(
         exerciseSetSummaries: sampleSummaries,
         exerciseName: "Pushups",
-        timePeriod: .month
+        timePeriod: .week
     )
     .preferredColorScheme(.dark)
     .padding(20)

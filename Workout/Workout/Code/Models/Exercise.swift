@@ -103,7 +103,6 @@ public enum Side: String {
 }
 
 // Helper to create an Exercise from JSON data for preview.
-
 extension Exercise {
     static func sample(id: String, name: String) -> Exercise {
         let json = """

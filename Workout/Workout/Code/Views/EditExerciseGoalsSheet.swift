@@ -15,6 +15,7 @@ struct EditExerciseGoalsSheet: View {
     @Binding var goalDuration: Int
     let onSave: () -> Void
 
+    // MARK: - Main View
     var body: some View {
         NavigationStack {
             Form {
