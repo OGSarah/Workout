@@ -13,6 +13,8 @@ struct DurationProgressChart: View {
     let exerciseName: String
     let timePeriod: TimePeriod
 
+    @AppStorage("exerciseGoals") private var exerciseGoalsData: Data = Data()
+
     private var durationData: [(date: Date, value: Double)] {
         let filteredSummaries = filterSummariesByTimePeriod(exerciseSetSummaries, for: timePeriod)
         return filteredSummaries
@@ -23,6 +25,14 @@ struct DurationProgressChart: View {
                 return (date: date, value: time)
             }
             .sorted { $0.date < $1.date }
+    }
+
+    private var goalDuration: Int {
+        if let data = try? JSONDecoder().decode([String: ExerciseGoals].self, from: exerciseGoalsData),
+           let goals = data[exerciseName] {
+            return Int(goals.duration)
+        }
+        return 0
     }
 
     // MARK: - Main View
@@ -50,6 +60,17 @@ struct DurationProgressChart: View {
                         .symbolSize(CGSize(width: 10, height: 10))
                         .foregroundStyle(.green)
                     }
+                    RuleMark(y: .value("Goal", goalDuration))
+                        .foregroundStyle(.teal)
+                        .lineStyle(StrokeStyle(lineWidth: 2, dash: [5, 5]))
+                        .annotation(position: .top, alignment: .trailing) {
+                            Text("Goal: \(goalDuration) min")
+                                .font(.caption)
+                                .foregroundColor(.teal)
+                                .padding(2)
+                                .background(Color.teal.opacity(0.1))
+                                .cornerRadius(4)
+                        }
                 }
                 .frame(height: 200)
                 .chartYScale(domain: 0...maxValue(durationData))
@@ -113,7 +134,11 @@ struct DurationProgressChart: View {
 
     // MARK: Private Functions
     private func maxValue(_ data: [(date: Date, value: Double)]) -> Double {
-        (data.map { $0.value }.max() ?? 100.0) + 10.0
+        if goalDuration > 0 {
+            return Double(goalDuration) + 10.0
+        } else {
+            return (data.map { $0.value }.max() ?? 100.0) + 10.0
+        }
     }
 
     private func allWeekDays() -> [Date] {

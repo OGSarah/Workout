@@ -13,6 +13,8 @@ struct WeightProgressChart: View {
     let exerciseName: String
     let timePeriod: TimePeriod
 
+    @AppStorage("exerciseGoals") private var exerciseGoalsData: Data = Data()
+
     private var weightData: [(date: Date, value: Double)] {
         let filteredSummaries = filterSummariesByTimePeriod(exerciseSetSummaries, for: timePeriod)
         return filteredSummaries
@@ -26,9 +28,22 @@ struct WeightProgressChart: View {
     }
 
     private var maxValuePlusTen: Double {
-        (weightData.map { $0.value }.max() ?? 0) + 10.0
+        if goalWeight > 0 {
+            return goalWeight + 10
+        } else {
+            return Double(weightData.map { $0.value }.max() ?? 0) + 10.0
+        }
     }
 
+    private var goalWeight: Double {
+        if let data = try? JSONDecoder().decode([String: ExerciseGoals].self, from: exerciseGoalsData),
+           let goals = data[exerciseName] {
+            return goals.weight
+        }
+        return 0.0
+    }
+
+    // MARK: - Main View
     var body: some View {
         if !weightData.isEmpty {
             VStack(alignment: .leading, spacing: 10) {
@@ -53,11 +68,11 @@ struct WeightProgressChart: View {
                         .symbolSize(CGSize(width: 10, height: 10))
                         .foregroundStyle(Color.red)
                     }
-                    RuleMark(y: .value("Goal", 300.0))
+                    RuleMark(y: .value("Goal", goalWeight))
                         .foregroundStyle(.teal)
                         .lineStyle(StrokeStyle(lineWidth: 2, dash: [5, 5]))
                         .annotation(position: .top, alignment: .trailing) {
-                            Text("Goal: \(Int(300.0)) lbs")
+                            Text("Goal: \(Int(goalWeight)) lbs")
                                 .font(.caption)
                                 .foregroundColor(.teal)
                                 .padding(2)

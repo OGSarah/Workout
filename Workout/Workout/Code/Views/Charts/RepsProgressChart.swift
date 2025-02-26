@@ -13,6 +13,8 @@ struct RepsProgressChart: View {
     let exerciseName: String
     let timePeriod: TimePeriod
 
+    @AppStorage("exerciseGoals") private var exerciseGoalsData: Data = Data()
+
     private var repsData: [(date: Date, value: Double)] {
         let filteredSummaries = filterSummariesByTimePeriod(exerciseSetSummaries, for: timePeriod)
         return filteredSummaries
@@ -23,6 +25,14 @@ struct RepsProgressChart: View {
                 return (date: date, value: reps)
             }
             .sorted { $0.date < $1.date }
+    }
+
+    private var goalReps: Int {
+        if let data = try? JSONDecoder().decode([String: ExerciseGoals].self, from: exerciseGoalsData),
+           let goals = data[exerciseName] {
+            return Int(goals.reps)
+        }
+        return 0
     }
 
     // MARK: - Main View
@@ -45,6 +55,17 @@ struct RepsProgressChart: View {
                                 .font(.caption)
                                 .foregroundColor(Color.darkYellow)
                         }
+                        RuleMark(y: .value("Goal", goalReps))
+                            .foregroundStyle(.teal)
+                            .lineStyle(StrokeStyle(lineWidth: 2, dash: [5, 5]))
+                            .annotation(position: .top, alignment: .trailing) {
+                                Text("Goal: \(goalReps)")
+                                    .font(.caption)
+                                    .foregroundColor(.teal)
+                                    .padding(2)
+                                    .background(Color.teal.opacity(0.1))
+                                    .cornerRadius(4)
+                            }
                     }
                 }
                 .frame(height: 200)
@@ -109,7 +130,11 @@ struct RepsProgressChart: View {
 
     // MARK: - Private Functions
     private func maxValue(_ data: [(date: Date, value: Double)]) -> Double {
-        (data.map { $0.value }.max() ?? 100.0) + 10.0
+        if goalReps > 0 {
+            return Double(goalReps)
+        } else {
+            return Double(data.map { $0.value }.max() ?? 100.0) + 10.0
+        }
     }
 
     private func filterSummariesByTimePeriod(_ summaries: [ExerciseSetSummary], for period: TimePeriod) -> [ExerciseSetSummary] {
