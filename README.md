@@ -22,7 +22,7 @@ A simple SwiftUI app that shows a client's workout performance over time.
   </div>
 </div>
 
-## Screenshots (to be added):
+## Screenshots:
 
 Here are some screenshots showcasing the app's features:
 
@@ -32,17 +32,21 @@ Here are some screenshots showcasing the app's features:
     <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/listview_light.png">
     <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/nogoals_dark.png">
     <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/nogoals_light.png">
-      </div>
+  </div>
 </div>
+
+<br><br> 
 
 <div align="center">
   <div style="border: 2px solid white; border-radius: 10px;">
     <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/editsheet_dark.png">
     <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/editsheet_light.png">
     <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/nodataCharts_dark.png">
-    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/nodatacharts_light.png">
-     </div>
+    `<img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/nodatacharts_light.png">
+  </div>
 </div>
+
+<br><br>
 
 <div align="center">
   <div style="border: 2px solid white; border-radius: 10px;">
