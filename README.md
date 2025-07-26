@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/Pearljam66/Workout/805402c2580b8cdea6aec8a7e9722b9676289345/Workout/Workout/Assets.xcassets/AppIcon.appiconset/workout_any.png" width="150" style="border: 3px solid white; border-radius: 15px; vertical-align: middle; margin-right: 20px;">
+  <img src="https://github.com/OGSarah/Workout/blob/e34b0b0c55620b4afc4333ffed21f39d8860abe4/Workout/Workout/Assets.xcassets/AppIcon.appiconset/workout_any.png" width="150" style="border: 3px solid white; border-radius: 15px; vertical-align: middle; margin-right: 20px;">
   <h1 style="display: inline-block; vertical-align: middle;">Workout</h1>
 </div>
 
@@ -18,7 +18,7 @@ A simple SwiftUI app that shows a client's workout performance over time.
 ## Ideation Phase:
 <div align="center">
   <div style="border: 2px solid white; border-radius: 10px;">
-    <img width="40%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/ideation.jpg">
+    <img width="40%" src="https://github.com/OGSarah/Workout/blob/e34b0b0c55620b4afc4333ffed21f39d8860abe4/screenshots/ideation.jpg">
   </div>
 </div>
 
@@ -28,10 +28,10 @@ Here are some screenshots showcasing the app's features:
 
 <div align="center">
   <div style="border: 2px solid white; border-radius: 10px;">
-    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/listview_dark.png">
-    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/listview_light.png">
-    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/nogoals_dark.png">
-    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/nogoals_light.png">
+    <img width="20%" src="https://github.com/OGSarah/Workout/blob/e34b0b0c55620b4afc4333ffed21f39d8860abe4/screenshots/listview_dark.png">
+    <img width="20%" src="https://github.com/OGSarah/Workout/blob/e34b0b0c55620b4afc4333ffed21f39d8860abe4/screenshots/listview_light.png">
+    <img width="20%" src="https://github.com/OGSarah/Workout/blob/e34b0b0c55620b4afc4333ffed21f39d8860abe4/screenshots/nogoals_dark.png">
+    <img width="20%" src="https://github.com/OGSarah/Workout/blob/e34b0b0c55620b4afc4333ffed21f39d8860abe4/screenshots/nogoals_light.png">
   </div>
 </div>
 
@@ -39,10 +39,10 @@ Here are some screenshots showcasing the app's features:
 
 <div align="center">
   <div style="border: 2px solid white; border-radius: 10px;">
-    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/editsheet_dark.png">
-    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/editsheet_light.png">
-    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/nodataCharts_dark.png">
-    `<img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/nodatacharts_light.png">
+    <img width="20%" src="https://github.com/OGSarah/Workout/blob/e34b0b0c55620b4afc4333ffed21f39d8860abe4/screenshots/editsheet_dark.png">
+    <img width="20%" src="https://github.com/OGSarah/Workout/blob/e34b0b0c55620b4afc4333ffed21f39d8860abe4/screenshots/editsheet_light.png">
+    <img width="20%" src="https://github.com/OGSarah/Workout/blob/e34b0b0c55620b4afc4333ffed21f39d8860abe4/screenshots/nodataCharts_dark.png">
+    `<img width="20%" src="https://github.com/OGSarah/Workout/blob/e34b0b0c55620b4afc4333ffed21f39d8860abe4/screenshots/nodatacharts_light.png">
   </div>
 </div>
 
@@ -50,10 +50,10 @@ Here are some screenshots showcasing the app's features:
 
 <div align="center">
   <div style="border: 2px solid white; border-radius: 10px;">
-    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/withgoals_dark.png">
-    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/withgoals_light.png">
-    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/restofscreenwithgoals_dark.png">
-    <img width="20%" src="https://raw.githubusercontent.com/Pearljam66/Workout/main/screenshots/restofscreenwithgoals_light.png">    
+    <img width="20%" src="https://github.com/OGSarah/Workout/blob/e34b0b0c55620b4afc4333ffed21f39d8860abe4/screenshots/withgoals_dark.png">
+    <img width="20%" src="https://github.com/OGSarah/Workout/blob/e34b0b0c55620b4afc4333ffed21f39d8860abe4/screenshots/withgoals_light.png">
+    <img width="20%" src="https://github.com/OGSarah/Workout/blob/e34b0b0c55620b4afc4333ffed21f39d8860abe4/screenshots/restofscreenwithgoals_dark.png">
+    <img width="20%" src="https://github.com/OGSarah/Workout/blob/e34b0b0c55620b4afc4333ffed21f39d8860abe4/screenshots/restofscreenwithgoals_light.png">    
   </div>
 </div>
 
