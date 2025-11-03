@@ -68,3 +68,10 @@ Here are some screenshots showcasing the app's features:
 - Added a description for each exercise on the ExerciseDetails screen since some of the lesser known exercises aren't as obvious as to what they are.
 - Added better preview data code, perhaps using more realistic data similar to the json data provided.
 
+## License
+Proprietary Software
+
+© 2025 SarahUniverse
+
+This software and its source code are the exclusive property of SarahUniverse.
+No part of this software may be reproduced, distributed, or transmitted in any form or by any means without prior written permission.
