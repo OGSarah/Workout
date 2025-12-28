@@ -28,10 +28,10 @@ Here are some screenshots showcasing the app's features:
 
 <div align="center">
   <div style="border: 2px solid white; border-radius: 10px;">
-    <img width="20%" src="https://github.com/OGSarah/Workout/blob/e34b0b0c55620b4afc4333ffed21f39d8860abe4/screenshots/listview_dark.png">
-    <img width="20%" src="https://github.com/OGSarah/Workout/blob/e34b0b0c55620b4afc4333ffed21f39d8860abe4/screenshots/listview_light.png">
-    <img width="20%" src="https://github.com/OGSarah/Workout/blob/e34b0b0c55620b4afc4333ffed21f39d8860abe4/screenshots/nogoals_dark.png">
-    <img width="20%" src="https://github.com/OGSarah/Workout/blob/e34b0b0c55620b4afc4333ffed21f39d8860abe4/screenshots/nogoals_light.png">
+    <img width="20%" src="https://github.com/OGSarah/Workout/blob/ab0105ee13b365545e63f0fee2d2d97e3372e53b/screenshots/listview_dark.png">
+    <img width="20%" src="https://github.com/OGSarah/Workout/blob/ab0105ee13b365545e63f0fee2d2d97e3372e53b/screenshots/listview_light.png">
+    <img width="20%" src="https://github.com/OGSarah/Workout/blob/ab0105ee13b365545e63f0fee2d2d97e3372e53b/screenshots/nogoals_dark.png">
+    <img width="20%" src="https://github.com/OGSarah/Workout/blob/ab0105ee13b365545e63f0fee2d2d97e3372e53b/screenshots/nogoals_light.png">
   </div>
 </div>
 
@@ -39,10 +39,10 @@ Here are some screenshots showcasing the app's features:
 
 <div align="center">
   <div style="border: 2px solid white; border-radius: 10px;">
-    <img width="20%" src="https://github.com/OGSarah/Workout/blob/e34b0b0c55620b4afc4333ffed21f39d8860abe4/screenshots/editsheet_dark.png">
-    <img width="20%" src="https://github.com/OGSarah/Workout/blob/e34b0b0c55620b4afc4333ffed21f39d8860abe4/screenshots/editsheet_light.png">
-    <img width="20%" src="https://github.com/OGSarah/Workout/blob/e34b0b0c55620b4afc4333ffed21f39d8860abe4/screenshots/nodataCharts_dark.png">
-    `<img width="20%" src="https://github.com/OGSarah/Workout/blob/e34b0b0c55620b4afc4333ffed21f39d8860abe4/screenshots/nodatacharts_light.png">
+    <img width="20%" src="https://github.com/OGSarah/Workout/blob/ab0105ee13b365545e63f0fee2d2d97e3372e53b/screenshots/editsheet_dark.png">
+    <img width="20%" src="https://github.com/OGSarah/Workout/blob/ab0105ee13b365545e63f0fee2d2d97e3372e53b/screenshots/editsheet_light.png">
+    <img width="20%" src="https://github.com/OGSarah/Workout/blob/ab0105ee13b365545e63f0fee2d2d97e3372e53b/screenshots/nodataCharts_dark.png">
+    `<img width="20%" src="https://github.com/OGSarah/Workout/blob/ab0105ee13b365545e63f0fee2d2d97e3372e53b/screenshots/nodatacharts_light.png">
   </div>
 </div>
 
@@ -50,10 +50,10 @@ Here are some screenshots showcasing the app's features:
 
 <div align="center">
   <div style="border: 2px solid white; border-radius: 10px;">
-    <img width="20%" src="https://github.com/OGSarah/Workout/blob/e34b0b0c55620b4afc4333ffed21f39d8860abe4/screenshots/withgoals_dark.png">
-    <img width="20%" src="https://github.com/OGSarah/Workout/blob/e34b0b0c55620b4afc4333ffed21f39d8860abe4/screenshots/withgoals_light.png">
-    <img width="20%" src="https://github.com/OGSarah/Workout/blob/e34b0b0c55620b4afc4333ffed21f39d8860abe4/screenshots/restofscreenwithgoals_dark.png">
-    <img width="20%" src="https://github.com/OGSarah/Workout/blob/e34b0b0c55620b4afc4333ffed21f39d8860abe4/screenshots/restofscreenwithgoals_light.png">    
+    <img width="20%" src="https://github.com/OGSarah/Workout/blob/ab0105ee13b365545e63f0fee2d2d97e3372e53b/screenshots/withgoals_dark.png">
+    <img width="20%" src="https://github.com/OGSarah/Workout/blob/ab0105ee13b365545e63f0fee2d2d97e3372e53b/screenshots/withgoals_light.png">
+    <img width="20%" src="https://github.com/OGSarah/Workout/blob/ab0105ee13b365545e63f0fee2d2d97e3372e53b/screenshots/restofscreenwithgoals_dark.png">
+    <img width="20%" src="https://github.com/OGSarah/Workout/blob/ab0105ee13b365545e63f0fee2d2d97e3372e53b/screenshots/restofscreenwithgoals_light.png">    
   </div>
 </div>
 
