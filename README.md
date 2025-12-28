@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://github.com/OGSarah/Workout/blob/e34b0b0c55620b4afc4333ffed21f39d8860abe4/Workout/Workout/Assets.xcassets/AppIcon.appiconset/workout_any.png" width="150" style="border: 3px solid white; border-radius: 15px; vertical-align: middle; margin-right: 20px;">
+  <img src="https://github.com/OGSarah/Workout/blob/fe64fb358a938738d21b74698f26ceb8f402594e/screenshots/AppIcon.png" width="300" style="border: 3px solid white; border-radius: 15px; vertical-align: middle; margin-right: 20px;">
   <h1 style="display: inline-block; vertical-align: middle;">Workout</h1>
 </div>
 
