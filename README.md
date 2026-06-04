@@ -3,7 +3,7 @@
   <h1 style="display: inline-block; vertical-align: middle;">Workout</h1>
 </div>
 
-A simple SwiftUI app that shows a client's workout performance over time.
+A SwiftUI app that shows a client's workout performance over time.
 
 ## Requirements:
 - Shows a single client their progress over time for each exercise.
