@@ -1,4 +1,8 @@
 {
+  "features" : [
+    "refractivity",
+    "specular-location"
+  ],
   "fill-specializations" : [
     {
       "value" : {
@@ -46,7 +50,7 @@
         },
         {
           "appearance" : "dark",
-          "value" : "overlay"
+          "value" : "hard-light"
         },
         {
           "appearance" : "tinted",
@@ -92,11 +96,37 @@
           }
         }
       ],
+      "lighting" : "individual",
+      "refractivity-specializations" : [
+        {
+          "value" : {
+            "depth" : 0.43132812500000006,
+            "enabled" : true,
+            "strength" : 0.00765625
+          }
+        },
+        {
+          "appearance" : "dark",
+          "value" : {
+            "depth" : 0.513515625,
+            "enabled" : true,
+            "strength" : -0.009921875
+          }
+        }
+      ],
       "shadow" : {
         "kind" : "layer-color",
         "opacity" : 0.5
       },
-      "specular" : true,
+      "specular-specializations" : [
+        {
+          "value" : "outside"
+        },
+        {
+          "appearance" : "dark",
+          "value" : "outside"
+        }
+      ],
       "translucency-specializations" : [
         {
           "appearance" : "tinted",
