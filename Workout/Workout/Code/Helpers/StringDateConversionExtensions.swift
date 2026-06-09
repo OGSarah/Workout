@@ -1,19 +1,20 @@
 //
 //  StringDateConversionExtensions.swift
-//  Future
+//  Workout
 //
 
 import Foundation
 
 extension Date {
 
-    public static let iso8601DateOnlyFormatter: ISO8601DateFormatter = {
+    // Formatters are configured once and only used for thread-safe read-only formatting/parsing.
+    nonisolated(unsafe) static let iso8601DateOnlyFormatter: ISO8601DateFormatter = {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withFullDate]
         return formatter
     }()
 
-    public static let iso8601DateFormatter: ISO8601DateFormatter = {
+    nonisolated(unsafe) static let iso8601DateFormatter: ISO8601DateFormatter = {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime,
                                    .withDashSeparatorInDate,
@@ -23,7 +24,7 @@ extension Date {
         return formatter
     }()
 
-    public static let rfc3339DateFormatterWithSubseconds: DateFormatter = {
+    static let rfc3339DateFormatterWithSubseconds: DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
         dateFormatter.dateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.SSS'Z'"
@@ -31,7 +32,7 @@ extension Date {
         return dateFormatter
     }()
 
-    public func asString(includeSeconds: Bool = true, includeSubseconds: Bool = true) -> String? {
+    func asString(includeSeconds: Bool = true, includeSubseconds: Bool = true) -> String? {
         if includeSeconds == false {
             return Date.iso8601DateOnlyFormatter.string(from: self)
         } else if includeSubseconds == true {
@@ -51,7 +52,7 @@ extension Date {
 
 extension String {
 
-    public func asDate() -> Date? {
+    func asDate() -> Date? {
         guard self != "0001-01-01" else {
             return nil
         }

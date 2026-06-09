@@ -14,7 +14,6 @@ extension Color {
 
     // Yellow
     static let lightYellow = Color(red: 1.0, green: 0.92, blue: 0.88)
-    static let brightYellow = Color(red: 1.0, green: 0.84, blue: 0.0)
     static let darkYellow = Color(red: 0.9, green: 0.7, blue: 0.0)
 
     // Green

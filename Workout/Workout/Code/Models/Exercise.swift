@@ -1,26 +1,26 @@
 //
 //  Exercise.swift
-//  Future
+//  Workout
 //
 
 import Foundation
 
 /// This is the exercise model, can be used to relate different sets in the same workouts or across different workouts
-public struct Exercise: Codable, Equatable, Identifiable {
-    public var id: String
-    public var name: String?
-    public var side: String?
-    public var description: String?
-    public var isAlternating: Bool = false
-    public var isDuration: Bool = false
-    public var isReps: Bool = false
-    public var isTwoDumbbells: Bool = false
-    public var isWeight: Bool = false
-    public var movementPatterns: String?
-    public var muscleGroups: String?
-    public var type: String?
+struct Exercise: Codable, Equatable, Identifiable {
+    var id: String
+    var name: String?
+    var side: String?
+    var description: String?
+    var isAlternating: Bool = false
+    var isDuration: Bool = false
+    var isReps: Bool = false
+    var isTwoDumbbells: Bool = false
+    var isWeight: Bool = false
+    var movementPatterns: String?
+    var muscleGroups: String?
+    var type: String?
 
-    public enum CodingKeys: String, CodingKey {
+    enum CodingKeys: String, CodingKey {
         case description = "description"
         case id = "id"
         case isAlternating = "is_alternating"
@@ -35,7 +35,7 @@ public struct Exercise: Codable, Equatable, Identifiable {
         case type = "type"
     }
 
-    public init(from decoder: Decoder) throws {
+    init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         self.description = try container.decodeIfPresent(String.self, forKey: .description)
@@ -52,7 +52,7 @@ public struct Exercise: Codable, Equatable, Identifiable {
         self.type = try container.decodeIfPresent(String.self, forKey: .type)
     }
 
-    public func encode(to encoder: Encoder) throws {
+    func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
         try container.encode(self.id, forKey: .id)
@@ -74,14 +74,14 @@ public struct Exercise: Codable, Equatable, Identifiable {
 // MARK: Helpers
 extension Exercise {
 
-    public var sideDisplayName: String? {
+    var sideDisplayName: String? {
         guard let side = side else { return nil }
         return Side(rawValue: side)?.displayName
     }
 
 }
 
-public enum Side: String {
+enum Side: String {
     case right = "right_side"
     case left = "left_side"
     case rightArm = "right_arm"
@@ -89,7 +89,7 @@ public enum Side: String {
     case rightLeg = "right_leg"
     case leftLeg = "left_leg"
 
-    public var displayName: String {
+    var displayName: String {
         switch self {
         case .left: return "Left Side"
         case .right: return "Right Side"
@@ -102,6 +102,7 @@ public enum Side: String {
 
 }
 
+#if DEBUG
 // Helper to create an Exercise from JSON data for preview.
 extension Exercise {
     static func sample(id: String, name: String) -> Exercise {
@@ -119,3 +120,4 @@ extension Exercise {
     }
 
 }
+#endif

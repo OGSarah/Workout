@@ -5,18 +5,13 @@
 //  Created by Sarah Clark on 2/21/25.
 //
 
+import SwiftData
 import SwiftUI
 
-enum TimePeriod {
-    case week, month, sixMonths, year
-}
-
+/// Shows a single exercise's goal gauges and progress charts, and lets the client edit goals.
 struct ExerciseDetailView: View {
-    @State private var exercise: Exercise
-    @State private var exerciseSetSummaries: [ExerciseSetSummary]
-    @Environment(\.colorScheme) var colorScheme
-    @State private var showEditSheet = false
-    @State private var timePeriod: TimePeriod = .week
+    @Environment(\.modelContext) private var modelContext
+    @State private var viewModel: ExerciseDetailViewModel
 
     private let backgroundGradient = LinearGradient(
         stops: [
@@ -28,23 +23,23 @@ struct ExerciseDetailView: View {
         endPoint: .bottom
     )
 
-    init(
-        exercise: Exercise,
-        exerciseSetSummaries: [ExerciseSetSummary]
-    ) {
-        self._exercise = State(initialValue: exercise)
-        self._exerciseSetSummaries = State(initialValue: exerciseSetSummaries)
+    init(exercise: Exercise, setSummaries: [ExerciseSetSummary], now: Date = Date()) {
+        _viewModel = State(initialValue: ExerciseDetailViewModel(exercise: exercise, setSummaries: setSummaries, now: now))
     }
 
     // MARK: - Main View
     var body: some View {
-        NavigationStack {
-            ZStack {
-                backgroundGradient
-                    .ignoresSafeArea()
-                mainScrollView
-            }
-            .navigationTitle(exercise.name ?? "Empty Name")
+        @Bindable var viewModel = viewModel
+
+        ZStack {
+            backgroundGradient
+                .ignoresSafeArea()
+            mainScrollView
+        }
+        .navigationTitle(viewModel.title)
+        .task { viewModel.connect(to: GoalStore(context: modelContext)) }
+        .sheet(isPresented: $viewModel.isEditingGoals) {
+            EditExerciseGoalsSheet(viewModel: viewModel)
         }
     }
 
@@ -52,235 +47,92 @@ struct ExerciseDetailView: View {
     private var mainScrollView: some View {
         ScrollView {
             VStack(alignment: .center, spacing: 20) {
-                goalGaugeSection
+                GoalGaugeSection(viewModel: viewModel)
                 performanceOverTimeSection
                 progressCharts
             }
             .padding(.horizontal)
-            .sheet(isPresented: $showEditSheet) {
-                editGoalsSheet
-            }
         }
-    }
-
-    private var goalGaugeSection: some View {
-        GoalGaugeSection(
-            exercise: $exercise,
-            showEditSheet: $showEditSheet,
-            exerciseSetSummaries: exerciseSetSummaries
-        )
     }
 
     private var performanceOverTimeSection: some View {
         VStack(alignment: .leading) {
-            performanceHeader
+            SectionHeader(title: "Performance Over Time", systemImage: "clock")
             timePeriodPicker
-                .padding(.horizontal, -15)
         }
     }
 
-    private var performanceHeader: some View {
-        HStack {
-            Image(systemName: "clock")
-                .foregroundStyle(.gray)
-                .font(.subheadline)
-                .padding(.trailing, -5)
-            Text("PERFORMANCE OVER TIME")
-                .foregroundStyle(.gray)
-                .font(.subheadline)
+    private var timePeriodPicker: some View {
+        @Bindable var viewModel = viewModel
+        return Picker("Time Period", selection: $viewModel.timePeriod) {
+            ForEach(TimePeriod.allCases) { period in
+                Text(period.title).tag(period)
+            }
         }
+        .pickerStyle(.segmented)
     }
 
     private var progressCharts: some View {
         VStack(spacing: 20) {
-            weightProgressChart
-            repsProgressChart
-            durationProgressChart
-        }
-    }
-
-    private var weightProgressChart: some View {
-        WeightProgressChart(
-            exerciseSetSummaries: exerciseSetSummaries,
-            exerciseName: exercise.name ?? "No Exercise Name",
-            timePeriod: timePeriod
-        )
-        .padding(.horizontal, 10)
-        .padding(.top, 10)
-        .padding(.bottom, 10)
-        .background {
-            glassBackground
-                .padding(.top, -10)
-        }
-    }
-
-    private var repsProgressChart: some View {
-        RepsProgressChart(
-            exerciseSetSummaries: exerciseSetSummaries,
-            exerciseName: exercise.name ?? "No Exercise Name",
-            timePeriod: timePeriod
-        )
-        .padding(.horizontal, 10)
-        .padding(.top, 10)
-        .padding(.bottom, 10)
-        .background {
-            glassBackground
-        }
-    }
-
-    private var durationProgressChart: some View {
-        DurationProgressChart(
-            exerciseSetSummaries: exerciseSetSummaries,
-            exerciseName: exercise.name ?? "No Exercise Name",
-            timePeriod: timePeriod
-        )
-        .padding(.horizontal, 10)
-        .padding(.top, 10)
-        .padding(.bottom, 10)
-        .background {
-            glassBackground
-        }
-    }
-
-    private var editGoalsSheet: some View {
-        EditExerciseGoalsSheet(
-            exercise: $exercise,
-            showEditSheet: $showEditSheet,
-            goalWeight: .constant(0),  // Temporary binding, actual values managed by GoalGaugeSection
-            goalReps: .constant(0),
-            goalDuration: .constant(0),
-            onSave: {
-                // Save action is handled by GoalGaugeSection
+            ForEach(Self.chartConfigs, id: \.metric) { config in
+                ProgressChart(
+                    title: config.title,
+                    points: viewModel.series(for: config.metric),
+                    goal: viewModel.goalLine(for: config.metric),
+                    period: viewModel.timePeriod,
+                    axisDates: viewModel.axisDates,
+                    style: config.style,
+                    tint: config.tint,
+                    goalUnit: config.goalUnit,
+                    emptyMessage: config.emptyMessage,
+                    emptySystemImage: config.emptySystemImage
+                )
+                .padding(10)
+                .glassCard()
             }
-        )
-    }
-
-    private var timePeriodPicker: some View {
-        Picker("Time Period", selection: $timePeriod) {
-            Text("Week").tag(TimePeriod.week)
-            Text("Month").tag(TimePeriod.month)
-            Text("6 Months").tag(TimePeriod.sixMonths)
-            Text("Year").tag(TimePeriod.year)
         }
-        .pickerStyle(.segmented)
-        .padding(.horizontal)
     }
 
-    private var glassBackground: some View {
-        RoundedRectangle(cornerRadius: 15)
-            .fill(.ultraThinMaterial)
-            .shadow(color: .black.opacity(0.2), radius: 2, x: 0, y: 2)
-            .overlay {
-                RoundedRectangle(cornerRadius: 15)
-                    .stroke(
-                        LinearGradient(
-                            colors: [
-                                .white.opacity(colorScheme == .dark ? 0.3 : 0.5),
-                                .white.opacity(0.2)
-                            ],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 0.5
-                    )
-            }
-            .overlay {
-                RoundedRectangle(cornerRadius: 15)
-                    .stroke(.black.opacity(0.1), lineWidth: 1)
-                    .blur(radius: 1)
-                    .mask(RoundedRectangle(cornerRadius: 15).fill(.black))
-            }
+    /// Per-metric presentation for the three progress charts.
+    private struct ChartConfig {
+        let metric: ProgressMetric
+        let title: String
+        let style: ProgressChart.Style
+        let tint: Color
+        let goalUnit: String
+        let emptyMessage: String
+        let emptySystemImage: String
     }
 
+    private static let chartConfigs: [ChartConfig] = [
+        ChartConfig(
+            metric: .weight, title: "Weight Progress (lbs)", style: .line, tint: .brightCoralRed,
+            goalUnit: "lbs", emptyMessage: "No weight data for this time period.", emptySystemImage: "chart.xyaxis.line"
+        ),
+        ChartConfig(
+            metric: .reps, title: "Reps Progress", style: .bar, tint: .yellow,
+            goalUnit: "reps", emptyMessage: "No reps data for this time period.", emptySystemImage: "chart.bar.xaxis"
+        ),
+        ChartConfig(
+            metric: .duration, title: "Duration Progress (min)", style: .line, tint: .brightLimeGreen,
+            goalUnit: "min", emptyMessage: "No duration data for this time period.", emptySystemImage: "chart.xyaxis.line"
+        )
+    ]
 }
 
 // MARK: - Previews
 #Preview("Light Mode") {
-    let sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
-    let sampleSummaries = [
-        ExerciseSetSummary.sample(
-            id: "1",
-            exerciseSetID: "set1",
-            workoutSummaryID: nil,
-            startedAt: Date().addingTimeInterval(-86400 * 2),
-            completedAt: Date().addingTimeInterval(-86400 * 2),
-            timeSpentActive: 60,
-            weight: 20.0,
-            repsReported: 10,
-            exerciseSet: ExerciseSet.sample(id: "set1", exercise: sampleExercise)
-        ),
-        ExerciseSetSummary.sample(
-            id: "2",
-            exerciseSetID: "set2",
-            workoutSummaryID: nil,
-            startedAt: Date().addingTimeInterval(-86400),
-            completedAt: Date().addingTimeInterval(-86400),
-            timeSpentActive: 60,
-            weight: 25.0,
-            repsReported: 12,
-            exerciseSet: ExerciseSet.sample(id: "set2", exercise: sampleExercise)
-        ),
-        ExerciseSetSummary.sample(
-            id: "3",
-            exerciseSetID: "set3",
-            workoutSummaryID: nil,
-            startedAt: Date(),
-            completedAt: Date(),
-            timeSpentActive: 60,
-            weight: 30.0,
-            repsReported: 15,
-            exerciseSet: ExerciseSet.sample(id: "set3", exercise: sampleExercise)
-        )
-    ]
-
-    return ExerciseDetailView(
-        exercise: sampleExercise,
-        exerciseSetSummaries: sampleSummaries
-    )
+    NavigationStack {
+        ExerciseDetailView(exercise: PreviewData.exercise, setSummaries: PreviewData.setSummaries)
+    }
+    .modelContainer(for: ExerciseGoal.self, inMemory: true)
     .preferredColorScheme(.light)
 }
 
 #Preview("Dark Mode") {
-    let sampleExercise = Exercise.sample(id: "ex1", name: "Pushups")
-    let sampleSummaries = [
-        ExerciseSetSummary.sample(
-            id: "1",
-            exerciseSetID: "set1",
-            workoutSummaryID: nil,
-            startedAt: Date().addingTimeInterval(-86400 * 2),
-            completedAt: Date().addingTimeInterval(-86400 * 2),
-            timeSpentActive: 60,
-            weight: 20.0,
-            repsReported: 10,
-            exerciseSet: ExerciseSet.sample(id: "set1", exercise: sampleExercise)
-        ),
-        ExerciseSetSummary.sample(
-            id: "2",
-            exerciseSetID: "set2",
-            workoutSummaryID: nil,
-            startedAt: Date().addingTimeInterval(-86400),
-            completedAt: Date().addingTimeInterval(-86400),
-            timeSpentActive: 60,
-            weight: 25.0,
-            repsReported: 12,
-            exerciseSet: ExerciseSet.sample(id: "set2", exercise: sampleExercise)
-        ),
-        ExerciseSetSummary.sample(
-            id: "3",
-            exerciseSetID: "set3",
-            workoutSummaryID: nil,
-            startedAt: Date(),
-            completedAt: Date(),
-            timeSpentActive: 60,
-            weight: 30.0,
-            repsReported: 15,
-            exerciseSet: ExerciseSet.sample(id: "set3", exercise: sampleExercise)
-        )
-    ]
-
-    return ExerciseDetailView(
-        exercise: sampleExercise,
-        exerciseSetSummaries: sampleSummaries
-    )
+    NavigationStack {
+        ExerciseDetailView(exercise: PreviewData.exercise, setSummaries: PreviewData.setSummaries)
+    }
+    .modelContainer(for: ExerciseGoal.self, inMemory: true)
     .preferredColorScheme(.dark)
 }

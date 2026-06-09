@@ -1,31 +1,24 @@
 //
 //  String+Extensions.swift
-//  Future
+//  Workout
 //
 
 import Foundation
 
-extension String {
-
-    public var isNilUUIDString: Bool {
-        return self == UUID.nilUUIDString
-    }
-
-}
-
 extension Optional where Wrapped == String {
 
-    public var isEmpty: Bool {
-        guard let self = self else { return true }
+    var isEmpty: Bool {
+        guard let self else { return true }
         return self.isEmpty
     }
 
-    public var isNotEmpty: Bool {
-        return !self.isEmpty
+    var isNotEmpty: Bool {
+        !self.isEmpty
     }
 
-    public var nilIfEmpty: String? {
-        return isNotEmpty ? self : nil
+    /// The string when it has content, otherwise `nil`. Used to normalise empty JSON strings to `nil`.
+    var nilIfEmpty: String? {
+        isNotEmpty ? self : nil
     }
 
 }

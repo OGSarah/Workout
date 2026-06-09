@@ -7,55 +7,50 @@
 
 import SwiftUI
 
+/// A sheet for editing an exercise's weight, reps, and duration goals.
 struct EditExerciseGoalsSheet: View {
-    @Binding var exercise: Exercise
-    @Binding var showEditSheet: Bool
-    @Binding var goalWeight: Double
-    @Binding var goalReps: Int
-    @Binding var goalDuration: Int
-    let onSave: () -> Void
+    @Bindable var viewModel: ExerciseDetailViewModel
 
     // MARK: - Main View
     var body: some View {
         NavigationStack {
             Form {
-                Section(header: Text("Edit Goals")) {
-                    HStack {
-                        Text("Weight Goal (lbs)")
-                        Spacer()
-                        TextField("Weight", value: $goalWeight, formatter: decimalFormatter)
+                Section("Edit Goals") {
+                    LabeledContent("Weight Goal (lbs)") {
+                        TextField("Weight", value: $viewModel.draftWeight, formatter: decimalFormatter)
                             .multilineTextAlignment(.trailing)
                             .keyboardType(.decimalPad)
+                            .accessibilityIdentifier("goalWeightField")
                     }
-                    HStack {
-                        Text("Reps Goal")
-                        Spacer()
-                        TextField("Reps", value: $goalReps, formatter: integerFormatter)
+                    LabeledContent("Reps Goal") {
+                        TextField("Reps", value: $viewModel.draftReps, formatter: integerFormatter)
                             .multilineTextAlignment(.trailing)
                             .keyboardType(.numberPad)
+                            .accessibilityIdentifier("goalRepsField")
                     }
-                    HStack {
-                        Text("Duration Goal (min)")
-                        Spacer()
-                        TextField("Duration", value: $goalDuration, formatter: integerFormatter)
+                    LabeledContent("Duration Goal (min)") {
+                        TextField("Duration", value: $viewModel.draftDuration, formatter: integerFormatter)
                             .multilineTextAlignment(.trailing)
                             .keyboardType(.numberPad)
+                            .accessibilityIdentifier("goalDurationField")
                     }
                 }
             }
-            .navigationTitle("Edit \(exercise.name ?? "Exercise") goals")
-            .navigationBarItems(
-                leading: Button("Cancel") {
-                    showEditSheet = false
-                },
-                trailing: Button("Save") {
-                    onSave()
-                    showEditSheet = false
+            .navigationTitle("Edit \(viewModel.title) Goals")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { viewModel.cancelEditingGoals() }
                 }
-            )
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") { viewModel.saveGoals() }
+                        .accessibilityIdentifier("saveGoalsButton")
+                }
+            }
         }
     }
 
+    // MARK: - Formatters
     private var decimalFormatter: NumberFormatter {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
@@ -72,53 +67,11 @@ struct EditExerciseGoalsSheet: View {
 
 // MARK: - Previews
 #Preview("Light Mode") {
-    struct PreviewWrapper: View {
-        @State private var sampleExercise = Exercise.sample(id: "ex1", name: "Bench Press")
-        @State private var showSheet = true
-        @State private var weight: Double = 100.0
-        @State private var reps: Int = 10
-        @State private var duration: Int = 60
-
-        var body: some View {
-            EditExerciseGoalsSheet(
-                exercise: $sampleExercise,
-                showEditSheet: $showSheet,
-                goalWeight: $weight,
-                goalReps: $reps,
-                goalDuration: $duration,
-                onSave: {
-                    // Preview save action
-                    print("Saved: Weight: \(weight), Reps: \(reps), Duration: \(duration)")
-                }
-            )
-            .preferredColorScheme(.light)
-        }
-    }
-    return PreviewWrapper()
+    EditExerciseGoalsSheet(viewModel: PreviewData.detailViewModel(withGoals: true))
+        .preferredColorScheme(.light)
 }
 
 #Preview("Dark Mode") {
-    struct PreviewWrapper: View {
-        @State private var sampleExercise = Exercise.sample(id: "ex1", name: "Bench Press")
-        @State private var showSheet = true
-        @State private var weight: Double = 100.0
-        @State private var reps: Int = 10
-        @State private var duration: Int = 60
-
-        var body: some View {
-            EditExerciseGoalsSheet(
-                exercise: $sampleExercise,
-                showEditSheet: $showSheet,
-                goalWeight: $weight,
-                goalReps: $reps,
-                goalDuration: $duration,
-                onSave: {
-                    // Preview save action
-                    print("Saved: Weight: \(weight), Reps: \(reps), Duration: \(duration)")
-                }
-            )
-            .preferredColorScheme(.dark)
-        }
-    }
-    return PreviewWrapper()
+    EditExerciseGoalsSheet(viewModel: PreviewData.detailViewModel(withGoals: true))
+        .preferredColorScheme(.dark)
 }

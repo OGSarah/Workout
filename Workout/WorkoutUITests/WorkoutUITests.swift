@@ -10,34 +10,47 @@ import XCTest
 final class WorkoutUITests: XCTestCase {
 
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-
-        // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
-
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
     }
 
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
+    /// Launches the app, opens an exercise, adds a goal, and confirms the gauges replace the
+    /// "No Goals Set" empty state.
     @MainActor
-    func testExample() throws {
-        // UI tests must launch the application that they test.
+    func testAddingGoalShowsGauges() throws {
         let app = XCUIApplication()
+        app.launchArguments += ["--uitesting"]
         app.launch()
 
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        // The exercise list loads with rows.
+        let list = app.collectionViews["exerciseList"]
+        XCTAssertTrue(list.waitForExistence(timeout: 15), "Exercise list should load")
+
+        let firstExercise = list.buttons.firstMatch
+        XCTAssertTrue(firstExercise.waitForExistence(timeout: 10), "There should be at least one exercise")
+        firstExercise.tap()
+
+        // The detail screen starts with no goals set.
+        XCTAssertTrue(app.staticTexts["No Goals Set"].waitForExistence(timeout: 5))
+
+        // Open the goal editor and set a weight goal.
+        app.buttons["editGoalsButton"].tap()
+
+        let weightField = app.textFields["goalWeightField"]
+        XCTAssertTrue(weightField.waitForExistence(timeout: 5))
+        weightField.tap()
+        weightField.typeText("100")
+
+        app.buttons["saveGoalsButton"].tap()
+
+        // After saving, the gauges replace the empty state and the button offers to edit.
+        XCTAssertTrue(app.buttons["Edit Goals"].waitForExistence(timeout: 5), "Button should switch to Edit Goals")
+        XCTAssertFalse(app.staticTexts["No Goals Set"].exists, "Empty state should be gone")
     }
 
     @MainActor
     func testLaunchPerformance() throws {
-        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 7.0, *) {
-            // This measures how long it takes to launch your application.
-            measure(metrics: [XCTApplicationLaunchMetric()]) {
-                XCUIApplication().launch()
-            }
+        measure(metrics: [XCTApplicationLaunchMetric()]) {
+            XCUIApplication().launch()
         }
     }
 }

@@ -5,23 +5,41 @@
 //  Created by Sarah Clark on 2/19/25.
 //
 
+import SwiftData
 import SwiftUI
 
+/// The app's root view. Loads workout data asynchronously and shows the exercise list once ready.
 struct ContentView: View {
-    let workoutsController = WorkoutsController()
+    @State private var repository = WorkoutRepository()
 
     var body: some View {
-        ExerciseListView(workoutsController: workoutsController)
+        Group {
+            switch repository.state {
+            case .idle, .loading:
+                ProgressView("Loading workouts…")
+            case .loaded:
+                ExerciseListView(exercises: repository.exercises, setSummaries: repository.setSummaries)
+            case .failed(let message):
+                ContentUnavailableView {
+                    Label("Couldn't Load Workouts", systemImage: "exclamationmark.triangle")
+                } description: {
+                    Text(message)
+                }
+            }
+        }
+        .task { await repository.load() }
     }
 }
 
 // MARK: - Previews
 #Preview("Light Mode") {
     ContentView()
+        .modelContainer(for: ExerciseGoal.self, inMemory: true)
         .preferredColorScheme(.light)
 }
 
 #Preview("Dark Mode") {
     ContentView()
+        .modelContainer(for: ExerciseGoal.self, inMemory: true)
         .preferredColorScheme(.dark)
 }

@@ -7,10 +7,10 @@
 
 import SwiftUI
 
+/// A searchable list of exercises that pushes to a detail screen for each one.
 struct ExerciseListView: View {
-    @State private var exercises: [Exercise] = []
-    @State private var searchText: String = ""
-    let workoutsController: WorkoutsController
+    @State private var viewModel: ExerciseListViewModel
+    private let setSummaries: [ExerciseSetSummary]
 
     private let backgroundGradient = LinearGradient(
         stops: [
@@ -22,87 +22,43 @@ struct ExerciseListView: View {
         endPoint: .bottom
     )
 
-    init(workoutsController: WorkoutsController) {
-        self.workoutsController = workoutsController
-        self._exercises = .init(initialValue: Self.extractExercises(from: workoutsController.workoutSummaries))
-        UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self])
-            .backgroundColor = UIColor.lightGray.withAlphaComponent(0.3)
+    init(exercises: [Exercise], setSummaries: [ExerciseSetSummary]) {
+        _viewModel = State(initialValue: ExerciseListViewModel(exercises: exercises))
+        self.setSummaries = setSummaries
     }
 
     var body: some View {
+        @Bindable var viewModel = viewModel
+
         NavigationStack {
             List {
-                ForEach(filteredExercises) { exercise in
+                ForEach(viewModel.filteredExercises) { exercise in
                     NavigationLink {
-                        ExerciseDetailView(
-                            exercise: exercise,
-                            exerciseSetSummaries: workoutsController.workoutSummaries.flatMap { $0.setSummaries }
-                        )
+                        ExerciseDetailView(exercise: exercise, setSummaries: setSummaries)
                     } label: {
-                        Text(exercise.name ?? "no exercise name")
+                        Text(exercise.name ?? "Unnamed Exercise")
                             .foregroundStyle(.secondary)
                     }
                 }
             }
-            .navigationTitle(Text("Exercises"))
-            .searchable(text: $searchText, prompt: "Search")
+            .navigationTitle("Exercises")
+            .searchable(text: $viewModel.searchText, prompt: "Search")
             .background(backgroundGradient)
             .scrollContentBackground(.hidden)
+            .accessibilityIdentifier("exerciseList")
         }
     }
-
-    private var filteredExercises: [Exercise] {
-        if searchText.isEmpty {
-            return exercises
-        } else {
-            return exercises.filter { exercise in
-                exercise.name?.localizedCaseInsensitiveContains(searchText) ?? false
-            }
-        }
-    }
-
-    private static func extractExercises(from workoutSummaries: [WorkoutSummary]) -> [Exercise] {
-        var exercises: [Exercise] = []
-        var seenNames: Set<String> = []
-
-        for summary in workoutSummaries {
-            for setSummary in summary.setSummaries {
-                if let exerciseSet = setSummary.exerciseSet,
-                   let exercise = exerciseSet.exercise,
-                   let name = exercise.name {
-                    if seenNames.insert(name).inserted {
-                        exercises.append(exercise)
-                    }
-                } else if let exerciseSet = setSummary.exerciseSet,
-                          let exercise = exerciseSet.exercise {
-                    exercises.append(exercise)
-                }
-            }
-        }
-
-        return exercises.sorted { (lhs, rhs) in
-            switch (lhs.name, rhs.name) {
-            case let (left?, right?):
-                return left < right
-            case (nil, _):
-                return false
-            case (_, nil):
-                return true
-            }
-        }
-    }
-
 }
 
 // MARK: - Previews
 #Preview("Light Mode") {
-    let workoutsController = WorkoutsController()
-    ExerciseListView(workoutsController: workoutsController)
-    .preferredColorScheme(.light)
+    ExerciseListView(exercises: PreviewData.exercises, setSummaries: PreviewData.setSummaries)
+        .modelContainer(for: ExerciseGoal.self, inMemory: true)
+        .preferredColorScheme(.light)
 }
 
 #Preview("Dark Mode") {
-    let workoutsController = WorkoutsController()
-    ExerciseListView(workoutsController: workoutsController)
-    .preferredColorScheme(.dark)
+    ExerciseListView(exercises: PreviewData.exercises, setSummaries: PreviewData.setSummaries)
+        .modelContainer(for: ExerciseGoal.self, inMemory: true)
+        .preferredColorScheme(.dark)
 }

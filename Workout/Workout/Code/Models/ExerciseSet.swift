@@ -1,12 +1,12 @@
 //
 //  ExerciseSet.swift
-//  Future
+//  Workout
 //
 
 import Foundation
 import HealthKit
 
-public enum ExerciseSetType: String, Codable, CaseIterable {
+enum ExerciseSetType: String, Codable, CaseIterable {
     case unknown = ""
     case reps = "reps"
     case duration = "duration"
@@ -14,20 +14,20 @@ public enum ExerciseSetType: String, Codable, CaseIterable {
 }
 
 /// This is one set of an exercise created by the coach for the user to perform. For example, 12 reps of Bicep Curls at 30 lbs.
-public struct ExerciseSet: Codable, Equatable {
-    public var id: String
-    public var exercise: Exercise?
-    public var type: ExerciseSetType = .unknown
-    public var reps: Int?
-    public var duration: Int?
-    public var weight: Float?
-    public var position: Int?
-    public var distance: Double?
-    public var estimatedDuration: Int?
-    public var intensity: String?
-    public var isTwoDumbbells: Bool?
+struct ExerciseSet: Codable, Equatable {
+    var id: String
+    var exercise: Exercise?
+    var type: ExerciseSetType = .unknown
+    var reps: Int?
+    var duration: Int?
+    var weight: Float?
+    var position: Int?
+    var distance: Double?
+    var estimatedDuration: Int?
+    var intensity: String?
+    var isTwoDumbbells: Bool?
 
-    public enum CodingKeys: String, CodingKey {
+    enum CodingKeys: String, CodingKey {
         case id = "id"
         case exercise = "exercise"
         case type = "type"
@@ -42,7 +42,7 @@ public struct ExerciseSet: Codable, Equatable {
         case isTwoDumbbells = "is_two_dumbbells"
     }
 
-    public init(from decoder: Decoder) throws {
+    init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         self.id = try container.decode(String.self, forKey: .id)
@@ -58,7 +58,7 @@ public struct ExerciseSet: Codable, Equatable {
         self.isTwoDumbbells = try container.decodeIfPresent(Bool.self, forKey: .isTwoDumbbells)
     }
 
-    public func encode(to encoder: Encoder) throws {
+    func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
         try container.encode(self.id, forKey: .id)
@@ -76,17 +76,17 @@ public struct ExerciseSet: Codable, Equatable {
 
     // MARK: Helpers
 
-    public var isRecovery: Bool {
+    var isRecovery: Bool {
         return (self.exercise?.type ?? "") == "rest"
     }
 
-    public var weightUnit: String {
+    var weightUnit: String {
         return (isTwoDumbbells ?? false) ? "lb dumbbells" : "lbs"
     }
 
 }
 
-public enum Intensity: String {
+enum Intensity: String {
     case none = ""
     case tempoFast = "tempo_fast"
     case tempoModerate = "tempo_moderate"
@@ -112,7 +112,7 @@ public enum Intensity: String {
     case weightLight = "weight_light"
     case weightModerate = "weight_moderate"
 
-    public var displayName: String {
+    var displayName: String {
         switch self {
         case .none: return "Normal"
         case .tempoFast: return "Fast Tempo"
@@ -142,6 +142,7 @@ public enum Intensity: String {
     }
 }
 
+#if DEBUG
 // Helper to create an ExerciseSet from JSON data for preview.
 extension ExerciseSet {
     static func sample(id: String, exercise: Exercise, weight: Float? = nil, reps: Int? = nil, duration: Int? = nil) -> ExerciseSet {
@@ -164,3 +165,4 @@ extension ExerciseSet {
         return summary
     }
 }
+#endif
