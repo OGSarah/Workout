@@ -11,7 +11,7 @@ import Foundation
 ///
 /// Each metric knows how to read its value from an ``ExerciseSetSummary``, which keeps the
 /// extraction logic in one place for both the gauges and the charts.
-enum ProgressMetric: CaseIterable {
+enum ProgressMetric: CaseIterable, Sendable {
     case weight
     case reps
     case duration

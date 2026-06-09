@@ -26,6 +26,7 @@ struct GoalGaugeSection: View {
                     .padding(.horizontal, 20)
                     .frame(maxWidth: .infinity)
                     .glassCard()
+                    .accessibilityIdentifier(AccessibilityIdentifiers.ExerciseDetail.goalGauges)
             } else {
                 ContentUnavailableView(
                     "No Goals Set",
@@ -34,6 +35,7 @@ struct GoalGaugeSection: View {
                 )
                 .padding()
                 .glassCard()
+                .accessibilityIdentifier(AccessibilityIdentifiers.ExerciseDetail.noGoalsState)
             }
         }
     }
@@ -46,7 +48,8 @@ struct GoalGaugeSection: View {
                 viewModel.startEditingGoals()
             }
             .buttonStyle(.glass)
-            .accessibilityIdentifier("editGoalsButton")
+            .accessibilityIdentifier(AccessibilityIdentifiers.ExerciseDetail.editGoalsButton)
+            .accessibilityHint("Opens the goal editor for this exercise")
         }
     }
 
@@ -108,6 +111,9 @@ struct GoalGaugeSection: View {
                 .minimumScaleFactor(0.9)
         }
         .frame(maxWidth: .infinity)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(title) goal")
+        .accessibilityValue("\(Int(value)) of \(Int(goal)), \(percent) percent complete")
     }
 }
 
@@ -120,4 +126,10 @@ struct GoalGaugeSection: View {
 #Preview("No Goals") {
     GoalGaugeSection(viewModel: PreviewData.detailViewModel(withGoals: false))
         .padding()
+}
+
+#Preview("Accessibility XL") {
+    GoalGaugeSection(viewModel: PreviewData.detailViewModel(withGoals: true))
+        .padding()
+        .dynamicTypeSize(.accessibility2)
 }

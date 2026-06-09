@@ -70,6 +70,8 @@ struct ExerciseDetailView: View {
             }
         }
         .pickerStyle(.segmented)
+        .accessibilityIdentifier(AccessibilityIdentifiers.ExerciseDetail.timePeriodPicker)
+        .accessibilityLabel("Chart time period")
     }
 
     private var progressCharts: some View {
@@ -87,6 +89,7 @@ struct ExerciseDetailView: View {
                     emptyMessage: config.emptyMessage,
                     emptySystemImage: config.emptySystemImage
                 )
+                .accessibilityIdentifier(AccessibilityIdentifiers.ExerciseDetail.chart(config.goalUnit))
                 .padding(10)
                 .glassCard()
             }
@@ -135,4 +138,19 @@ struct ExerciseDetailView: View {
     }
     .modelContainer(for: ExerciseGoal.self, inMemory: true)
     .preferredColorScheme(.dark)
+}
+
+#Preview("No Data") {
+    NavigationStack {
+        ExerciseDetailView(exercise: PreviewData.exercise, setSummaries: [])
+    }
+    .modelContainer(for: ExerciseGoal.self, inMemory: true)
+}
+
+#Preview("Accessibility XL") {
+    NavigationStack {
+        ExerciseDetailView(exercise: PreviewData.exercise, setSummaries: PreviewData.setSummaries)
+    }
+    .modelContainer(for: ExerciseGoal.self, inMemory: true)
+    .dynamicTypeSize(.accessibility3)
 }

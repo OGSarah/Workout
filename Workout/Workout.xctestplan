@@ -1,0 +1,37 @@
+{
+  "configurations" : [
+    {
+      "id" : "A1B2C3D4-0000-4000-A000-000000000001",
+      "name" : "Default",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Workout.xcodeproj",
+      "identifier" : "26B9BE512D6699290050A260",
+      "name" : "Workout"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:Workout.xcodeproj",
+        "identifier" : "26B9BE662D66992A0050A260",
+        "name" : "WorkoutTests"
+      }
+    },
+    {
+      "parallelizable" : false,
+      "target" : {
+        "containerPath" : "container:Workout.xcodeproj",
+        "identifier" : "26B9BE702D66992A0050A260",
+        "name" : "WorkoutUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

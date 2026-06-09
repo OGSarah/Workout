@@ -32,7 +32,7 @@ final class ExerciseDetailViewModel {
 
     private let setSummaries: [ExerciseSetSummary]
     private let now: Date
-    private var goalStore: GoalStore?
+    private var goalStore: (any GoalStoreProtocol)?
 
     init(exercise: Exercise, setSummaries: [ExerciseSetSummary], now: Date = Date()) {
         self.exercise = exercise
@@ -78,7 +78,7 @@ final class ExerciseDetailViewModel {
     // MARK: - Goals
 
     /// Connects the view model to persistence and loads any saved goals.
-    func connect(to goalStore: GoalStore) {
+    func connect(to goalStore: any GoalStoreProtocol) {
         self.goalStore = goalStore
         loadGoals()
     }

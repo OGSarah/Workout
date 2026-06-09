@@ -39,13 +39,16 @@ struct ExerciseListView: View {
                         Text(exercise.name ?? "Unnamed Exercise")
                             .foregroundStyle(.secondary)
                     }
+                    .accessibilityIdentifier(AccessibilityIdentifiers.ExerciseList.row(exercise.id))
+                    .accessibilityLabel("\(exercise.name ?? "Unnamed") exercise")
+                    .accessibilityHint("Shows goals and progress charts")
                 }
             }
             .navigationTitle("Exercises")
             .searchable(text: $viewModel.searchText, prompt: "Search")
             .background(backgroundGradient)
             .scrollContentBackground(.hidden)
-            .accessibilityIdentifier("exerciseList")
+            .accessibilityIdentifier(AccessibilityIdentifiers.ExerciseList.list)
         }
     }
 }
@@ -61,4 +64,10 @@ struct ExerciseListView: View {
     ExerciseListView(exercises: PreviewData.exercises, setSummaries: PreviewData.setSummaries)
         .modelContainer(for: ExerciseGoal.self, inMemory: true)
         .preferredColorScheme(.dark)
+}
+
+#Preview("Accessibility XL") {
+    ExerciseListView(exercises: PreviewData.exercises, setSummaries: PreviewData.setSummaries)
+        .modelContainer(for: ExerciseGoal.self, inMemory: true)
+        .dynamicTypeSize(.accessibility3)
 }

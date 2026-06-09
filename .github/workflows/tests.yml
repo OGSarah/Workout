@@ -1,0 +1,56 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: SwiftLint
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install SwiftLint
+        run: brew install swiftlint
+      - name: Run SwiftLint
+        working-directory: Workout
+        run: swiftlint lint --reporter github-actions-logging
+
+  test:
+    name: Build & Unit Test
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -switch /Applications/Xcode.app
+
+      - name: Show available simulators
+        run: xcrun simctl list devices available
+
+      - name: Run unit tests
+        working-directory: Workout
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project Workout.xcodeproj \
+            -scheme Workout \
+            -testPlan Workout \
+            -only-testing:WorkoutTests \
+            -destination 'platform=iOS Simulator,name=iPhone 16,OS=latest' \
+            -resultBundlePath TestResults.xcresult \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestResults
+          path: Workout/TestResults.xcresult
+          if-no-files-found: ignore

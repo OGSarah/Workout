@@ -8,7 +8,7 @@
 import Foundation
 
 /// The window of time used to filter and label progress data in the charts.
-enum TimePeriod: String, CaseIterable, Identifiable {
+enum TimePeriod: String, CaseIterable, Identifiable, Sendable {
     case week
     case month
     case sixMonths

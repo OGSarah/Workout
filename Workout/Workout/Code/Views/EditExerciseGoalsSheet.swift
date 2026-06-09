@@ -16,23 +16,25 @@ struct EditExerciseGoalsSheet: View {
         NavigationStack {
             Form {
                 Section("Edit Goals") {
+                    // `LabeledContent` already supplies the visible + VoiceOver label for each field,
+                    // so we avoid adding a second `accessibilityLabel` that would be read twice.
                     LabeledContent("Weight Goal (lbs)") {
                         TextField("Weight", value: $viewModel.draftWeight, formatter: decimalFormatter)
                             .multilineTextAlignment(.trailing)
                             .keyboardType(.decimalPad)
-                            .accessibilityIdentifier("goalWeightField")
+                            .accessibilityIdentifier(AccessibilityIdentifiers.EditGoals.weightField)
                     }
                     LabeledContent("Reps Goal") {
                         TextField("Reps", value: $viewModel.draftReps, formatter: integerFormatter)
                             .multilineTextAlignment(.trailing)
                             .keyboardType(.numberPad)
-                            .accessibilityIdentifier("goalRepsField")
+                            .accessibilityIdentifier(AccessibilityIdentifiers.EditGoals.repsField)
                     }
                     LabeledContent("Duration Goal (min)") {
                         TextField("Duration", value: $viewModel.draftDuration, formatter: integerFormatter)
                             .multilineTextAlignment(.trailing)
                             .keyboardType(.numberPad)
-                            .accessibilityIdentifier("goalDurationField")
+                            .accessibilityIdentifier(AccessibilityIdentifiers.EditGoals.durationField)
                     }
                 }
             }
@@ -41,10 +43,13 @@ struct EditExerciseGoalsSheet: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { viewModel.cancelEditingGoals() }
+                        .accessibilityIdentifier(AccessibilityIdentifiers.EditGoals.cancelButton)
+                        .accessibilityHint("Closes the editor without saving changes")
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") { viewModel.saveGoals() }
-                        .accessibilityIdentifier("saveGoalsButton")
+                        .accessibilityIdentifier(AccessibilityIdentifiers.EditGoals.saveButton)
+                        .accessibilityHint("Saves your exercise goals")
                 }
             }
         }
@@ -74,4 +79,8 @@ struct EditExerciseGoalsSheet: View {
 #Preview("Dark Mode") {
     EditExerciseGoalsSheet(viewModel: PreviewData.detailViewModel(withGoals: true))
         .preferredColorScheme(.dark)
+}
+
+#Preview("Empty Fields") {
+    EditExerciseGoalsSheet(viewModel: PreviewData.detailViewModel(withGoals: false))
 }

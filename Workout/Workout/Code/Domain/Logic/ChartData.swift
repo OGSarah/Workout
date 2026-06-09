@@ -8,7 +8,7 @@
 import Foundation
 
 /// A single plotted point: a value recorded on a date.
-struct ChartPoint: Equatable, Identifiable {
+struct ChartPoint: Equatable, Identifiable, Sendable {
     let date: Date
     let value: Double
 

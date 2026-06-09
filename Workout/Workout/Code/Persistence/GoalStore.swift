@@ -8,12 +8,30 @@
 import Foundation
 import SwiftData
 
+/// Persistence for a client's per-exercise ``ExerciseGoal`` records.
+///
+/// Abstracting goal storage behind a protocol mirrors the ``WorkoutDataLoading`` pattern: production
+/// uses the SwiftData-backed ``GoalStore`` while tests inject a lightweight in-memory mock, so the
+/// view model can be exercised without a `ModelContext`.
+@MainActor
+protocol GoalStoreProtocol {
+    /// Every stored goal.
+    func allGoals() -> [ExerciseGoal]
+
+    /// The stored goal for an exercise, if one exists.
+    func goal(forExerciseID exerciseID: String) -> ExerciseGoal?
+
+    /// Inserts or updates the goal for an exercise and persists the change.
+    @discardableResult
+    func upsert(exerciseID: String, weight: Double, reps: Int, duration: Int) -> ExerciseGoal
+}
+
 /// Reads and writes ``ExerciseGoal`` records.
 ///
 /// The single place in the app that touches a `ModelContext`, keeping SwiftData access on the main
 /// actor and out of the views and view models' way.
 @MainActor
-final class GoalStore {
+final class GoalStore: GoalStoreProtocol {
     private let context: ModelContext
 
     init(context: ModelContext) {

@@ -17,6 +17,7 @@ struct ContentView: View {
             switch repository.state {
             case .idle, .loading:
                 ProgressView("Loading workouts…")
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Root.loading)
             case .loaded:
                 ExerciseListView(exercises: repository.exercises, setSummaries: repository.setSummaries)
             case .failed(let message):
@@ -25,6 +26,7 @@ struct ContentView: View {
                 } description: {
                     Text(message)
                 }
+                .accessibilityIdentifier(AccessibilityIdentifiers.Root.loadFailure)
             }
         }
         .task { await repository.load() }

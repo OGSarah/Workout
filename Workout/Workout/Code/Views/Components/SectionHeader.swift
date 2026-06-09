@@ -15,11 +15,14 @@ struct SectionHeader: View {
     var body: some View {
         HStack(spacing: 4) {
             Image(systemName: systemImage)
+                .accessibilityHidden(true)
             Text(title.uppercased())
         }
         .font(.subheadline)
         .foregroundStyle(.gray)
         .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isHeader)
     }
 }
 

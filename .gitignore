@@ -24,3 +24,12 @@ xcuserdata/
 # Playgrounds
 timeline.xctimeline
 playground.xcworkspace
+
+# Test output
+*.xcresult
+
+# Secrets / local config
+*.xcconfig
+.env
+.env.local
+.claude/settings.local.json

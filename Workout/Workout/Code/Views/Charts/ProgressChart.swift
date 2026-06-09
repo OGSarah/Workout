@@ -41,6 +41,7 @@ struct ProgressChart: View {
 
                 chart
                     .frame(height: 200)
+                    .accessibilityLabel(accessibilityLabel)
                     .chartYScale(domain: 0...upperBound)
                     .chartXAxis { xAxis }
                     .chartYAxis {
@@ -118,6 +119,17 @@ struct ProgressChart: View {
         return max(goal ?? 0, dataMax) + 10
     }
 
+    /// A spoken summary of the chart for VoiceOver, covering the range and any goal line.
+    private var accessibilityLabel: Text {
+        let low = points.map(\.value).min() ?? 0
+        let high = points.map(\.value).max() ?? 0
+        var summary = "\(title), ranging from \(Int(low)) to \(Int(high))"
+        if let goal, goal > 0 {
+            summary += ", goal \(Int(goal)) \(goalUnit)"
+        }
+        return Text(summary)
+    }
+
     private func axisLabel(for date: Date) -> String {
         switch period {
         case .week:
@@ -131,3 +143,31 @@ struct ProgressChart: View {
         }
     }
 }
+
+// MARK: - Previews
+#if DEBUG
+#Preview("Line — With Goal") {
+    let now = Date()
+    let points = (0..<6).reversed().map { offset in
+        ChartPoint(
+            date: Calendar.current.date(byAdding: .day, value: -offset, to: now) ?? now,
+            value: Double(20 + (5 - offset) * 3)
+        )
+    }
+    return ProgressChart(
+        title: "Weight Progress (lbs)", points: points, goal: 35, period: .week,
+        axisDates: TimeWindow.weekDays(now: now), style: .line, tint: .brightCoralRed,
+        goalUnit: "lbs", emptyMessage: "No weight data for this time period.", emptySystemImage: "chart.xyaxis.line"
+    )
+    .padding()
+}
+
+#Preview("Empty State") {
+    ProgressChart(
+        title: "Reps Progress", points: [], goal: nil, period: .week,
+        axisDates: [], style: .bar, tint: .yellow,
+        goalUnit: "reps", emptyMessage: "No reps data for this time period.", emptySystemImage: "chart.bar.xaxis"
+    )
+    .padding()
+}
+#endif

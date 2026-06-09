@@ -6,7 +6,7 @@
 import Foundation
 import HealthKit
 
-enum ExerciseSetType: String, Codable, CaseIterable {
+enum ExerciseSetType: String, Codable, CaseIterable, Sendable {
     case unknown = ""
     case reps = "reps"
     case duration = "duration"
@@ -14,7 +14,7 @@ enum ExerciseSetType: String, Codable, CaseIterable {
 }
 
 /// This is one set of an exercise created by the coach for the user to perform. For example, 12 reps of Bicep Curls at 30 lbs.
-struct ExerciseSet: Codable, Equatable {
+struct ExerciseSet: Codable, Equatable, Sendable {
     var id: String
     var exercise: Exercise?
     var type: ExerciseSetType = .unknown
