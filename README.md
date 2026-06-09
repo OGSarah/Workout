@@ -1,7 +1,7 @@
 <div align="center">
   <img src="screenshots/AppIcon.png" width="300" style="border-radius: 22px;" alt="Workout app icon">
   <h1>Workout</h1>
-  <p><strong>Track a client's strength, reps, and endurance progress over time — at a glance.</strong></p>
+  <p><strong>Track a client's strength, reps, and endurance progress over time. At a glance.</strong></p>
 </div>
 
 Workout is a SwiftUI app for iOS 27 that turns a client's raw workout history into clear, glanceable progress. It surfaces every exercise the client has performed, lets a coach set per-exercise goals, and visualises progress toward those goals with circular gauges and time-series charts across multiple time ranges — with full accessibility support and end-to-end test coverage.
