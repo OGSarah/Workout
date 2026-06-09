@@ -9,7 +9,7 @@ Workout is a SwiftUI app for iOS 27 that turns a client's raw workout history in
 [![Tests](https://github.com/OGSarah/Workout/actions/workflows/tests.yml/badge.svg)](https://github.com/OGSarah/Workout/actions/workflows/tests.yml)
 
 **NOTE:**
-Tests will fail on GitHub until they add Xcode 27 with iOS 27 support to their runners. They pass locally with the latest Xcode 27 beta. Since I'm not shipping this app, I'll leave the project as is until GitHub updates their test runner OSes.
+Tests will fail on GitHub until they add Xcode 27 with iOS 27 support to their runners. They pass locally with the latest Xcode 27 beta. Since I'm not shipping this app, I'll leave the project as is until GitHub updates their test runner OS's.
 
 ## Screenshots
 
