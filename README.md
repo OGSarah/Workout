@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="screenshots/AppIcon.png" width="120" style="border-radius: 22px;" alt="Workout app icon">
+  <img src="screenshots/AppIcon.png" width="300" style="border-radius: 22px;" alt="Workout app icon">
   <h1>Workout</h1>
   <p><strong>Track a client's strength, reps, and endurance progress over time — at a glance.</strong></p>
 </div>
