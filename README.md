@@ -61,7 +61,7 @@ Tests will fail on GitHub until they add Xcode 27 with iOS 27 support to their r
 
 ## Data Source
 
-The app ships with a set of anonymised workout summaries as bundled JSON resources under `Workout/Data/summaries`. Each file is one completed workout containing the set-by-set summaries a client generated during a session. Keeping the catalogue as discrete JSON documents, rather than a single blob, mirrors how a real per-workout export would arrive and makes it trivial to add, remove, or fix a workout without touching code. The data is loaded and decoded off the main thread at launch.
+The app contains a set of anonymised workout summaries as bundled JSON resources under `Workout/Data/summaries`. Each file is one completed workout containing the set-by-set summaries a client generated during a session. Keeping the catalogue as discrete JSON documents, rather than a single blob, mirrors how a real per-workout export would arrive and makes it trivial to add, remove, or fix a workout without touching code. The data is loaded and decoded off the main thread at launch.
 
 ## Architecture & Design Patterns
 
