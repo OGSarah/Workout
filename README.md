@@ -4,7 +4,7 @@
   <p><strong>Track a client's strength, reps, and endurance progress over time. At a glance.</strong></p>
 </div>
 
-Workout is a SwiftUI app for iOS 27 that turns a client's raw workout history into clear, glanceable progress. It surfaces every exercise the client has performed, lets a coach set per-exercise goals, and visualises progress toward those goals with circular gauges and time-series charts across multiple time ranges — with full accessibility support and end-to-end test coverage.
+Workout is a SwiftUI app for iOS 27 that turns a client's raw workout history into clear, glanceable progress. It surfaces every exercise the client has performed, lets a coach set per-exercise goals, and visualises progress toward those goals with circular gauges and time-series charts across multiple time ranges, with full accessibility support and end-to-end test coverage.
 
 [![Tests](https://github.com/OGSarah/Workout/actions/workflows/tests.yml/badge.svg)](https://github.com/OGSarah/Workout/actions/workflows/tests.yml)
 
@@ -61,7 +61,7 @@ Tests will fail on GitHub until they add Xcode 27 with iOS 27 support to their r
 
 ## Data Source
 
-The app ships with a set of anonymised workout summaries as bundled JSON resources under `Workout/Data/summaries`. Each file is one completed workout containing the set-by-set summaries a client generated during a session. Keeping the catalogue as discrete JSON documents — rather than a single blob — mirrors how a real per-workout export would arrive and makes it trivial to add, remove, or fix a workout without touching code. The data is loaded and decoded off the main thread at launch.
+The app ships with a set of anonymised workout summaries as bundled JSON resources under `Workout/Data/summaries`. Each file is one completed workout containing the set-by-set summaries a client generated during a session. Keeping the catalogue as discrete JSON documents, rather than a single blob, mirrors how a real per-workout export would arrive and makes it trivial to add, remove, or fix a workout without touching code. The data is loaded and decoded off the main thread at launch.
 
 ## Architecture & Design Patterns
 
@@ -130,7 +130,7 @@ The app ships with a set of anonymised workout summaries as bundled JSON resourc
 
 ## Continuous Integration
 
-Tests run automatically on GitHub Actions for every push to `main` and every pull request targeting `main`. The workflow lives at [`.github/workflows/tests.yml`](.github/workflows/tests.yml): one job lints with SwiftLint, the other runs the **unit tests** (`-only-testing:WorkoutTests`) via `xcodebuild test` against an iOS Simulator destination on a `macos-latest` runner and uploads the `.xcresult` bundle as an artifact. The UI tests are kept out of CI — they're slower and simulator-bound — and are run locally from the full test plan.
+Tests run automatically on GitHub Actions for every push to `main` and every pull request targeting `main`. The workflow lives at [`.github/workflows/tests.yml`](.github/workflows/tests.yml): one job lints with SwiftLint, the other runs the **unit tests** (`-only-testing:WorkoutTests`) via `xcodebuild test` against an iOS Simulator destination on a `macos-latest` runner and uploads the `.xcresult` bundle as an artifact. The UI tests are kept out of CI, they're slower and simulator-bound and are run locally from the full test plan.
 
 ## Time Spent
 
