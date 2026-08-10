@@ -35,8 +35,9 @@ jobs:
       - name: Show Xcode version
         run: xcodebuild -version
 
-      # Ask xcodebuild what IT can target, not simctl. If the iOS platform
-      # is missing for the selected Xcode, install it and try once more.
+      # Ask xcodebuild what IT can target. Incompatible entries always carry an
+      # `error:` field, so filter on that rather than on section headings —
+      # the heading wording changes between Xcode releases.
       - name: Pick a simulator
         id: sim
         working-directory: Workout
@@ -44,61 +45,18 @@ jobs:
           pick() {
             xcodebuild -project Workout.xcodeproj -scheme Workout \
                        -showdestinations 2>/dev/null \
-              | awk '/Available destinations/{f=1;next} /Ineligible destinations/{f=0} f' \
               | tr -d '{}' \
               | grep 'platform:iOS Simulator' \
+              | grep -v 'error:' \
               | grep -v 'placeholder' \
               | grep -v 'Designed for' \
               | grep 'name:iPhone' \
-              | sed -E 's/.*OS:([0-9.]+).*name:[[:space:]]*(.*[^[:space:]])[[:space:]]*$/\1|\2/'
+              | grep 'OS:' \
+              | sed -E 's/.*OS:([0-9.]+).*name:[[:space:]]*(.*[^[:space:]])[[:space:]]*$/\1|\2/' \
+              || true
           }
 
           LINES=$(pick)
 
           if [ -z "$LINES" ]; then
-            echo "No iOS Simulator destinations. Installing the iOS platform..."
-            xcodebuild -downloadPlatform iOS
-            LINES=$(pick)
-          fi
-
-          if [ -z "$LINES" ]; then
-            echo "::error::No iOS Simulator destination for $(xcodebuild -version | head -1)."
-            xcodebuild -project Workout.xcodeproj -scheme Workout -showdestinations || true
-            exit 1
-          fi
-
-          # Newest runtime, then the shortest device name in it
-          # (prefers "iPhone 17" over "iPhone 17 Pro Max").
-          OS=$(echo "$LINES" | cut -d'|' -f1 | sort -V | tail -1)
-          NAME=$(echo "$LINES" \
-            | awk -F'|' -v os="$OS" '$1 == os { print $2 }' \
-            | awk '{ print length, $0 }' | sort -n | head -1 | cut -d' ' -f2-)
-
-          echo "os=$OS"     >> "$GITHUB_OUTPUT"
-          echo "name=$NAME" >> "$GITHUB_OUTPUT"
-          echo "Using $NAME on iOS $OS"
-
-      - name: Install xcbeautify
-        run: brew install xcbeautify
-
-      - name: Run tests
-        working-directory: Workout
-        run: |
-          set -o pipefail
-          xcodebuild test \
-            -project Workout.xcodeproj \
-            -scheme Workout \
-            -testPlan Workout \
-            -destination "platform=iOS Simulator,name=${{ steps.sim.outputs.name }},OS=${{ steps.sim.outputs.os }}" \
-            -resultBundlePath TestResults.xcresult \
-            -only-testing:WorkoutTests \
-            CODE_SIGNING_ALLOWED=NO \
-            | xcbeautify --renderer github-actions
-
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v5
-        with:
-          name: TestResults
-          path: Workout/TestResults.xcresult
-          if-no-files-found: warn
+            echo "No
