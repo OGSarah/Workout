@@ -22,19 +22,19 @@ jobs:
       - name: Run SwiftLint
         working-directory: Workout
         run: swiftlint lint --reporter github-actions-logging
- test:
-    name: Build and Test (${{ matrix.runner }})
-    runs-on: ${{ matrix.runner }}
-    # The Xcode 27 image is public preview — no SLA. Don't let it block merges.
-    continue-on-error: ${{ matrix.experimental }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          # Forward-looking leg: image IS the toolchain, no setup-xcode needed.
-          - runner: xcode-27
-            xcode: ''
-            experimental: true
+   test:
+      name: Build and Test (${{ matrix.runner }})
+      runs-on: ${{ matrix.runner }}
+      # The Xcode 27 image is public preview — no SLA. Don't let it block merges.
+      continue-on-error: ${{ matrix.experimental }}
+      strategy:
+        fail-fast: false
+        matrix:
+          include:
+            # Forward-looking leg: image IS the toolchain, no setup-xcode needed.
+            - runner: xcode-27
+              xcode: ''
+              experimental: true
 
     steps:
       - name: Checkout
