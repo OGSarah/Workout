@@ -14,81 +14,91 @@ concurrency:
 jobs:
   lint:
     name: SwiftLint
-    runs-on: macos-latest
+    runs-on: macos-26
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Install SwiftLint
         run: brew install swiftlint
       - name: Run SwiftLint
         working-directory: Workout
         run: swiftlint lint --reporter github-actions-logging
-   test:
-      name: Build and Test (${{ matrix.runner }})
-      runs-on: ${{ matrix.runner }}
-      # The Xcode 27 image is public preview — no SLA. Don't let it block merges.
-      continue-on-error: ${{ matrix.experimental }}
-      strategy:
-        fail-fast: false
-        matrix:
-          include:
-            # Forward-looking leg: image IS the toolchain, no setup-xcode needed.
-            - runner: xcode-27
-              xcode: ''
-              experimental: true
 
+  test:
+    name: Build and Test
+    runs-on: xcode-27
+    # The Xcode 27 image is public preview — no SLA. Don't let it block merges.
+    continue-on-error: true
     steps:
       - name: Checkout
         uses: actions/checkout@v5
 
-      # Only runs on the macos-26 leg. On xcode-27 the image already
-      # provides Xcode 27 as the default and only major version.
-      - name: Select Xcode ${{ matrix.xcode }}
-        if: matrix.xcode != ''
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: ${{ matrix.xcode }}
-
       - name: Show Xcode version
         run: xcodebuild -version
 
-      - name: List available simulators
-        run: xcrun simctl list devices available
-
-      # Resolves the newest installed iOS runtime and the base iPhone model
-      # within it, so a device rename on a new image doesn't break the build.
+      # Ask xcodebuild what IT can target, not simctl. If the iOS platform
+      # is missing for the selected Xcode, install it and try once more.
       - name: Pick a simulator
         id: sim
+        working-directory: Workout
         run: |
-          JSON=$(xcrun simctl list devices available --json)
+          pick() {
+            xcodebuild -project Workout.xcodeproj -scheme Workout \
+                       -showdestinations 2>/dev/null \
+              | awk '/Available destinations/{f=1;next} /Ineligible destinations/{f=0} f' \
+              | tr -d '{}' \
+              | grep 'platform:iOS Simulator' \
+              | grep -v 'placeholder' \
+              | grep -v 'Designed for' \
+              | grep 'name:iPhone' \
+              | sed -E 's/.*OS:([0-9.]+).*name:[[:space:]]*(.*[^[:space:]])[[:space:]]*$/\1|\2/'
+          }
 
-          RUNTIME=$(echo "$JSON" | jq -r '
-            [.devices | keys[] | select(test("SimRuntime\\.iOS-"))]
-            | sort_by(capture("iOS-(?<a>[0-9]+)-(?<b>[0-9]+)")
-                      | [(.a | tonumber), (.b | tonumber)])
-            | last // empty')
+          LINES=$(pick)
 
-          if [ -z "$RUNTIME" ]; then
-            echo "::error::No iOS simulator runtimes installed on this image."
+          if [ -z "$LINES" ]; then
+            echo "No iOS Simulator destinations. Installing the iOS platform..."
+            xcodebuild -downloadPlatform iOS
+            LINES=$(pick)
+          fi
+
+          if [ -z "$LINES" ]; then
+            echo "::error::No iOS Simulator destination for $(xcodebuild -version | head -1)."
+            xcodebuild -project Workout.xcodeproj -scheme Workout -showdestinations || true
             exit 1
           fi
 
-          NAME=$(echo "$JSON" | jq -r --arg rt "$RUNTIME" '
-            [.devices[$rt][]
-             | select(.isAvailable)
-             | .name
-             | select(startswith("iPhone"))]
-            | sort_by(length) | first // empty')
+          # Newest runtime, then the shortest device name in it
+          # (prefers "iPhone 17" over "iPhone 17 Pro Max").
+          OS=$(echo "$LINES" | cut -d'|' -f1 | sort -V | tail -1)
+          NAME=$(echo "$LINES" \
+            | awk -F'|' -v os="$OS" '$1 == os { print $2 }' \
+            | awk '{ print length, $0 }' | sort -n | head -1 | cut -d' ' -f2-)
 
-          if [ -z "$NAME" ]; then
-            echo "::error::No available iPhone simulator for runtime $RUNTIME."
-            exit 1
-          fi
-
-          OS=$(echo "$RUNTIME" | sed -E 's/.*iOS-([0-9]+)-([0-9]+)$/\1.\2/')
-
-          echo "name=$NAME" >> "$GITHUB_OUTPUT"
           echo "os=$OS"     >> "$GITHUB_OUTPUT"
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
           echo "Using $NAME on iOS $OS"
 
       - name: Install xcbeautify
         run: brew install xcbeautify
+
+      - name: Run tests
+        working-directory: Workout
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project Workout.xcodeproj \
+            -scheme Workout \
+            -testPlan Workout \
+            -destination "platform=iOS Simulator,name=${{ steps.sim.outputs.name }},OS=${{ steps.sim.outputs.os }}" \
+            -resultBundlePath TestResults.xcresult \
+            -only-testing:WorkoutTests \
+            CODE_SIGNING_ALLOWED=NO \
+            | xcbeautify --renderer github-actions
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: TestResults
+          path: Workout/TestResults.xcresult
+          if-no-files-found: warn
